@@ -42,7 +42,7 @@ public class Skill implements Serializable {
     
     public Skill() {
     }
-
+    
     public Long getId() {
         return id;
     }

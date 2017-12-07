@@ -5,7 +5,6 @@
  */
 package imp.core.bean;
 
-import imp.core.entity.Exemple;
 import imp.core.entity.Post;
 import java.util.List;
 import javax.ejb.Stateless;

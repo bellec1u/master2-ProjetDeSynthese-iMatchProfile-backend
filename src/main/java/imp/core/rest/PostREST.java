@@ -39,11 +39,17 @@ public class PostREST {
      * @param id of post
      * @return 
      */
-    @GET
+     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
-        return Response.ok(postRepo.getById(id)).build();
+        Post result = postRepo.getById(id);
+        if (result != null) {
+            return Response.ok(result).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Candidate not found for id: " + id)
+                .build();
     }
 
     @POST

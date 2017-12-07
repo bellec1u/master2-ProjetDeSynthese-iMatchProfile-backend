@@ -55,11 +55,11 @@ public class User implements Serializable {
     /**
      * Number of reports that this user has received.
      */
-    @Column(name = "reportNumber")
-    private long reportNumber;
+    @Column(name = "report_number")
+    private long reportNumber = 0;
     
     @Column(name = "state")
-    private State state;
+    private State state = State.OK;
     
     public User() {
     }
