@@ -6,7 +6,10 @@
 package imp.core.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -57,7 +61,9 @@ public class Candidate implements Serializable {
     //TODO
     // photo
     
-    
+        
+    @OneToMany(mappedBy="candidate", cascade=CascadeType.ALL)
+     private List<Match> match;
     
     
     
@@ -69,7 +75,8 @@ public class Candidate implements Serializable {
         this.user = user;
         this.birthDate = birthDate;
         this.description = description;
-    }
+        this.match = new ArrayList<>();
+   }
     
     
     
@@ -105,6 +112,20 @@ public class Candidate implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Match> getMatch() {
+        return match;
+    }
+
+    public void setMatch(List<Match> match) {
+        this.match = match;
+    }
+    
+    
+    public void addMatch(Match m) {
+        m.setCandidate(this);
+        this.match.add(m);
     }
 
     @Override
