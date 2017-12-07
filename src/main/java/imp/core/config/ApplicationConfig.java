@@ -30,6 +30,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(imp.core.rest.ExempleREST.class);
+        resources.add(imp.core.rest.PostREST.class);
     }
     
 }
