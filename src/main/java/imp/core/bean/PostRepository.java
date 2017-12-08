@@ -40,7 +40,6 @@ public class PostRepository extends AbstractRepository<Post> {
      */
     public Post add() {
         Post p = new Post();
-        p.setTitle("Chef de projet");
         em.persist(p);
         return p;
     }

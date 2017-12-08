@@ -48,7 +48,7 @@ public class PostREST {
             return Response.ok(result).build();
         }
         return Response.status(Response.Status.NOT_FOUND)
-                .entity("Candidate not found for id: " + id)
+                .entity("Post not found for id: " + id)
                 .build();
     }
 

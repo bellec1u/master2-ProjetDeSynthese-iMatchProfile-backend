@@ -59,6 +59,9 @@ public class Post implements Serializable {
     @Column(name = "title")
     private String title;
     
+    @Column(name = "experience")
+    private String experience;
+    
     /**
      * Salary of the post
      */
@@ -128,16 +131,14 @@ public class Post implements Serializable {
     public Post() {
     }
 
-    public Post(Date publicationDate, String reference, String title, String salaryIndex, int minSalary, int maxSalary, String contractType, String description, String importantNotes, String workplace, String organization, String workUnit,Recruiter recruiter) {
-        this.publicationDate = publicationDate;
+    public Post(String reference, String title,String experience, String salaryIndex, int minSalary, int maxSalary, String contractType, String workplace, String organization, String workUnit,Recruiter recruiter) {
         this.reference = reference;
         this.title = title;
+        this.experience = experience;
         this.salaryIndex = salaryIndex;
         this.minSalary = minSalary;
         this.maxSalary = maxSalary;
         this.contractType = contractType;
-        this.description = description;
-        this.importantNotes = importantNotes;
         this.workplace = workplace;
         this.organization = organization;
         this.workUnit = workUnit;
@@ -271,6 +272,24 @@ public class Post implements Serializable {
         this.recruiter = recruiter;
     }
 
+    public String getExperience() {
+        return experience;
+    }
+
+    public void setExperience(String experience) {
+        this.experience = experience;
+    }
+
+    public List<PostSkill> getPostskill() {
+        return postskill;
+    }
+
+    public void setPostskill(List<PostSkill> postskill) {
+        this.postskill = postskill;
+    }
+    
+    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -293,7 +312,9 @@ public class Post implements Serializable {
 
     @Override
     public String toString() {
-        return "Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + ", postskill=" + postskill + ", recruiter=" + recruiter + '}';
+        return "Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", experience=" + experience + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + ", postskill=" + postskill + ", recruiter=" + recruiter + '}';
     }
+
+
    
 }
