@@ -29,6 +29,8 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "Recruiter.findAll", 
                 query = "SELECT r FROM Recruiter r"),
+        @NamedQuery(name = "Recruiter.findById", 
+                query = "SELECT r FROM Recruiter r where r.id = :id")
 })
 @Table(name = "Recruiters")
 public class Recruiter implements Serializable {
@@ -45,7 +47,7 @@ public class Recruiter implements Serializable {
     @Column(name = "company")
     private String company;
     
-     @OneToMany(mappedBy="recruiter", cascade=CascadeType.ALL)
+     @OneToMany(mappedBy="recruiter", cascade=CascadeType.PERSIST)
      private List<Post> post;
    
     //TODO
