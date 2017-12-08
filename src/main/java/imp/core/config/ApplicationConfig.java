@@ -19,12 +19,7 @@ public class ApplicationConfig extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
         addRestResourceClasses(resources);
-        addProviders(resources);
         return resources;
-    }
-
-    private void addProviders(Set<Class<?>> resources) {
-        resources.add(CorsFilter.class);
     }
     
     /**

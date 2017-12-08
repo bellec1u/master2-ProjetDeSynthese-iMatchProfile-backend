@@ -117,7 +117,7 @@ public class Post implements Serializable {
     private String workUnit;
     
     // Skills
-     @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
     private List<PostSkill> postskill;
     
     @ManyToOne
