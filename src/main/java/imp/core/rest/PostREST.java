@@ -73,5 +73,20 @@ public class PostREST {
         postRepo.removeById(id);
         return Response.ok().build();
     }
+    /**
+     * Only for test purposes ...
+     * Return list post 
+     * @param id _ recruiter id
+     * @return 
+     */
+    @GET
+    @Path("{id}/recruiter")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPostsByRec(@PathParam("id") Long id) {
+        List<Post> result = postRepo.getPostsByRecruiter(id);
+        GenericEntity<List<Post>> gen = new GenericEntity<List<Post>>(result) {};
+        return Response.ok(gen).build();
+        
+    }
     
 }

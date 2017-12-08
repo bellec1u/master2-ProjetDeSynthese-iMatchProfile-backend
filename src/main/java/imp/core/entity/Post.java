@@ -30,7 +30,9 @@ import javax.persistence.Temporal;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Post.findAll",
-                query = "SELECT p FROM Post p")
+                query = "SELECT p FROM Post p"),
+    @NamedQuery(name = "Post.findPostsByRec",
+                query = "SELECT p FROM Post p WHERE p.recruiter.id = :id")
 })
 @Table(name = "Posts")
 public class Post implements Serializable {
