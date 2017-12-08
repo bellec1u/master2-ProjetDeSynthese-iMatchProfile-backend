@@ -7,6 +7,7 @@ package imp.core.rest;
 
 import imp.core.bean.ExempleRepository;
 import imp.core.entity.Exemple;
+import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -46,7 +47,11 @@ public class ExempleREST {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
-        return Response.ok(exempleRepo.getById(id)).build();
+        Exemple ex = exempleRepo.getById(id);
+        if (ex == null) {
+            throw new ServiceException(Response.Status.NOT_FOUND, "Exemple not found");
+        }
+        return Response.ok(ex).build();
     }
     
     @PUT
@@ -68,7 +73,7 @@ public class ExempleREST {
     @Path("{id}")
     public Response remove(@PathParam("id") Long id) {
         exempleRepo.removeById(id);
-        return Response.ok().build();
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
     
     
