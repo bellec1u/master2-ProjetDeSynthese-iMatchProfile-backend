@@ -6,8 +6,10 @@
 package imp.core.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -77,7 +79,7 @@ public class Candidate implements Serializable {
     @JoinTable(name = "candidates_skills", 
       joinColumns = @JoinColumn(name = "candidate_id"),
       inverseJoinColumns = @JoinColumn(name = "skill_id"))
-    private Set<Skill> skills = new HashSet<Skill>();
+    private List<Skill> skills = new ArrayList<Skill>();
     
     public Candidate() {
     }
@@ -120,11 +122,11 @@ public class Candidate implements Serializable {
         this.description = description;
     }
 
-    public Set<Skill> getSkills() {
+    public List<Skill> getSkills() {
         return skills;
     }
 
-    public void setSkills(Set<Skill> skills) {
+    public void setSkills(List<Skill> skills) {
         this.skills = skills;
     }
     
