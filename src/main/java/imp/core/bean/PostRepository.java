@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -42,6 +43,12 @@ public class PostRepository extends AbstractRepository<Post> {
         Post p = new Post();
         em.persist(p);
         return p;
+    }
+    
+    public List<Post> getPostsByRecruiter(Long id){
+        TypedQuery<Post> query = em.createNamedQuery("Post.findPostsByRec", Post.class);
+        query.setParameter("id", id);
+        return query.getResultList();
     }
     
     
