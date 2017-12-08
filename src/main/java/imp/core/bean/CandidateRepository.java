@@ -10,14 +10,13 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 /**
  *
  * @author alexis
  */
 @Stateless
-public class CandidateRepository extends AbstractRepository {
+public class CandidateRepository extends AbstractRepository<Candidate> {
     
     @PersistenceContext(unitName = "imp-pu")
     private EntityManager em;
@@ -31,15 +30,8 @@ public class CandidateRepository extends AbstractRepository {
         return em;
     }
     
-    /**
-     * Returns the candidate corresponding at this id.
-     * @param id The id for this candidate.
-     * @return The candidate corresponding at this id or null if the candidate does not exist.
-     */
-    public Candidate getById(Long id) {
-        TypedQuery<Candidate> query = em.createNamedQuery("Candidate.getById", Candidate.class);
-        query.setParameter("id", id);
-        List<Candidate> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
+    public List<Candidate> getAll() {
+        return executeNamedQuery("Candidate.findAll");
     }
+    
 }

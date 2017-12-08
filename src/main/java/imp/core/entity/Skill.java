@@ -92,6 +92,22 @@ public class Skill implements Serializable {
         s.setSkill(this);
         this.postskill.add(s);
     }
+
+    public List<PostSkill> getPostskill() {
+        return postskill;
+    }
+
+    public void setPostskill(List<PostSkill> postskill) {
+        this.postskill = postskill;
+    }
+
+    public Set<Candidate> getCandidates() {
+        return candidates;
+    }
+
+    public void setCandidates(Set<Candidate> candidates) {
+        this.candidates = candidates;
+    }
     
     @Override
     public int hashCode() {
