@@ -6,6 +6,7 @@
 package imp.core.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,11 +38,19 @@ public class Skill implements Serializable {
     @Column(name = "description")
     private String description;
     
-     @OneToMany(mappedBy="skill", cascade=CascadeType.ALL)
-    private List<PostSkill> skill;
+    @OneToMany(mappedBy="skill", cascade=CascadeType.ALL)
+    private List<PostSkill> postskill;
     
     public Skill() {
     }
+
+    public Skill(Type type, String description) {
+        this.type = type;
+        this.description = description;
+        this.postskill = new ArrayList<>();
+    }
+    
+    
     
     public Long getId() {
         return id;
@@ -68,16 +77,16 @@ public class Skill implements Serializable {
     }
     
     public List<PostSkill> getSkill() {
-      return skill;
+      return postskill;
     }
 
     public void setSkill(List<PostSkill> skill) {
-        this.skill = skill;
+        this.postskill = skill;
     }
     
     public void addSkill(PostSkill s) {
         s.setSkill(this);
-        this.skill.add(s);
+        this.postskill.add(s);
     }
     
     @Override
@@ -102,7 +111,7 @@ public class Skill implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Skill{" + "id=" + id + ", type=" + type + ", description=" + description + '}';
+        return "Skill{" + "id=" + id + ", type=" + type + ", description=" + description + ", skill=" + postskill + '}';
     }
     
 }

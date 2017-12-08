@@ -39,7 +39,7 @@ public class PostREST {
      * @param id of post
      * @return 
      */
-     @GET
+    @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
