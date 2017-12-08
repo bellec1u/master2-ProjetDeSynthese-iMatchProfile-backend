@@ -6,6 +6,9 @@
 package imp.core.bean;
 
 import imp.core.entity.Candidate;
+import imp.core.entity.Post;
+import imp.core.entity.PostSkill;
+import imp.core.entity.PostSkill.Type;
 import imp.core.entity.Skill;
 import imp.core.entity.User;
 import javax.annotation.PostConstruct;
@@ -42,8 +45,15 @@ public class DatabaseSeed {
         cand.setUser(user);
         cand.setDescription("Je cherche un stage de ouf !");        
         cand.addSkill(skill);
+        
+        Post p = new Post();
+        p.setDescription("test");
+        
+        PostSkill ps = new PostSkill(p,skill,Type.MANDATORY);
      
         em.persist(skill);
         em.persist(cand);
+        em.persist(p);
+        em.persist(ps);
     }
 }

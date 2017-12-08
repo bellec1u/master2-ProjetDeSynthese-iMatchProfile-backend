@@ -6,6 +6,7 @@
 package imp.core.entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +22,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PostSkills")
 public class PostSkill implements Serializable {
+    
+    static public enum Type {MANDATORY, OPTIONAL};
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -34,15 +38,19 @@ public class PostSkill implements Serializable {
     @ManyToOne()
     @JoinColumn(name = "skill")
     private Skill skill; 
+    
+    @Column(name = "type")
+    private Type type;
 
     public PostSkill() {
     }
 
-    public PostSkill(Post post, Skill skill) {
+    public PostSkill(Post post, Skill skill, Type type) {
         this.post = post;
         this.skill = skill;
+        this.type = type;
     }
-   
+  
     public Long getId() {
         return id;
     }
@@ -67,6 +75,13 @@ public class PostSkill implements Serializable {
         this.skill = skill;
     }
     
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
 
     @Override
     public int hashCode() {
@@ -90,7 +105,7 @@ public class PostSkill implements Serializable {
 
     @Override
     public String toString() {
-        return "PostSkill{" + "id=" + id + ", post=" + post + ", skill=" + skill + '}';
+        return "PostSkill{" + "id=" + id + ", post=" + post + ", skill=" + skill + ", type=" + type + '}';
     }
 
 }
