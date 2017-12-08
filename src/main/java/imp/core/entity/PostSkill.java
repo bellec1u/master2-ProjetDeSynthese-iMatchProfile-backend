@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -20,10 +22,17 @@ import javax.persistence.Table;
  * @author dyasar
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "PostSkill.findAll",
+                query = "SELECT p FROM PostSkill p"),
+        @NamedQuery(name = "PostSkill.findById", 
+                query = "SELECT p FROM PostSkill p where p.post.id = :id")
+})
+    
 @Table(name = "PostSkills")
 public class PostSkill implements Serializable {
     
-    static public enum Type {MANDATORY, OPTIONAL};
+    static public enum Type {OBLIGATOIRE, PLUS};
 
 
     private static final long serialVersionUID = 1L;

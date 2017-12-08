@@ -28,7 +28,7 @@ import javax.persistence.Table;
 @Table(name = "Skills")
 public class Skill implements Serializable {
 
-    static public enum Type {WORK, FUNCTIONAL, TECHNICAL, LINGUISTIC};
+    static public enum Typeskill {METIER, FONCTIONNELLES, TECHNQUES, LINGUISTIQUES};
     
     private static final long serialVersionUID = 1L;
     @Id
@@ -36,7 +36,7 @@ public class Skill implements Serializable {
     private Long id;
     
     @Column(name = "type")
-    private Type type;
+    private Typeskill type;
     
     @Column(name = "description")
     private String description;
@@ -50,7 +50,7 @@ public class Skill implements Serializable {
     public Skill() {
     }
 
-    public Skill(Type type, String description) {
+    public Skill(Typeskill type, String description) {
         this.type = type;
         this.description = description;
         this.postskill = new ArrayList<>();
@@ -64,11 +64,11 @@ public class Skill implements Serializable {
         this.id = id;
     }
 
-    public Type getType() {
+    public Typeskill getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(Typeskill type) {
         this.type = type;
     }
 
