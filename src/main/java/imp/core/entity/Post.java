@@ -118,10 +118,7 @@ public class Post implements Serializable {
     
     // Skills
      @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
-    private List<PostSkill> skill;
-     
-    @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
-    private List<Match> match;
+    private List<PostSkill> postskill;
     
     @ManyToOne
     @JoinColumn(name = "recruiter")
@@ -144,8 +141,7 @@ public class Post implements Serializable {
         this.workplace = workplace;
         this.organization = organization;
         this.workUnit = workUnit;
-        this.skill = new ArrayList<>();
-        this.match = new ArrayList<>();
+        this.postskill = new ArrayList<>();
         this.recruiter = recruiter;
     }
 
@@ -255,29 +251,16 @@ public class Post implements Serializable {
     
     
     public List<PostSkill> getSkill() {
-        return skill;
+        return postskill;
     }
 
     public void setSkill(List<PostSkill> skill) {
-        this.skill = skill;
+        this.postskill = skill;
     }
     
     public void addSkill(PostSkill s) {
         s.setPost(this);
-        this.skill.add(s);
-    }
-
-    public List<Match> getMatch() {
-        return match;
-    }
-
-    public void setMatch(List<Match> match) {
-        this.match = match;
-    }
-    
-    public void addMatch(Match m) {
-        m.setPost(this);
-        this.match.add(m);
+        this.postskill.add(s);
     }
 
     public Recruiter getRecruiter() {
@@ -310,7 +293,7 @@ public class Post implements Serializable {
 
     @Override
     public String toString() {
-        return "Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + ", skill=" + skill + '}';
+        return "Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + ", postskill=" + postskill + ", recruiter=" + recruiter + '}';
     }
    
 }
