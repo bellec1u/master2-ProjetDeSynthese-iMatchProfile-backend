@@ -19,12 +19,7 @@ public class ApplicationConfig extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
         addRestResourceClasses(resources);
-        addProviders(resources);
         return resources;
-    }
-
-    private void addProviders(Set<Class<?>> resources) {
-        resources.add(CorsFilter.class);
     }
     
     /**
@@ -38,6 +33,7 @@ public class ApplicationConfig extends Application {
         resources.add(imp.core.rest.CandidateREST.class);
         resources.add(imp.core.rest.ExempleREST.class);
         resources.add(imp.core.rest.PostREST.class);
+        resources.add(imp.core.rest.RecruiterREST.class);
     }
     
 }
