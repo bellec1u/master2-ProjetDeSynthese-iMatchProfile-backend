@@ -48,7 +48,7 @@ public class PostREST {
             return Response.ok(result).build();
         }
         return Response.status(Response.Status.NOT_FOUND)
-                .entity("Candidate not found for id: " + id)
+                .entity("Post not found for id: " + id)
                 .build();
     }
 
@@ -72,6 +72,21 @@ public class PostREST {
     public Response remove(@PathParam("id") Long id) {
         postRepo.removeById(id);
         return Response.ok().build();
+    }
+    /**
+     * Only for test purposes ...
+     * Return list post 
+     * @param id _ recruiter id
+     * @return 
+     */
+    @GET
+    @Path("{id}/recruiter")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPostsByRec(@PathParam("id") Long id) {
+        List<Post> result = postRepo.getPostsByRecruiter(id);
+        GenericEntity<List<Post>> gen = new GenericEntity<List<Post>>(result) {};
+        return Response.ok(gen).build();
+        
     }
     
 }

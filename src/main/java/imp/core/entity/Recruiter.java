@@ -54,6 +54,7 @@ public class Recruiter implements Serializable {
     // photo
     
     public Recruiter() {
+        this.post = new ArrayList<>();
     }
 
     public Recruiter(User user, String company) {
