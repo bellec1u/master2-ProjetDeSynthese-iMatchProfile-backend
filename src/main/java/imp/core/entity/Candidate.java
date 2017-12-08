@@ -8,11 +8,13 @@ package imp.core.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import javax.persistence.CascadeType;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,13 +46,13 @@ public class Candidate implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     /**
      * Link to basics profile informations
      */
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     private User user;
     
     /**
@@ -86,7 +88,7 @@ public class Candidate implements Serializable {
     private Set<Skill> skills;
     
     public Candidate() {
-    
+        this.skills = new HashSet<Skill>();
     }
     
     public Candidate(User user, Date birthDate, String description) {
@@ -128,6 +130,18 @@ public class Candidate implements Serializable {
         this.description = description;
     }
 
+    public Set<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(Set<Skill> skills) {
+        this.skills = skills;
+    }
+    
+    public void addSkill(Skill skill) {
+        skills.add(skill);
+    }
+    
     public List<Match> getMatch() {
         return match;
     }

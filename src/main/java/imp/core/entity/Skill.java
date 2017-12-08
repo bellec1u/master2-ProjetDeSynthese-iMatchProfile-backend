@@ -7,12 +7,14 @@ package imp.core.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -37,9 +39,12 @@ public class Skill implements Serializable {
     @Column(name = "description")
     private String description;
     
-     @OneToMany(mappedBy="skill", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="skill", cascade=CascadeType.ALL)
     private List<PostSkill> skill;
     
+    @ManyToMany(mappedBy="skills")
+    private Set<Candidate> candidates;
+     
     public Skill() {
     }
     

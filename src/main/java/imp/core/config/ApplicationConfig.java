@@ -34,6 +34,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(imp.core.config.CorsFilter.class);
         resources.add(imp.core.rest.CandidateREST.class);
         resources.add(imp.core.rest.ExempleREST.class);
         resources.add(imp.core.rest.PostREST.class);
