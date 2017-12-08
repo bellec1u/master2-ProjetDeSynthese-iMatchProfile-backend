@@ -11,6 +11,7 @@ import imp.core.entity.PostSkill;
 import imp.core.entity.PostSkill.Type;
 import imp.core.entity.Recruiter;
 import imp.core.entity.Skill;
+import imp.core.entity.Skill.Typeskill;
 import imp.core.entity.User;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -59,6 +60,26 @@ public class DatabaseSeed {
         user4.setLastname("Courtal");
         user4.setPassword("password");
         user4.setRole(User.Role.CANDIDATE);
+
+        Skill skill0 = new Skill();
+        skill0.setDescription("Banque de détail");
+        skill0.setType(Typeskill.METIER);
+        
+        Skill skill2 = new Skill();
+        skill2.setDescription("Télécommunications d'entreprise");
+        skill2.setType(Typeskill.METIER);
+
+        Skill skill3 = new Skill();
+        skill3.setDescription("Microsoft Project 2013");
+        skill3.setType(Typeskill.FONCTIONNELLES);
+        
+        Skill skill4 = new Skill();
+        skill4.setDescription("Aucune");
+        skill4.setType(Typeskill.TECHNQUES);
+        
+        Skill skill5 = new Skill();
+        skill5.setDescription("Français C2");
+        skill5.setType(Typeskill.LINGUISTIQUES);
         
         Skill java = new Skill();
         java.setDescription("Java");
@@ -109,7 +130,6 @@ public class DatabaseSeed {
         Post p = new Post("AP-20161107-1","Chef de projet","7 dans la fonction de Chef de projet","PM7",58000,70000,"CDI","Nancy","CP-Axions","Assistance MOA",r);
         p.setDescription("Pour l’un de ses clients qui est un grand groupe dans le domaine bancaire,CP-Axions recherche un chef de projet qui sera rattaché(e) à la Direction Projet et impliqué(e) principalement dans les missions suivantes :...");
         p.setImportantNotes("Certains déplacements au sein de l’Union Européenne peuvent s’avérer nécessaire.");
-        PostSkill ps = new PostSkill(p, angular, Type.MANDATORY);
      
         em.persist(angular);
         em.persist(java);
@@ -117,6 +137,20 @@ public class DatabaseSeed {
         em.persist(bdd);
         em.persist(marketing);
         
+        PostSkill ps = new PostSkill(p,skill0,Type.OBLIGATOIRE);
+        PostSkill ps2 = new PostSkill(p,skill2,Type.PLUS);
+        PostSkill ps3 = new PostSkill(p,skill3,Type.OBLIGATOIRE);
+        PostSkill ps4 = new PostSkill();
+        ps4.setPost(p);
+        ps4.setSkill(skill4);
+        PostSkill ps5 = new PostSkill(p,skill5,Type.OBLIGATOIRE);
+
+        em.persist(skill0);
+        em.persist(skill2);
+        em.persist(skill3);
+        em.persist(skill4);
+        em.persist(skill5);
+
         em.persist(cand);
         em.persist(cand2);
         em.persist(cand3);
@@ -126,5 +160,9 @@ public class DatabaseSeed {
 
         em.persist(p);
         em.persist(ps);
+        em.persist(ps2);   
+        em.persist(ps3);
+        em.persist(ps4);    
+        em.persist(ps5);
     }
 }
