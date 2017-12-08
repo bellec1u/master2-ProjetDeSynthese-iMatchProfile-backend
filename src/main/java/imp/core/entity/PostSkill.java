@@ -31,7 +31,7 @@ public class PostSkill implements Serializable {
     @JoinColumn(name = "post")
     private Post post; 
     
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "skill")
     private Skill skill; 
 

@@ -74,13 +74,12 @@ public class Candidate implements Serializable {
     //TODO
     // A REVOIR
     @ManyToMany
-    @JoinTable(name = "CANDIDATES_SKILLS", 
-      joinColumns = @JoinColumn(name = "CANDIDATE_ID"),
-      inverseJoinColumns = @JoinColumn(name = "SKILL_ID"))
-    private Set<Skill> skills;
+    @JoinTable(name = "candidates_skills", 
+      joinColumns = @JoinColumn(name = "candidate_id"),
+      inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private Set<Skill> skills = new HashSet<Skill>();
     
     public Candidate() {
-        this.skills = new HashSet<Skill>();
     }
     
     public Candidate(User user, Date birthDate, String description) {
