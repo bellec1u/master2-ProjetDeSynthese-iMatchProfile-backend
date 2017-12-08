@@ -6,14 +6,20 @@
 package imp.core.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
@@ -111,8 +117,36 @@ public class Post implements Serializable {
     private String workUnit;
     
     // Skills
+     @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
+    private List<PostSkill> skill;
+     
+    @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
+    private List<Match> match;
     
+    @ManyToOne
+    @JoinColumn(name = "recruiter")
+    private Recruiter recruiter; 
+    
+     
     public Post() {
+    }
+
+    public Post(Date publicationDate, String reference, String title, String salaryIndex, int minSalary, int maxSalary, String contractType, String description, String importantNotes, String workplace, String organization, String workUnit,Recruiter recruiter) {
+        this.publicationDate = publicationDate;
+        this.reference = reference;
+        this.title = title;
+        this.salaryIndex = salaryIndex;
+        this.minSalary = minSalary;
+        this.maxSalary = maxSalary;
+        this.contractType = contractType;
+        this.description = description;
+        this.importantNotes = importantNotes;
+        this.workplace = workplace;
+        this.organization = organization;
+        this.workUnit = workUnit;
+        this.skill = new ArrayList<>();
+        this.match = new ArrayList<>();
+        this.recruiter = recruiter;
     }
 
     public Long getId() {
@@ -218,6 +252,41 @@ public class Post implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    
+    public List<PostSkill> getSkill() {
+        return skill;
+    }
+
+    public void setSkill(List<PostSkill> skill) {
+        this.skill = skill;
+    }
+    
+    public void addSkill(PostSkill s) {
+        s.setPost(this);
+        this.skill.add(s);
+    }
+
+    public List<Match> getMatch() {
+        return match;
+    }
+
+    public void setMatch(List<Match> match) {
+        this.match = match;
+    }
+    
+    public void addMatch(Match m) {
+        m.setPost(this);
+        this.match.add(m);
+    }
+
+    public Recruiter getRecruiter() {
+        return recruiter;
+    }
+
+    public void setRecruiter(Recruiter recruiter) {
+        this.recruiter = recruiter;
+    }
 
     @Override
     public int hashCode() {
@@ -241,7 +310,7 @@ public class Post implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + '}';
+        return "Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + ", skill=" + skill + '}';
     }
-    
+   
 }

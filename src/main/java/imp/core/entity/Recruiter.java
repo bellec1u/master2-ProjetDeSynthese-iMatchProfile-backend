@@ -6,6 +6,9 @@
 package imp.core.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -41,11 +45,21 @@ public class Recruiter implements Serializable {
     @Column(name = "company")
     private String company;
     
+     @OneToMany(mappedBy="recruiter", cascade=CascadeType.ALL)
+     private List<Post> post;
+   
     //TODO
     // photo
     
     public Recruiter() {
     }
+
+    public Recruiter(User user, String company) {
+        this.user = user;
+        this.company = company;
+        this.post = new ArrayList<>();
+    }
+    
     
     public Long getId() {
         return id;
@@ -69,6 +83,19 @@ public class Recruiter implements Serializable {
 
     public void setCompany(String company) {
         this.company = company;
+    }
+    
+    public List<Post> getPost() {
+        return post;
+    }
+
+    public void setPost(List<Post> post) {
+        this.post = post;
+    }
+    
+    public void addPost(Post p) {
+        p.setRecruiter(this);
+        this.post.add(p);
     }
     
     @Override

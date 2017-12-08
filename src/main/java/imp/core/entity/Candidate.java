@@ -6,14 +6,22 @@
 package imp.core.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -25,12 +33,16 @@ import javax.persistence.Temporal;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Candidate.findAll", 
-                query = "SELECT c FROM Candidate c")
+                query = "SELECT c FROM Candidate c"),
+    @NamedQuery(name = "Candidate.getById", 
+            query = "SELECT c FROM Candidate c WHERE c.id = :id")
+
 })
 @Table(name = "Candidates")
 public class Candidate implements Serializable {
     
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -52,14 +64,26 @@ public class Candidate implements Serializable {
      * Description of the user
      */
     @Column(name = "description")
-    private String description;
+    private String description = "";
     
     //TODO
     // photo
     
+        
+    @OneToMany(mappedBy="candidate", cascade=CascadeType.ALL)
+     private List<Match> match;
     
     
-    
+    /**
+     * Skills of the user
+     */
+    //TODO
+    // A REVOIR
+    @ManyToMany
+    @JoinTable(name = "CANDIDATES_SKILLS", 
+      joinColumns = @JoinColumn(name = "CANDIDATE_ID"),
+      inverseJoinColumns = @JoinColumn(name = "SKILL_ID"))
+    private Set<Skill> skills;
     
     public Candidate() {
     
@@ -69,11 +93,8 @@ public class Candidate implements Serializable {
         this.user = user;
         this.birthDate = birthDate;
         this.description = description;
-    }
-    
-    
-    
-    
+        this.match = new ArrayList<>();
+   }
     
     public Long getId() {
         return id;
@@ -105,6 +126,20 @@ public class Candidate implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Match> getMatch() {
+        return match;
+    }
+
+    public void setMatch(List<Match> match) {
+        this.match = match;
+    }
+    
+    
+    public void addMatch(Match m) {
+        m.setCandidate(this);
+        this.match.add(m);
     }
 
     @Override
