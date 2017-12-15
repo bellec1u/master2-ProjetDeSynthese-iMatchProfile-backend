@@ -19,7 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *
+ * REST service for the candidate entity.
+ * 
  * @author alexis
  */
 @Stateless
@@ -29,21 +30,32 @@ public class CandidateREST {
     @EJB
     private CandidateRepository candidateRepository;
     
+    /**
+     * Returns all the candidates.
+     * @return A response containing all the candidates. 
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
         List<Candidate> list = candidateRepository.getAll();
         // because ok() method expects an Entity as parameter
         GenericEntity<List<Candidate>> candidates = new GenericEntity<List<Candidate>>(list) {};
-        return Response.ok(candidates).build();
+        return Response
+                .ok(candidates)
+                .build();
     }
     
+    /**
+     * Returns the candidate corresponding to the id parameter.
+     * @param id The id of the candidate to get.
+     * @return A response containing the candidate
+     * or a 404 response if the candidate with this id is not found.
+     */
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
         Candidate result = candidateRepository.getById(id);
-        System.out.println(result);
         if (result != null) {
             return Response.ok(result).build();
         }
