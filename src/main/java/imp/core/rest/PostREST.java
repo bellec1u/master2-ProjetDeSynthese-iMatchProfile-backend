@@ -56,7 +56,8 @@ public class PostREST {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Post entity) {
         Post post = postRepo.create(entity);
-        return Response.ok(post).status(Response.Status.CREATED).build();
+        System.out.println(post);
+            return Response.ok(post).status(Response.Status.CREATED).build();
     }
     
     @PUT

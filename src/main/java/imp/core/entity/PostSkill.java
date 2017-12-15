@@ -25,7 +25,7 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "PostSkill.findAll",
                 query = "SELECT p FROM PostSkill p"),
-        @NamedQuery(name = "PostSkill.findById", 
+        @NamedQuery(name = "PostSkill.findPostsById", 
                 query = "SELECT p FROM PostSkill p where p.post.id = :id")
 })
     

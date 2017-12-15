@@ -5,11 +5,13 @@
  */
 package imp.core.bean;
 
+import imp.core.entity.Post;
 import imp.core.entity.PostSkill;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -33,4 +35,9 @@ public class PostSkillRepository extends AbstractRepository<PostSkill>{
         return executeNamedQuery("PostSkill.findAll");
     }
     
+     public List<PostSkill> getPostsById(Long id){
+        TypedQuery<PostSkill> query = em.createNamedQuery("PostSkill.findPostsById", PostSkill.class);
+        query.setParameter("id", id);
+        return query.getResultList();
+    }
 }

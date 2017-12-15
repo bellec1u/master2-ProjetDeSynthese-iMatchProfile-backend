@@ -8,8 +8,7 @@ package imp.core.rest;
 import imp.core.bean.PostSkillRepository;
 import imp.core.entity.Post;
 import imp.core.entity.PostSkill;
-import imp.core.entity.Recruiter;
-import java.util.List;
+ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
@@ -40,12 +39,13 @@ public class PostSkillREST {
         return Response.ok(gen).build();
     }
     
-   @GET
+    @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPostsById(@PathParam("id") Long id) {
-        PostSkill result = postRepo.getById(id);
-        return Response.ok(result).build();
+        List<PostSkill> list = postRepo.getPostsById(id);
+        GenericEntity<List<PostSkill>> gen = new GenericEntity<List<PostSkill>>(list) {};
+        return Response.ok(gen).build();
 
     }
     
