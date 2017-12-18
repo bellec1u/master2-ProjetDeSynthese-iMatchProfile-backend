@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.post;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,11 +15,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
@@ -30,9 +28,7 @@ import javax.persistence.Temporal;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Post.findAll",
-                query = "SELECT p FROM Post p"),
-    @NamedQuery(name = "Post.findPostsByRec",
-                query = "SELECT p FROM Post p WHERE p.recruiter.id = :id")
+            query = "SELECT p FROM Post p")
 })
 @Table(name = "Posts")
 public class Post implements Serializable {
@@ -121,19 +117,25 @@ public class Post implements Serializable {
     @Column(name = "work_unit")
     private String workUnit;
     
-    // Skills
-    @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
+    /**
+     * Recruiter of the post
+     */
+//    @ManyToOne
+//    private Recruiter recruiter; 
+    
+    /**
+     * Skills recommanded for the post
+     */
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<PostSkill> postskill;
     
-    @ManyToOne
-    @JoinColumn(name = "recruiter")
-    private Recruiter recruiter; 
+    
     
      
     public Post() {
     }
 
-    public Post(String reference, String title,String experience, String salaryIndex, int minSalary, int maxSalary, String contractType, String workplace, String organization, String workUnit,Recruiter recruiter) {
+    public Post(String reference, String title,String experience, String salaryIndex, int minSalary, int maxSalary, String contractType, String workplace, String organization, String workUnit/*,Recruiter recruiter*/) {
         this.reference = reference;
         this.title = title;
         this.experience = experience;
@@ -145,7 +147,7 @@ public class Post implements Serializable {
         this.organization = organization;
         this.workUnit = workUnit;
         this.postskill = new ArrayList<>();
-        this.recruiter = recruiter;
+//        this.recruiter = recruiter;
     }
 
     public Long getId() {
@@ -262,17 +264,16 @@ public class Post implements Serializable {
     }
     
     public void addSkill(PostSkill s) {
-        s.setPost(this);
         this.postskill.add(s);
     }
 
-    public Recruiter getRecruiter() {
-        return recruiter;
-    }
-
-    public void setRecruiter(Recruiter recruiter) {
-        this.recruiter = recruiter;
-    }
+//    public Recruiter getRecruiter() {
+//        return recruiter;
+//    }
+//
+//    public void setRecruiter(Recruiter recruiter) {
+//        this.recruiter = recruiter;
+//    }
 
     public String getExperience() {
         return experience;
@@ -314,7 +315,7 @@ public class Post implements Serializable {
 
     @Override
     public String toString() {
-        return "Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", experience=" + experience + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + ", postskill=" + postskill + ", recruiter=" + recruiter + '}';
+        return "Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", experience=" + experience + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + ", postskill=" + postskill + '}';
     }
 
 

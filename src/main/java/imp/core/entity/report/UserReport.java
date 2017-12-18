@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.report;
 
+import imp.core.entity.user.User;
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -20,14 +21,14 @@ public class UserReport implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     /**
      * User who receives this comment
      */
     @OneToOne
     @JoinColumn(name = "reported_user")
     private User reportedUser;
-    
+
     /**
      * User who wrote this comment
      */
@@ -35,22 +36,14 @@ public class UserReport implements Serializable {
     @JoinColumn(name = "reporting_user")
     private User reportingUser;
 
-    
-    
-    
-    
     public UserReport() {
     }
-    
+
     public UserReport(User reportedUser, User reportingUser) {
         this.reportedUser = reportedUser;
         this.reportingUser = reportingUser;
     }
 
-    
-    
-    
-    
     public Long getId() {
         return id;
     }
@@ -58,7 +51,7 @@ public class UserReport implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public User getReportedUser() {
         return reportedUser;
     }
@@ -99,5 +92,5 @@ public class UserReport implements Serializable {
     public String toString() {
         return "entity.UserReport{" + "id=" + id + ", reportedUser=" + reportedUser + ", reportingUser=" + reportingUser + '}';
     }
-    
+
 }

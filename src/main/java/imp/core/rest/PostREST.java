@@ -6,7 +6,7 @@
 package imp.core.rest;
 
 import imp.core.bean.PostRepository;
-import imp.core.entity.Post;
+import imp.core.entity.post.Post;
 import java.util.List;
 import javax.ws.rs.core.GenericEntity;
 import javax.ejb.*;

@@ -5,7 +5,7 @@
  */
 package imp.core.bean;
 
-import imp.core.entity.user.Recruiter;
+import imp.core.entity.Skill;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -13,16 +13,16 @@ import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author Mohamed
+ * @author Leopold
  */
 @Stateless
-public class RecruiterRepository extends AbstractRepository<Recruiter> {
+public class SkillRepository extends AbstractRepository<Skill> {
 
     @PersistenceContext(unitName = "imp-pu")
     private EntityManager em;
 
-    public RecruiterRepository() {
-        super(Recruiter.class);
+    public SkillRepository() {
+        super(Skill.class);
     }
 
     @Override
@@ -30,8 +30,8 @@ public class RecruiterRepository extends AbstractRepository<Recruiter> {
         return em;
     }
 
-    public List<Recruiter> getAll() {
-        return executeNamedQuery("Recruiter.findAll");
+    public List<Skill> getAll() {
+        return executeNamedQuery("Skill.findAll");
     }
 
 }

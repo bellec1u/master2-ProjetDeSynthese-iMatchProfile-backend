@@ -3,22 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.user;
 
+import imp.core.entity.Skill;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -32,64 +29,54 @@ import javax.persistence.Temporal;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "Candidate.findAll", 
-                query = "SELECT c FROM Candidate c"),
-    @NamedQuery(name = "Candidate.getById", 
-            query = "SELECT c FROM Candidate c WHERE c.id = :id")
-
+    @NamedQuery(name = "Candidate.findAll",
+            query = "SELECT c FROM Candidate c")
 })
 @Table(name = "Candidates")
 public class Candidate implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     /**
      * Link to basics profile informations
      */
     @OneToOne(cascade = CascadeType.PERSIST)
     private User user;
-    
+
     /**
      * Date of birth of the user
      */
     @Temporal(javax.persistence.TemporalType.DATE)
     @Column(name = "birth_date")
     private Date birthDate;
-    
+
     /**
      * Description of the user
      */
     @Column(name = "description")
     private String description = "";
-    
+
     //TODO
     // photo
-    
-
     /**
      * Skills of the user
      */
-    //TODO
-    // A REVOIR
     @ManyToMany
-    @JoinTable(name = "candidates_skills", 
-      joinColumns = @JoinColumn(name = "candidate_id"),
-      inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private List<Skill> skills = new ArrayList<Skill>();
-    
+
     public Candidate() {
     }
-    
+
     public Candidate(User user, Date birthDate, String description) {
         this.user = user;
         this.birthDate = birthDate;
         this.description = description;
-   }
-    
+    }
+
     public Long getId() {
         return id;
     }
@@ -129,11 +116,11 @@ public class Candidate implements Serializable {
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
     }
-    
+
     public void addSkill(Skill skill) {
         skills.add(skill);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;

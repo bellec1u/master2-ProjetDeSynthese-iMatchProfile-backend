@@ -5,7 +5,7 @@
  */
 package imp.core.bean;
 
-import imp.core.entity.Candidate;
+import imp.core.entity.user.Candidate;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;

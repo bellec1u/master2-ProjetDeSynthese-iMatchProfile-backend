@@ -6,7 +6,7 @@
 package imp.core.rest;
 
 import imp.core.bean.CandidateRepository;
-import imp.core.entity.Candidate;
+import imp.core.entity.user.Candidate;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 
 /**
  * REST service for the candidate entity.
- * 
+ *
  * @author alexis
  */
 @Stateless
@@ -29,27 +29,30 @@ public class CandidateREST {
 
     @EJB
     private CandidateRepository candidateRepository;
-    
+
     /**
      * Returns all the candidates.
-     * @return A response containing all the candidates. 
+     *
+     * @return A response containing all the candidates.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
         List<Candidate> list = candidateRepository.getAll();
         // because ok() method expects an Entity as parameter
-        GenericEntity<List<Candidate>> candidates = new GenericEntity<List<Candidate>>(list) {};
+        GenericEntity<List<Candidate>> candidates = new GenericEntity<List<Candidate>>(list) {
+        };
         return Response
                 .ok(candidates)
                 .build();
     }
-    
+
     /**
      * Returns the candidate corresponding to the id parameter.
+     *
      * @param id The id of the candidate to get.
-     * @return A response containing the candidate
-     * or a 404 response if the candidate with this id is not found.
+     * @return A response containing the candidate or a 404 response if the
+     * candidate with this id is not found.
      */
     @GET
     @Path("{id}")

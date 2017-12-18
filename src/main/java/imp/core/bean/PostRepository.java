@@ -5,7 +5,7 @@
  */
 package imp.core.bean;
 
-import imp.core.entity.Post;
+import imp.core.entity.post.Post;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;

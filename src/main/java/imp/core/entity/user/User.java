@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.user;
 
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
 import javax.persistence.Table;
 
 /**
@@ -19,16 +18,17 @@ import javax.persistence.Table;
  * @author Leopold
  */
 @Entity
-@NamedQueries({
- 
-})
 @Table(name = "Users")
 public class User implements Serializable {
 
-    public static enum Role {CANDIDATE, RECRUITER, MODERATOR};
-    
-    public static enum State {OK, SUSPENDED, CLOSED, BANNED};
-    
+    public static enum Role {
+        CANDIDATE, RECRUITER, MODERATOR
+    };
+
+    public static enum State {
+        OK, SUSPENDED, CLOSED, BANNED
+    };
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,35 +36,34 @@ public class User implements Serializable {
 
     @Column(name = "email")
     private String email;
-    
+
     @Column(name = "password")
     private String password;
-    
+
     @Column(name = "lastname")
     private String lastname;
-    
+
     @Column(name = "firstname")
     private String firstname;
-    
+
     /**
      * Link between the entity User and the entities Recruiter and Candidate.
      */
     @Column(name = "role")
     private Role role;
-    
+
     /**
      * Number of reports that this user has received.
      */
     @Column(name = "report_number")
     private long reportNumber = 0;
-    
+
     @Column(name = "state")
     private State state = State.OK;
-    
+
     public User() {
     }
-    
-    
+
     public Long getId() {
         return id;
     }
@@ -128,7 +127,7 @@ public class User implements Serializable {
     public void setState(State state) {
         this.state = state;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -153,5 +152,5 @@ public class User implements Serializable {
     public String toString() {
         return "entity.User{" + "id=" + id + ", email=" + email + ", password=" + password + ", lastname=" + lastname + ", firstname=" + firstname + ", role=" + role + ", reportNumber=" + reportNumber + ", state=" + state + '}';
     }
-    
+
 }
