@@ -6,8 +6,8 @@
 package imp.core.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +58,7 @@ public class Candidate implements Serializable {
      */
     @Temporal(javax.persistence.TemporalType.DATE)
     @Column(name = "birth_date")
-    private Date birthDate;
+    private LocalDate birthDate;
     
     /**
      * Description of the user
@@ -84,7 +84,7 @@ public class Candidate implements Serializable {
     public Candidate() {
     }
     
-    public Candidate(User user, Date birthDate, String description) {
+    public Candidate(User user, LocalDate birthDate, String description) {
         this.user = user;
         this.birthDate = birthDate;
         this.description = description;
@@ -106,11 +106,11 @@ public class Candidate implements Serializable {
         this.user = user;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

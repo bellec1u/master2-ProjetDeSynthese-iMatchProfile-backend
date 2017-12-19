@@ -7,7 +7,7 @@ package imp.core.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -47,7 +47,7 @@ public class Post implements Serializable {
      */
     @Temporal(javax.persistence.TemporalType.DATE)
     @Column(name = "publication_date")
-    private Date publicationDate;
+    private LocalDateTime publicationDate;
     
     /**
      * Reference of the specific post
@@ -152,11 +152,11 @@ public class Post implements Serializable {
         return id;
     }
 
-    public Date getPublicationDate() {
+    public LocalDateTime getPublicationDate() {
         return publicationDate;
     }
 
-    public void setPublicationDate(Date publicationDate) {
+    public void setPublicationDate(LocalDateTime publicationDate) {
         this.publicationDate = publicationDate;
     }
 
