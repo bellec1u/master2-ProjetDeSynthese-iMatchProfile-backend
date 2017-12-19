@@ -18,22 +18,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  *
  * @author auktis
- * 
+ *
  * Fake entity for exemple purpose
  */
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Exemple.findAll",
-                query = "SELECT e FROM Exemple e")
+            query = "SELECT e FROM Exemple e")
 })
-@XmlRootElement
 public class Exemple implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     @Column
     private String name;
 
@@ -44,7 +43,7 @@ public class Exemple implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -77,5 +76,5 @@ public class Exemple implements Serializable {
     public String toString() {
         return "imp.core.entity.Exemple[ id=" + id + " ]";
     }
-    
+
 }

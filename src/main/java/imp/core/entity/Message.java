@@ -5,6 +5,7 @@
  */
 package imp.core.entity;
 
+import imp.core.entity.user.User;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,20 +29,20 @@ public class Message implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     /**
      * Author of the message
      */
     @OneToOne
     @JoinColumn(name = "author")
     private User author;
-    
+
     /**
      * Content of the message
      */
     @Column(name = "message")
     private String msg;
-    
+
     /**
      * Conversation of the message
      */
@@ -49,10 +50,6 @@ public class Message implements Serializable {
     @JoinColumn(name = "conversation")
     private Conversation conversation;
 
-    
-    
-    
-    
     public Message() {
     }
 
@@ -63,10 +60,6 @@ public class Message implements Serializable {
         this.conversation = conv;
     }
 
-    
-    
-    
-    
     public Long getId() {
         return id;
     }
@@ -74,12 +67,12 @@ public class Message implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-     public User getAutor() {
+
+    public User getAutor() {
         return author;
     }
 
-    public void setAutor(User author ){
+    public void setAutor(User author) {
         this.author = author;
     }
 

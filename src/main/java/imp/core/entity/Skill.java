@@ -6,18 +6,13 @@
 package imp.core.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -25,37 +20,36 @@ import javax.persistence.Table;
  * @author Auktis
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "Skill.findAll",
+            query = "SELECT s FROM Skill s")
+})
 @Table(name = "Skills")
 public class Skill implements Serializable {
 
-    static public enum Typeskill {METIER, FONCTIONNELLES, TECHNQUES, LINGUISTIQUES};
-    
+    static public enum Typeskill {
+        METIER, FONCTIONNELLES, TECHNQUES, LINGUISTIQUES
+    };
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     @Column(name = "type")
     private Typeskill type;
-    
+
     @Column(name = "description")
     private String description;
-    
-    @OneToMany(mappedBy="skill", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    private List<PostSkill> postskill;
-    
-    @ManyToMany(mappedBy="skills")
-    private Set<Candidate> candidates;
-     
+
     public Skill() {
     }
 
     public Skill(Typeskill type, String description) {
         this.type = type;
         this.description = description;
-        this.postskill = new ArrayList<>();
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -79,36 +73,7 @@ public class Skill implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    public List<PostSkill> getSkill() {
-      return postskill;
-    }
 
-    public void setSkill(List<PostSkill> skill) {
-        this.postskill = skill;
-    }
-    
-    public void addSkill(PostSkill s) {
-        s.setSkill(this);
-        this.postskill.add(s);
-    }
-
-    public List<PostSkill> getPostskill() {
-        return postskill;
-    }
-
-    public void setPostskill(List<PostSkill> postskill) {
-        this.postskill = postskill;
-    }
-
-    public Set<Candidate> getCandidates() {
-        return candidates;
-    }
-
-    public void setCandidates(Set<Candidate> candidates) {
-        this.candidates = candidates;
-    }
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -131,7 +96,7 @@ public class Skill implements Serializable {
 
     @Override
     public String toString() {
-        return "Skill{" + "id=" + id + ", type=" + type + ", description=" + description + ", skill=" + postskill + '}';
+        return "Skill{" + "id=" + id + ", type=" + type + ", description=" + description + '}';
     }
-    
+
 }

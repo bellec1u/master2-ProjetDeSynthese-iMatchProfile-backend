@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.report;
 
+import imp.core.entity.post.Post;
+import imp.core.entity.user.User;
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,43 +21,35 @@ import javax.persistence.Table;
  * @author yasar
  */
 @Entity
-@Table(name = "Conversation_reports")
-public class ConversationReport implements Serializable {
+@Table(name = "Post_reports")
+public class PostReport implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     /**
-     * Reported conversation
+     * Reported post
      */
     @OneToOne
-    @JoinColumn(name = "reported_conversation")
-    private Conversation reportedConversation;
-    
+    @JoinColumn(name = "reported_post")
+    private Post reportedPost;
+
     /**
-     * User who report the comment
+     * User who report the post
      */
     @OneToOne
     @JoinColumn(name = "reporting_user")
     private User reportingUser;
-    
-    
-    
-    
-    
-    public ConversationReport() {
+
+    public PostReport() {
     }
-    
-    public ConversationReport(Conversation reportedConversation, User reportingUser) {
-        this.reportedConversation = reportedConversation;
+
+    public PostReport(Post reportedPost, User reportingUser) {
+        this.reportedPost = reportedPost;
         this.reportingUser = reportingUser;
     }
-    
-    
-    
-    
 
     public Long getId() {
         return id;
@@ -65,13 +58,13 @@ public class ConversationReport implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public Conversation getReportedConversation() {
-        return reportedConversation;
+
+    public Post getReportedPost() {
+        return reportedPost;
     }
 
-    public void setReportedConversation(Conversation reportedConversation) {
-        this.reportedConversation = reportedConversation;
+    public void setReportedPost(Post reportedPost) {
+        this.reportedPost = reportedPost;
     }
 
     public User getReportingUser() {
@@ -81,7 +74,6 @@ public class ConversationReport implements Serializable {
     public void setReportingUser(User reportingUser) {
         this.reportingUser = reportingUser;
     }
-
 
     @Override
     public int hashCode() {
@@ -93,10 +85,10 @@ public class ConversationReport implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ConversationReport)) {
+        if (!(object instanceof PostReport)) {
             return false;
         }
-        ConversationReport other = (ConversationReport) object;
+        PostReport other = (PostReport) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -105,11 +97,7 @@ public class ConversationReport implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.CommentReport[ "
-                + "id=" + id + ", "
-                + "reportedConversation=" + reportedConversation + ", "
-                + "reportingUser=" + reportingUser
-                + " ]";
+        return "entity.PostReport{" + "id=" + id + ", reportedPost=" + reportedPost + ", reportingUser=" + reportingUser + '}';
     }
-    
+
 }

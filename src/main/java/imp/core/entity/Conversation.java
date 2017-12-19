@@ -5,11 +5,11 @@
  */
 package imp.core.entity;
 
+import imp.core.entity.user.User;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,31 +31,27 @@ public class Conversation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     /**
      * User who start the conversation
      */
     @OneToOne
     @JoinColumn(name = "user1")
     private User User1;
-    
+
     /**
      * Second user of the conversation
      */
     @OneToOne
     @JoinColumn(name = "user2")
     private User User2;
-    
+
     /**
      * list of messages corresponding to the conversation
      */
-    @OneToMany(mappedBy="conversation", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL)
     private List<Message> messages;
-    
-    
-    
-    
-    
+
     public Conversation() {
     }
 
@@ -65,18 +61,14 @@ public class Conversation implements Serializable {
         this.messages = new ArrayList<>();
     }
 
-    
-    
-    
-    
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }  
-    
+    }
+
     public User getUser1() {
         return User1;
     }
@@ -100,12 +92,12 @@ public class Conversation implements Serializable {
     public void setMsg(List<Message> msg) {
         this.messages = msg;
     }
-    
+
     public void addMessage(Message m) {
         m.setConversation(this);
         this.messages.add(m);
     }
-     
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -135,5 +127,5 @@ public class Conversation implements Serializable {
                 + "messages=" + messages
                 + " ]";
     }
-    
+
 }

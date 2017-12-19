@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.report;
 
+import imp.core.entity.Comment;
+import imp.core.entity.user.User;
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,8 +21,8 @@ import javax.persistence.Table;
  * @author yasar
  */
 @Entity
-@Table(name = "Post_reports")
-public class PostReport implements Serializable {
+@Table(name = "Comment_reports")
+public class CommentReport implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -29,35 +30,34 @@ public class PostReport implements Serializable {
     private Long id;
     
     /**
-     * Reported post
+     * Reported comment
      */
     @OneToOne
-    @JoinColumn(name = "reported_post")
-    private Post reportedPost;
+    @JoinColumn(name = "reported_comment")
+    private Comment reportedComment;
     
     /**
-     * User who report the post
+     * User who report the comment
      */
     @OneToOne
     @JoinColumn(name = "reporting_user")
     private User reportingUser;
- 
+
     
     
     
     
-    
-    public PostReport() {
+    public CommentReport() {
     }
 
-    public PostReport(Post reportedPost, User reportingUser) {
-        this.reportedPost = reportedPost;
+    public CommentReport(Comment reportedComment, User reportingUser) {
+        this.reportedComment = reportedComment;
         this.reportingUser = reportingUser;
     }
+       
     
     
     
-   
     
     public Long getId() {
         return id;
@@ -67,22 +67,22 @@ public class PostReport implements Serializable {
         this.id = id;
     }
     
-    public Post getReportedPost() {
-        return reportedPost;
+     public Comment getReportedComment() {
+        return reportedComment;
     }
 
-    public void setReportedPost(Post reportedPost) {
-        this.reportedPost = reportedPost;
+    public void setReportedComment(Comment reportedComment) {
+        this.reportedComment = reportedComment;
     }
-    
-     public User getReportingUser() {
+
+    public User getReportingUser() {
         return reportingUser;
     }
 
     public void setReportingUser(User reportingUser) {
         this.reportingUser = reportingUser;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -93,10 +93,10 @@ public class PostReport implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PostReport)) {
+        if (!(object instanceof CommentReport)) {
             return false;
         }
-        PostReport other = (PostReport) object;
+        CommentReport other = (CommentReport) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -105,7 +105,11 @@ public class PostReport implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.PostReport{" + "id=" + id + ", reportedPost=" + reportedPost + ", reportingUser=" + reportingUser + '}';
+        return "entity.CommentReport[ "
+                + "id=" + id + ", "
+                + "reportedComment=" + reportedComment + ", "
+                + "reportingUser=" + reportingUser
+                + " ]";
     }
     
 }

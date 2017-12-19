@@ -5,11 +5,10 @@
  */
 package imp.core.rest;
 
-import imp.core.entity.Candidate;
+import imp.core.entity.user.Candidate;
 import imp.core.entity.Skill;
-import imp.core.entity.User;
-import java.time.LocalDate;
-import java.time.Month;
+import imp.core.entity.user.User;
+import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,12 +25,12 @@ import static org.junit.Assert.*;
  */
 public class CandidateRESTTest {
     
-    @PersistenceContext(unitName = "imp-pu")
+    /*@PersistenceContext(unitName = "imp-pu")
     private EntityManager em;
 
     private static Candidate candidateInserted;
     
-    private static Skill skillInserted;
+    private static Skill skillInserted;*/
         
     public CandidateRESTTest() {
     }
@@ -47,13 +46,15 @@ public class CandidateRESTTest {
         user.setPassword("testpassword");
         user.setRole(User.Role.CANDIDATE);
         
-        Skill skillInserted = new Skill();
+        skillInserted = new Skill();
         skillInserted.setDescription("Compétence Fonctionnel Test");
         skillInserted.setType(Skill.Typeskill.FONCTIONNELLES);
         
         candidateInserted = new Candidate();
         candidateInserted.setUser(user);
-        candidateInserted.setBirthDate(LocalDate.of(1980 , Month.JULY , 3));
+        Calendar cal = Calendar.getInstance();
+        cal.set(1980, Calendar.JANUARY, 9);
+        candidateInserted.setBirthDate(cal.getTime());
         candidateInserted.setDescription("Description test");
         candidateInserted.addSkill(skillInserted);*/
         

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.user;
 
+import imp.core.entity.post.Post;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -27,43 +27,41 @@ import javax.persistence.Table;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "Recruiter.findAll", 
-                query = "SELECT r FROM Recruiter r"),
-        @NamedQuery(name = "Recruiter.findById", 
-                query = "SELECT r FROM Recruiter r where r.id = :id")
+    @NamedQuery(name = "Recruiter.findAll",
+            query = "SELECT r FROM Recruiter r")
 })
 @Table(name = "Recruiters")
 public class Recruiter implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
-    @OneToOne
-    @JoinColumn(name = "user_id")
+
+    /**
+     * Link to basics profile informations
+     */
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
-    
+
     @Column(name = "company")
     private String company;
-    
-     @OneToMany(mappedBy="recruiter", cascade=CascadeType.PERSIST)
-     private List<Post> post;
-   
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Post> posts;
+
     //TODO
     // photo
-    
     public Recruiter() {
-        this.post = new ArrayList<>();
+        this.posts = new ArrayList<>();
     }
 
     public Recruiter(User user, String company) {
         this.user = user;
         this.company = company;
-        this.post = new ArrayList<>();
+        this.posts = new ArrayList<>();
     }
-    
-    
+
     public Long getId() {
         return id;
     }
@@ -87,20 +85,19 @@ public class Recruiter implements Serializable {
     public void setCompany(String company) {
         this.company = company;
     }
-    
+
     public List<Post> getPost() {
-        return post;
+        return posts;
     }
 
-    public void setPost(List<Post> post) {
-        this.post = post;
+    public void setPost(List<Post> posts) {
+        this.posts = posts;
     }
-    
+
     public void addPost(Post p) {
-        p.setRecruiter(this);
-        this.post.add(p);
+        this.posts.add(p);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
