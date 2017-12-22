@@ -98,6 +98,23 @@ public class Recruiter implements Serializable {
         this.posts.add(p);
     }
 
+    public Post getPostById(long id) {
+        for (Post p : this.posts) {
+            if (id == p.getId()) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public void setPostById(Post post) {
+        for (int i = 0; i < this.posts.size(); i++) {
+            if (post.getId() == this.posts.get(i).getId()) {
+                this.posts.set(i, post);
+            }
+        }
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;

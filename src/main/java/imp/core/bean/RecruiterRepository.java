@@ -65,7 +65,14 @@ public class RecruiterRepository extends AbstractRepository<Recruiter> {
         recruiter.addPost(post);
         // update the recruiter
         edit(recruiter);
-        return recruiter.getPost().get( recruiter.getPost().size() - 1 );
+        return recruiter.getPost().get(recruiter.getPost().size() - 1);
+    }
+
+    public Post updatePost(Long id, Long id_post, Post post) {
+        Recruiter recruiter = super.getById(id);
+        recruiter.setPostById(post);
+        edit(recruiter);
+        return recruiter.getPostById(id_post);
     }
 
 }
