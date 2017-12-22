@@ -118,15 +118,9 @@ public class Post implements Serializable {
     private String workUnit;
     
     /**
-     * Recruiter of the post
-     */
-//    @ManyToOne
-//    private Recruiter recruiter; 
-    
-    /**
      * Skills recommanded for the post
      */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<PostSkill> postskill;
     
     
