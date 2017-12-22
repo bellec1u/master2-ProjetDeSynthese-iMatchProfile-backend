@@ -147,11 +147,14 @@ public class Post implements Serializable {
         this.organization = organization;
         this.workUnit = workUnit;
         this.postskill = new ArrayList<>();
-//        this.recruiter = recruiter;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Date getPublicationDate() {
@@ -176,6 +179,14 @@ public class Post implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getExperience() {
+        return experience;
+    }
+
+    public void setExperience(String experience) {
+        this.experience = experience;
     }
 
     public String getSalaryIndex() {
@@ -250,39 +261,6 @@ public class Post implements Serializable {
         this.workUnit = workUnit;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    
-    public List<PostSkill> getSkill() {
-        return postskill;
-    }
-
-    public void setSkill(List<PostSkill> skill) {
-        this.postskill = skill;
-    }
-    
-    public void addSkill(PostSkill s) {
-        this.postskill.add(s);
-    }
-
-//    public Recruiter getRecruiter() {
-//        return recruiter;
-//    }
-//
-//    public void setRecruiter(Recruiter recruiter) {
-//        this.recruiter = recruiter;
-//    }
-
-    public String getExperience() {
-        return experience;
-    }
-
-    public void setExperience(String experience) {
-        this.experience = experience;
-    }
-
     public List<PostSkill> getPostskill() {
         return postskill;
     }
@@ -291,7 +269,9 @@ public class Post implements Serializable {
         this.postskill = postskill;
     }
     
-    
+    public void addPostskill(PostSkill postskill) {
+        this.postskill.add(postskill);
+    }
 
     @Override
     public int hashCode() {
