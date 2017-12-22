@@ -7,12 +7,13 @@ package imp.core.rest;
 
 import imp.core.bean.RecruiterRepository;
 import imp.core.entity.post.Post;
-import imp.core.entity.user.Candidate;
 import imp.core.entity.user.Recruiter;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -27,10 +28,10 @@ import javax.ws.rs.core.Response;
 @Stateless
 @Path("recruiters")
 public class RecruiterREST {
-    
+
     @EJB
     private RecruiterRepository recruiterRepository;
-    
+
     /**
      * Returns all the recruiters.
      *
@@ -46,7 +47,13 @@ public class RecruiterREST {
                 .ok(recruiters)
                 .build();
     }
-    
+
+    /**
+     * Return a recruiter and all his posts
+     *
+     * @param id
+     * @return
+     */
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -55,4 +62,13 @@ public class RecruiterREST {
         return Response.ok(result).build();
     }
     
+    @POST
+    @Path("{id}/post")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addPost(@PathParam("id") Long id, Post json) {
+        Post result = recruiterRepository.addPost(id, json);
+        return Response.ok(result).build();
+    }
+
 }

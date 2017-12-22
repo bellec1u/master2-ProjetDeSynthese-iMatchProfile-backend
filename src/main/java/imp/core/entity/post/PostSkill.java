@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -20,6 +22,10 @@ import javax.persistence.Table;
  * @author dyasar
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "PostSkill.findBySkillAndType",
+            query = "SELECT ps FROM PostSkill ps WHERE ps.skill.id = :id_skill AND ps.type = :type")
+})
 @Table(name = "PostSkills")
 public class PostSkill implements Serializable {
 
