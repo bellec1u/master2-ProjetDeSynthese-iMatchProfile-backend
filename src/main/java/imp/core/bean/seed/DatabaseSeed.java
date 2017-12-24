@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.bean;
+package imp.core.bean.seed;
 
 import imp.core.entity.post.Post;
 import imp.core.entity.post.PostSkill;
@@ -30,19 +30,21 @@ public class DatabaseSeed {
     @PersistenceContext(unitName = "imp-pu")
     private EntityManager em;
 
+    private Skill java, angular, j2ee, bdd, marketing;
+    
     @PostConstruct
     public void seed() {
         // ---------- ---------- ---------- ---------- Skills
-        Skill java = new Skill();
+        this.java = new Skill();
         java.setDescription("Java");
 
-        Skill angular = new Skill();
+        this.angular = new Skill();
         angular.setDescription("Angular");
 
-        Skill j2ee = new Skill();
+        this.j2ee = new Skill();
         j2ee.setDescription("J2EE");
 
-        Skill bdd = new Skill();
+        this.bdd = new Skill();
         bdd.setDescription("Base de données relationnelle");
 
         Skill marketing = new Skill();
@@ -107,5 +109,41 @@ public class DatabaseSeed {
         
 //        em.persist(r);
 //        em.flush();
+
+        this.testSeed();
+    }
+    
+    /**
+     * elements used for the tests
+     */
+    public void testSeed() {
+        // ---------- ---------- ---------- ---------- Skills
+
+        // ---------- ---------- ---------- ---------- Candidates
+
+        // ---------- ---------- ---------- ---------- Recruiters
+        User user2 = new User();
+        user2.setEmail("test.test@test.test");
+        user2.setFirstname("test");
+        user2.setLastname("test");
+        user2.setPassword("passtest");
+        user2.setRole(User.Role.RECRUITER);
+
+        Recruiter r = new Recruiter(user2, "Test&Co");
+
+        Post p = new Post("test reference", "test title", "test experience", "test salaryindex", 1, 2, "test contracttype", "test workplace", "test organisation", "test workunit");
+        p.setDescription("this is a test for testing a test in a class test");
+        p.setImportantNotes("important notes of the test");
+        
+        PostSkill ps = new PostSkill(java, PostSkill.Type.OBLIGATOIRE);
+        PostSkill ps2 = new PostSkill(j2ee, PostSkill.Type.PLUS);
+
+        p.addPostskill(ps);
+        p.addPostskill(ps2);
+        
+        r.addPost(p);
+        
+        em.persist(r);
+        em.flush();
     }
 }

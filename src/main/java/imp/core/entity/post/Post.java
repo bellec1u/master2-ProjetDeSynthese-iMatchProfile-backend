@@ -129,7 +129,7 @@ public class Post implements Serializable {
     public Post() {
     }
 
-    public Post(String reference, String title,String experience, String salaryIndex, int minSalary, int maxSalary, String contractType, String workplace, String organization, String workUnit/*,Recruiter recruiter*/) {
+    public Post(String reference, String title,String experience, String salaryIndex, int minSalary, int maxSalary, String contractType, String workplace, String organization, String workUnit) {
         this.reference = reference;
         this.title = title;
         this.experience = experience;
