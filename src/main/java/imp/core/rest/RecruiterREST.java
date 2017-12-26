@@ -40,6 +40,7 @@ public class RecruiterREST {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
+        System.out.println("imp.core.rest.RecruiterREST.getAll()");
         List<Recruiter> list = recruiterRepository.getAll();
         GenericEntity<List<Recruiter>> recruiters = new GenericEntity<List<Recruiter>>(list) {
         };
@@ -58,6 +59,7 @@ public class RecruiterREST {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
+        System.out.println("imp.core.rest.RecruiterREST.getById()");
         Recruiter result = recruiterRepository.getById(id);
         return Response.ok(result).build();
     }
@@ -67,6 +69,7 @@ public class RecruiterREST {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addPost(@PathParam("id") Long id, Post json) {
+        System.out.println("imp.core.rest.RecruiterREST.addPost()");
         Post result = recruiterRepository.addPost(id, json);
         return Response.ok(result).build();
     }

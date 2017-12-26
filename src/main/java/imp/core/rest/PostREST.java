@@ -27,6 +27,7 @@ public class PostREST {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
+        System.out.println("imp.core.rest.PostREST.getAll()");
         List<Post> list = postRepository.getAll();
         // because ok() method expects an Entity as parameter
         GenericEntity<List<Post>> gen = new GenericEntity<List<Post>>(list) {
@@ -44,6 +45,7 @@ public class PostREST {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
+        System.out.println("imp.core.rest.PostREST.getById()");
         Post result = postRepository.getById(id);
         if (result != null) {
             return Response.ok(result).build();
@@ -58,6 +60,7 @@ public class PostREST {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updatePost(@PathParam("id") Long id, Post json) {
+        System.out.println("imp.core.rest.PostREST.updatePost()");
         Post result = postRepository.edit(id, json);
         return Response.ok(result).build();
     }
@@ -65,6 +68,7 @@ public class PostREST {
     @DELETE
     @Path("{id}")
     public Response deletePost(@PathParam("id") Long id) {
+        System.out.println("imp.core.rest.PostREST.deletePost()");
         postRepository.removeById(id);
         return Response.ok().build();
     }
