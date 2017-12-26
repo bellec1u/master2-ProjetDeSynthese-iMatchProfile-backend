@@ -25,15 +25,13 @@ public class UserReport implements Serializable {
     /**
      * User who receives this comment
      */
-    @OneToOne
-    @JoinColumn(name = "reported_user")
+    @ManyToOne
     private User reportedUser;
 
     /**
      * User who wrote this comment
      */
-    @OneToOne
-    @JoinColumn(name = "reporting_user")
+    @ManyToOne
     private User reportingUser;
 
     public UserReport() {

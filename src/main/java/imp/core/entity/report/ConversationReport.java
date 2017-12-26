@@ -5,7 +5,7 @@
  */
 package imp.core.entity.report;
 
-import imp.core.entity.Conversation;
+import imp.core.entity.conversation.Conversation;
 import imp.core.entity.user.User;
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -32,15 +33,13 @@ public class ConversationReport implements Serializable {
     /**
      * Reported conversation
      */
-    @OneToOne
-    @JoinColumn(name = "reported_conversation")
+    @ManyToOne
     private Conversation reportedConversation;
 
     /**
      * User who report the comment
      */
-    @OneToOne
-    @JoinColumn(name = "reporting_user")
+    @ManyToOne
     private User reportingUser;
 
     public ConversationReport() {
