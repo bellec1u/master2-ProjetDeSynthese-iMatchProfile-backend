@@ -70,8 +70,7 @@ public class PostRepository extends AbstractRepository<Post> {
         // set the list of postskill
         post.setPostskill(lps);
         // update the post
-        super.edit(post);
-        return super.getById(post.getId());
+        return super.edit(post);
     }
 
     @Override
