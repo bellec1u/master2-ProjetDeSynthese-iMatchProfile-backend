@@ -97,7 +97,7 @@ public class DatabaseSeed {
         em.persist(r);
         em.flush();
         
-        // ---------- ---------- ---------- ---------- Add new post
+        
         Post p2 = new Post("AP-20161107-2", "Chef de projet", "7 dans la fonction de Chef de projet", "PM7", 58000, 70000, "CDI", "Nancy", "CP-Axions", "Assistance MOA");
         p2.setDescription("Pour l’un de ses clients qui est un grand groupe dans le domaine bancaire,CP-Axions recherche un chef de projet qui sera rattaché(e) à la Direction Projet et impliqué(e) principalement dans les missions suivantes :...");
         p2.setImportantNotes("Certains déplacements au sein de l’Union Européenne peuvent s’avérer nécessaire.");
@@ -108,42 +108,28 @@ public class DatabaseSeed {
         r.addPost(p2);
         
 //        em.persist(r);
-//        em.flush();
+        em.flush();
 
-        this.testSeed();
-    }
-    
-    /**
-     * elements used for the tests
-     */
-    public void testSeed() {
-        // ---------- ---------- ---------- ---------- Skills
+        // ---------- ---------- ---------- ---------- For tests
+        User u = new User();
+        u.setEmail("test.test@test.test");
+        u.setFirstname("test");
+        u.setLastname("test");
+        u.setPassword("passtest");
+        u.setRole(User.Role.RECRUITER);
 
-        // ---------- ---------- ---------- ---------- Candidates
+        Recruiter recru = new Recruiter(u, "Test&Co");
 
-        // ---------- ---------- ---------- ---------- Recruiters
-        User user2 = new User();
-        user2.setEmail("test.test@test.test");
-        user2.setFirstname("test");
-        user2.setLastname("test");
-        user2.setPassword("passtest");
-        user2.setRole(User.Role.RECRUITER);
+        Post post = new Post("test reference", "test title", "test experience", "test salaryindex", 1, 2, "test contracttype", "test workplace", "test organisation", "test workunit");
+        post.setDescription("this is a test for testing a test in a class test");
+        post.setImportantNotes("important notes of the test");
 
-        Recruiter r = new Recruiter(user2, "Test&Co");
-
-        Post p = new Post("test reference", "test title", "test experience", "test salaryindex", 1, 2, "test contracttype", "test workplace", "test organisation", "test workunit");
-        p.setDescription("this is a test for testing a test in a class test");
-        p.setImportantNotes("important notes of the test");
+        post.addPostskill(ps);
+        post.addPostskill(ps2);
         
-        PostSkill ps = new PostSkill(java, PostSkill.Type.OBLIGATOIRE);
-        PostSkill ps2 = new PostSkill(j2ee, PostSkill.Type.PLUS);
-
-        p.addPostskill(ps);
-        p.addPostskill(ps2);
+        recru.addPost(post);
         
-        r.addPost(p);
-        
-        em.persist(r);
+        em.persist(recru);
         em.flush();
     }
 }
