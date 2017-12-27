@@ -8,7 +8,7 @@ package imp.core.rest;
 import io.restassured.RestAssured;
 
 /**
- * Simple class with statics methods 
+ * Simple class with static methods 
  * 
  * @author alexis
  */
