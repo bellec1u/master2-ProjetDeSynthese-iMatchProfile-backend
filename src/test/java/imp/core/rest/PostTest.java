@@ -100,7 +100,7 @@ public class PostTest {
         json.put("workplace", "test workplace");
 
         given().contentType(MediaType.APPLICATION_JSON).body(json)
-                .when().post("http://localhost:8080/imp/api/recruiters/12/post")
+                .when().post("http://localhost:8080/imp/api/recruiters/13/post")
                 .then().statusCode(200)
                         .body("id", greaterThan(0))
                         .body("contractType", equalTo("test contractType"))
@@ -154,7 +154,7 @@ public class PostTest {
 
         JSONObject newJson = 
                 given().contentType(MediaType.APPLICATION_JSON).body(json)
-                .when().post("http://localhost:8080/imp/api/recruiters/12/post")
+                .when().post("http://localhost:8080/imp/api/recruiters/13/post")
                         .body().as(JSONObject.class);
                 
         // update the json
@@ -223,7 +223,7 @@ public class PostTest {
 
         JSONObject newJson = 
                 given().contentType(MediaType.APPLICATION_JSON).body(json)
-                .when().post("http://localhost:8080/imp/api/recruiters/12/post")
+                .when().post("http://localhost:8080/imp/api/recruiters/13/post")
                         .body().as(JSONObject.class);
                 
         // get id value 
