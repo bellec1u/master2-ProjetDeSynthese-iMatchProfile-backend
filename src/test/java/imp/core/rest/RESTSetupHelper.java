@@ -17,7 +17,7 @@ public class RESTSetupHelper {
     public static void setUpServer() {
         String port = System.getProperty("server.port");
         if (port == null) {
-            RestAssured.port = Integer.valueOf(8080);
+            RestAssured.port = 8080;
         } else {
             RestAssured.port = Integer.valueOf(port);
         }
