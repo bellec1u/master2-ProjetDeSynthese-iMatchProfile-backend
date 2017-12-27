@@ -5,18 +5,14 @@
  */
 package imp.core.rest;
 
-import imp.core.entity.post.Post;
-import io.restassured.RestAssured;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import javax.ws.rs.core.MediaType;
-import static org.junit.Assert.*;
 
 import static io.restassured.RestAssured.*;
-import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
 
 import org.json.simple.JSONObject;
@@ -26,31 +22,14 @@ import org.json.simple.JSONArray;
  *
  * @author Leopold
  */
-public class PostTest {
+public class PostRESTTest {
 
-    public PostTest() {
+    public PostRESTTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
-        String port = System.getProperty("server.port");
-        if (port == null) {
-            RestAssured.port = Integer.valueOf(8080);
-        } else {
-            RestAssured.port = Integer.valueOf(port);
-        }
-
-        String basePath = System.getProperty("server.base");
-        if (basePath == null) {
-            basePath = "/imp/api/";
-        }
-        RestAssured.basePath = basePath;
-
-        String baseHost = System.getProperty("server.host");
-        if (baseHost == null) {
-            baseHost = "http://localhost";
-        }
-        RestAssured.baseURI = baseHost;
+        RESTSetupHelper.setUpServer();
     }
 
     @AfterClass
