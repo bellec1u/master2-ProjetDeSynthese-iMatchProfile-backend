@@ -5,14 +5,14 @@
  */
 package imp.core.entity.report;
 
-import imp.core.entity.Comment;
+import imp.core.entity.conversation.Comment;
 import imp.core.entity.user.User;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -32,15 +32,13 @@ public class CommentReport implements Serializable {
     /**
      * Reported comment
      */
-    @OneToOne
-    @JoinColumn(name = "reported_comment")
+    @ManyToOne
     private Comment reportedComment;
     
     /**
      * User who report the comment
      */
-    @OneToOne
-    @JoinColumn(name = "reporting_user")
+    @ManyToOne
     private User reportingUser;
 
     

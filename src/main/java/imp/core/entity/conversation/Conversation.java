@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.conversation;
 
 import imp.core.entity.user.User;
 import java.io.Serializable;
@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -35,21 +36,20 @@ public class Conversation implements Serializable {
     /**
      * User who start the conversation
      */
-    @OneToOne
-    @JoinColumn(name = "user1")
+    @ManyToOne
     private User User1;
 
     /**
      * Second user of the conversation
      */
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user2")
     private User User2;
 
     /**
      * list of messages corresponding to the conversation
      */
-    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Message> messages;
 
     public Conversation() {
@@ -94,7 +94,6 @@ public class Conversation implements Serializable {
     }
 
     public void addMessage(Message m) {
-        m.setConversation(this);
         this.messages.add(m);
     }
 

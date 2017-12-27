@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.conversation;
 
+import imp.core.entity.conversation.Conversation;
 import imp.core.entity.user.User;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -33,8 +34,7 @@ public class Message implements Serializable {
     /**
      * Author of the message
      */
-    @OneToOne
-    @JoinColumn(name = "author")
+    @ManyToOne
     private User author;
 
     /**
@@ -43,21 +43,13 @@ public class Message implements Serializable {
     @Column(name = "message")
     private String msg;
 
-    /**
-     * Conversation of the message
-     */
-    @ManyToOne
-    @JoinColumn(name = "conversation")
-    private Conversation conversation;
-
     public Message() {
     }
 
-    public Message(Long id, User autor, String msg, Conversation conv) {
+    public Message(Long id, User autor, String msg) {
         this.id = id;
         this.author = autor;
         this.msg = msg;
-        this.conversation = conv;
     }
 
     public Long getId() {
@@ -84,14 +76,6 @@ public class Message implements Serializable {
         this.msg = msg;
     }
 
-    public Conversation getConversation() {
-        return conversation;
-    }
-
-    public void setConversation(Conversation conversation) {
-        this.conversation = conversation;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -114,7 +98,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Message{" + "id=" + id + ", author=" + author + ", msg=" + msg + ", conv=" + conversation + '}';
+        return "entity.Message{" + "id=" + id + ", author=" + author + ", msg=" + msg + '}';
     }
 
 }

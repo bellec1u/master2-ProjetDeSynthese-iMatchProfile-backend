@@ -29,6 +29,9 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "Recruiter.findAll",
             query = "SELECT r FROM Recruiter r")
+    ,
+    @NamedQuery(name = "Recruiter.findCreatorOfPost",
+            query = "SELECT r FROM Recruiter r WHERE :post MEMBER OF r.posts")
 })
 @Table(name = "Recruiters")
 public class Recruiter implements Serializable {
@@ -96,6 +99,33 @@ public class Recruiter implements Serializable {
 
     public void addPost(Post p) {
         this.posts.add(p);
+    }
+
+    public Post getPostById(long id) {
+        for (Post p : this.posts) {
+            if (id == p.getId()) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public void setPostById(Post post) {
+        for (int i = 0; i < this.posts.size(); i++) {
+            if (post.getId() == this.posts.get(i).getId()) {
+                this.posts.set(i, post);
+            }
+        }
+    }
+    
+    public void removePostById(Object id) {
+        int index = -1;
+        for (int i = 0; i < this.posts.size(); i++) {
+            if (id == this.posts.get(i).getId()) {
+                index = i;
+            }
+        }
+        this.posts.remove(index);
     }
 
     @Override

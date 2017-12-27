@@ -17,33 +17,36 @@ import javax.ws.rs.core.*;
  *
  * @author Leopold
  */
-
 @Stateless
 @Path("posts")
 public class PostREST {
-    
+
     @EJB
-    private PostRepository postRepo;
-    
+    private PostRepository postRepository;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
-        List<Post> list = postRepo.getAll();
+        System.out.println("imp.core.rest.PostREST.getAll()");
+        List<Post> list = postRepository.getAll();
         // because ok() method expects an Entity as parameter
-        GenericEntity<List<Post>> gen = new GenericEntity<List<Post>>(list) {};
+        GenericEntity<List<Post>> gen = new GenericEntity<List<Post>>(list) {
+        };
         return Response.ok(gen).build();
     }
-    
+
     /**
      * Get post with id
+     *
      * @param id of post
-     * @return 
+     * @return
      */
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
-        Post result = postRepo.getById(id);
+        System.out.println("imp.core.rest.PostREST.getById()");
+        Post result = postRepository.getById(id);
         if (result != null) {
             return Response.ok(result).build();
         }
@@ -51,43 +54,23 @@ public class PostREST {
                 .entity("Post not found for id: " + id)
                 .build();
     }
-
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(Post entity) {
-        Post post = postRepo.create(entity);
-        System.out.println(post);
-            return Response.ok(post).status(Response.Status.CREATED).build();
-    }
     
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response edit(@PathParam("id") Long id, Post entity) {
-        postRepo.edit(entity);
-        return Response.ok().build();
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updatePost(@PathParam("id") Long id, Post json) {
+        System.out.println("imp.core.rest.PostREST.updatePost()");
+        Post result = postRepository.edit(id, json);
+        return Response.ok(result).build();
     }
     
     @DELETE
     @Path("{id}")
-    public Response remove(@PathParam("id") Long id) {
-        postRepo.removeById(id);
+    public Response deletePost(@PathParam("id") Long id) {
+        System.out.println("imp.core.rest.PostREST.deletePost()");
+        postRepository.removeById(id);
         return Response.ok().build();
     }
-    /**
-     * Only for test purposes ...
-     * Return list post 
-     * @param id _ recruiter id
-     * @return 
-     */
-    @GET
-    @Path("{id}/recruiter")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPostsByRec(@PathParam("id") Long id) {
-        List<Post> result = postRepo.getPostsByRecruiter(id);
-        GenericEntity<List<Post>> gen = new GenericEntity<List<Post>>(result) {};
-        return Response.ok(gen).build();
-        
-    }
-    
+
 }

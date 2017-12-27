@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -32,15 +33,13 @@ public class PostReport implements Serializable {
     /**
      * Reported post
      */
-    @OneToOne
-    @JoinColumn(name = "reported_post")
+    @ManyToOne
     private Post reportedPost;
 
     /**
      * User who report the post
      */
-    @OneToOne
-    @JoinColumn(name = "reporting_user")
+    @ManyToOne
     private User reportingUser;
 
     public PostReport() {

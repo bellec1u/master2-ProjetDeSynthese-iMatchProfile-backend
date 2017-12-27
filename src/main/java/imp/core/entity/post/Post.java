@@ -7,7 +7,7 @@ package imp.core.entity.post;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,7 +43,7 @@ public class Post implements Serializable {
      */
     @Temporal(javax.persistence.TemporalType.DATE)
     @Column(name = "publication_date")
-    private LocalDateTime publicationDate;
+    private Date publicationDate;
     
     /**
      * Reference of the specific post
@@ -118,15 +118,9 @@ public class Post implements Serializable {
     private String workUnit;
     
     /**
-     * Recruiter of the post
-     */
-//    @ManyToOne
-//    private Recruiter recruiter; 
-    
-    /**
      * Skills recommanded for the post
      */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<PostSkill> postskill;
     
     
@@ -135,7 +129,7 @@ public class Post implements Serializable {
     public Post() {
     }
 
-    public Post(String reference, String title,String experience, String salaryIndex, int minSalary, int maxSalary, String contractType, String workplace, String organization, String workUnit/*,Recruiter recruiter*/) {
+    public Post(String reference, String title,String experience, String salaryIndex, int minSalary, int maxSalary, String contractType, String workplace, String organization, String workUnit) {
         this.reference = reference;
         this.title = title;
         this.experience = experience;
@@ -147,18 +141,21 @@ public class Post implements Serializable {
         this.organization = organization;
         this.workUnit = workUnit;
         this.postskill = new ArrayList<>();
-//        this.recruiter = recruiter;
     }
 
     public Long getId() {
         return id;
     }
 
-    public LocalDateTime getPublicationDate() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getPublicationDate() {
         return publicationDate;
     }
 
-    public void setPublicationDate(LocalDateTime publicationDate) {
+    public void setPublicationDate(Date publicationDate) {
         this.publicationDate = publicationDate;
     }
 
@@ -176,6 +173,14 @@ public class Post implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getExperience() {
+        return experience;
+    }
+
+    public void setExperience(String experience) {
+        this.experience = experience;
     }
 
     public String getSalaryIndex() {
@@ -250,39 +255,6 @@ public class Post implements Serializable {
         this.workUnit = workUnit;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    
-    public List<PostSkill> getSkill() {
-        return postskill;
-    }
-
-    public void setSkill(List<PostSkill> skill) {
-        this.postskill = skill;
-    }
-    
-    public void addSkill(PostSkill s) {
-        this.postskill.add(s);
-    }
-
-//    public Recruiter getRecruiter() {
-//        return recruiter;
-//    }
-//
-//    public void setRecruiter(Recruiter recruiter) {
-//        this.recruiter = recruiter;
-//    }
-
-    public String getExperience() {
-        return experience;
-    }
-
-    public void setExperience(String experience) {
-        this.experience = experience;
-    }
-
     public List<PostSkill> getPostskill() {
         return postskill;
     }
@@ -291,7 +263,9 @@ public class Post implements Serializable {
         this.postskill = postskill;
     }
     
-    
+    public void addPostskill(PostSkill postskill) {
+        this.postskill.add(postskill);
+    }
 
     @Override
     public int hashCode() {

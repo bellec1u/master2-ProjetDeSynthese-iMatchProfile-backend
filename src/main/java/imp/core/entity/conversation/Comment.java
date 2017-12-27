@@ -3,7 +3,7 @@
 * To change this template file, choose Tools | Templates
 * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.conversation;
 
 import imp.core.entity.user.User;
 import java.io.Serializable;
