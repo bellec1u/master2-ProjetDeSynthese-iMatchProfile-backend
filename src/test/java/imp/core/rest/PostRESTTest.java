@@ -280,7 +280,7 @@ public class PostRESTTest {
 
         given().contentType(MediaType.APPLICATION_JSON)
                 .when().delete("http://localhost:8080/imp/api/posts/" + (int) id)
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
     @Test
