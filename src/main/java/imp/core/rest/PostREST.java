@@ -70,7 +70,7 @@ public class PostREST {
     public Response deletePost(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.PostREST.deletePost()");
         postRepository.removeById(id);
-        return Response.ok().build();
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
 }

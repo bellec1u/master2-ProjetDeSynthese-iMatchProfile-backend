@@ -44,7 +44,7 @@ public class Candidate implements Serializable {
     /**
      * Link to basics profile informations
      */
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private User user;
 
     /**

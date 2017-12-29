@@ -10,7 +10,10 @@ import imp.core.entity.user.Candidate;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -65,6 +68,31 @@ public class CandidateREST {
         return Response.status(Response.Status.NOT_FOUND)
                 .entity("Candidate not found for id: " + id)
                 .build();
+    }
+
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updatePost(@PathParam("id") Long id, Candidate candidate) {
+        Candidate result = candidateRepository.getById(id);
+        // if the candidate to update does not exist
+        if (result == null) {   // return a 404
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("Candidate not found for id: " + id)
+                .build();
+        }
+        
+        result = candidateRepository.edit(candidate);
+        return Response.ok(result).build();
+    }
+    
+    @DELETE
+    @Path("{id}")
+    public Response deleteCandidate(@PathParam("id") Long id) {
+        System.out.println("DELETE CANDIDAT");
+        candidateRepository.removeById(id);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
 }
