@@ -75,5 +75,24 @@ public class RecruiterREST {
         Post result = recruiterRepository.addPost(id, json);
         return Response.ok(result).build();
     }
+    
+    /**
+     * Return all post of a recruiter
+     *
+     * @param id -- id of recruiter
+     * @return
+     */
+    @GET
+    @Path("{id}/post")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPostsById(@PathParam("id") Long id) {
+        System.out.println("imp.core.rest.RecruiterREST.getPostsById()");
+        List<Post> postsRecruiter = recruiterRepository.getById(id).getPost();
+        GenericEntity<List<Post>> posts = new GenericEntity<List<Post>>(postsRecruiter) {
+        };
+        return Response
+                .ok(posts)
+                .build();
+    }
 
 }
