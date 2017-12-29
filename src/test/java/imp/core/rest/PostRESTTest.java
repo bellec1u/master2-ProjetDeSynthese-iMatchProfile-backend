@@ -5,6 +5,11 @@
  */
 package imp.core.rest;
 
+import imp.core.entity.Skill;
+import imp.core.entity.post.Post;
+import imp.core.entity.post.PostSkill;
+import imp.core.entity.user.Recruiter;
+import imp.core.entity.user.User;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,6 +18,10 @@ import org.junit.Test;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 import static org.hamcrest.Matchers.*;
 
 import org.json.simple.JSONObject;
@@ -24,24 +33,86 @@ import org.json.simple.JSONArray;
  */
 public class PostRESTTest {
 
+    private static EntityManagerFactory emf;
+    private static EntityManager em;
+
+    private Recruiter recruiterTest;
+    private Post postTest;
+    private PostSkill postskillTest;
+    private Skill skillTest;
+
     public PostRESTTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
         RESTSetupHelper.setUpServer();
+
+        emf = Persistence.createEntityManagerFactory("imp-test-pu");
     }
 
     @AfterClass
     public static void tearDownClass() {
+        emf.close();
     }
 
     @Before
     public void setUp() {
+        // ---------- ---------- ---------- ---------- init the entity manager
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+
+        // ---------- ---------- ---------- ---------- create a new skill for the tests
+        skillTest = new Skill();
+        skillTest.setDescription("test");
+
+        em.persist(skillTest);
+
+        // ---------- ---------- ---------- ---------- create a new recruiter for the tests
+        User u = new User();
+        u.setEmail("test.test@test.test");
+        u.setFirstname("test");
+        u.setLastname("test");
+        u.setPassword("passtest");
+        u.setRole(User.Role.RECRUITER);
+        recruiterTest = new Recruiter(u, "Test&Co");
+
+        postTest = new Post("1", "1", "1", "1", 1, 2, "1", "1", "1", "1");
+        postTest.setDescription("1 1 1");
+        postTest.setImportantNotes("1 1");
+
+        postskillTest = new PostSkill(skillTest, PostSkill.Type.OBLIGATOIRE);
+
+        postTest.addPostskill(postskillTest);
+
+        recruiterTest.addPost(postTest);
+
+        em.persist(recruiterTest);
+
+//        TypedQuery<Recruiter> query = em.createQuery("select r from Recruiter r", Recruiter.class);
+//        System.out.println(query.getResultList());
+        // ---------- ---------- ---------- ---------- commit the new entities for the tests
+        em.getTransaction().commit();
     }
 
     @After
     public void tearDown() {
+        // ---------- ---------- ---------- ---------- remove all test entities
+        em.getTransaction().begin();
+        em.remove(em.merge(recruiterTest));
+        em.remove(em.merge(postskillTest));
+        em.remove(em.merge(skillTest));
+        em.getTransaction().commit();
+
+        // ---------- ---------- ---------- ---------- if one transaction has not finished
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+
+        // ---------- ---------- ---------- ---------- close the entity manager
+        if (em.isOpen()) {
+            em.close();
+        }
     }
 
     @Test
@@ -79,24 +150,24 @@ public class PostRESTTest {
         json.put("workplace", "test workplace");
 
         given().contentType(MediaType.APPLICATION_JSON).body(json)
-                .when().post("http://localhost:8080/imp/api/recruiters/13/post")
+                .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/post")
                 .then().statusCode(200)
-                        .body("id", greaterThan(0))
-                        .body("contractType", equalTo("test contractType"))
-                        .body("description", equalTo("test description"))
-                        .body("experience", equalTo("test experience"))
-                        .body("importantNotes", equalTo("test importantNotes"))
-                        .body("maxSalary", equalTo(3))
-                        .body("minSalary", equalTo(2))
-                        .body("organization", equalTo("test organization"))
-                        .body("postskill.size()", equalTo(2))
-                        .body("reference", equalTo("test reference"))
-                        .body("salaryIndex", equalTo("test salaryIndex"))
-                        .body("title", equalTo("test title"))
-                        .body("workUnit", equalTo("test workUnit"))
-                        .body("workplace", equalTo("test workplace"));
+                .body("id", greaterThan(0))
+                .body("contractType", equalTo("test contractType"))
+                .body("description", equalTo("test description"))
+                .body("experience", equalTo("test experience"))
+                .body("importantNotes", equalTo("test importantNotes"))
+                .body("maxSalary", equalTo(3))
+                .body("minSalary", equalTo(2))
+                .body("organization", equalTo("test organization"))
+                .body("postskill.size()", equalTo(2))
+                .body("reference", equalTo("test reference"))
+                .body("salaryIndex", equalTo("test salaryIndex"))
+                .body("title", equalTo("test title"))
+                .body("workUnit", equalTo("test workUnit"))
+                .body("workplace", equalTo("test workplace"));
     }
-    
+
     @Test
     public void updatePost() {
         JSONObject json = new JSONObject();
@@ -131,41 +202,41 @@ public class PostRESTTest {
         json.put("workUnit", "test workUnit");
         json.put("workplace", "test workplace");
 
-        JSONObject newJson = 
-                given().contentType(MediaType.APPLICATION_JSON).body(json)
-                .when().post("http://localhost:8080/imp/api/recruiters/13/post")
+        JSONObject newJson
+                = given().contentType(MediaType.APPLICATION_JSON).body(json)
+                        .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/post")
                         .body().as(JSONObject.class);
-                
+
         // update the json
         newJson.put("title", "new test title");
-        
+
         // get id value 
         double id = (double) newJson.get("id");
-        
+
         // need to reformat in int value
         newJson.put("maxSalary", 3);
         newJson.put("minSalary", 2);
-        newJson.put("id", (int)id);
+        newJson.put("id", (int) id);
 
         given().contentType(MediaType.APPLICATION_JSON).body(newJson)
-                .when().put("http://localhost:8080/imp/api/posts/" + (int)id)
+                .when().put("http://localhost:8080/imp/api/posts/" + (int) id)
                 .then().statusCode(200)
-                        .body("id", equalTo((int)id))
-                        .body("contractType", equalTo("test contractType"))
-                        .body("description", equalTo("test description"))
-                        .body("experience", equalTo("test experience"))
-                        .body("importantNotes", equalTo("test importantNotes"))
-                        .body("maxSalary", equalTo(3))
-                        .body("minSalary", equalTo(2))
-                        .body("organization", equalTo("test organization"))
-                        .body("postskill.size()", equalTo(2))
-                        .body("reference", equalTo("test reference"))
-                        .body("salaryIndex", equalTo("test salaryIndex"))
-                        .body("title", equalTo("new test title"))
-                        .body("workUnit", equalTo("test workUnit"))
-                        .body("workplace", equalTo("test workplace"));
+                .body("id", equalTo((int) id))
+                .body("contractType", equalTo("test contractType"))
+                .body("description", equalTo("test description"))
+                .body("experience", equalTo("test experience"))
+                .body("importantNotes", equalTo("test importantNotes"))
+                .body("maxSalary", equalTo(3))
+                .body("minSalary", equalTo(2))
+                .body("organization", equalTo("test organization"))
+                .body("postskill.size()", equalTo(2))
+                .body("reference", equalTo("test reference"))
+                .body("salaryIndex", equalTo("test salaryIndex"))
+                .body("title", equalTo("new test title"))
+                .body("workUnit", equalTo("test workUnit"))
+                .body("workplace", equalTo("test workplace"));
     }
-    
+
     @Test
     public void deletePost() {
         JSONObject json = new JSONObject();
@@ -200,17 +271,45 @@ public class PostRESTTest {
         json.put("workUnit", "test workUnit");
         json.put("workplace", "test workplace");
 
-        JSONObject newJson = 
-                given().contentType(MediaType.APPLICATION_JSON).body(json)
-                .when().post("http://localhost:8080/imp/api/recruiters/13/post")
-                        .body().as(JSONObject.class);
-                
+        JSONObject newJson = given().contentType(MediaType.APPLICATION_JSON).body(json)
+                .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/post")
+                .body().as(JSONObject.class);
+
         // get id value 
         double id = (double) newJson.get("id");
 
         given().contentType(MediaType.APPLICATION_JSON)
-                .when().delete("http://localhost:8080/imp/api/posts/" + (int)id)
+                .when().delete("http://localhost:8080/imp/api/posts/" + (int) id)
                 .then().statusCode(200);
     }
-    
+
+    @Test
+    public void getAllPost() {
+        given().contentType(MediaType.APPLICATION_JSON)
+                .when().get("http://localhost:8080/imp/api/posts")
+                .then().statusCode(200)
+                        .body("size()", greaterThan(0));
+    }
+
+    @Test
+    public void getOnePost() {
+        given().contentType(MediaType.APPLICATION_JSON)
+                .when().get("http://localhost:8080/imp/api/posts/" + postTest.getId())
+                .then().statusCode(200)
+                .body("id", equalTo(Math.toIntExact(postTest.getId())))
+                .body("contractType", equalTo(postTest.getContractType()))
+                .body("description", equalTo(postTest.getDescription()))
+                .body("experience", equalTo(postTest.getExperience()))
+                .body("importantNotes", equalTo(postTest.getImportantNotes()))
+                .body("maxSalary", equalTo(postTest.getMaxSalary()))
+                .body("minSalary", equalTo(postTest.getMinSalary()))
+                .body("organization", equalTo(postTest.getOrganization()))
+                .body("postskill.size()", equalTo(postTest.getPostskill().size()))
+                .body("reference", equalTo(postTest.getReference()))
+                .body("salaryIndex", equalTo(postTest.getSalaryIndex()))
+                .body("title", equalTo(postTest.getTitle()))
+                .body("workUnit", equalTo(postTest.getWorkUnit()))
+                .body("workplace", equalTo(postTest.getWorkplace()));
+    }
+
 }

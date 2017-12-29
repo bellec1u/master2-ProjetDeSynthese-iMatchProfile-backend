@@ -7,6 +7,7 @@ package imp.core.entity.post;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -141,6 +142,7 @@ public class Post implements Serializable {
         this.organization = organization;
         this.workUnit = workUnit;
         this.postskill = new ArrayList<>();
+        this.publicationDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
     }
 
     public Long getId() {
