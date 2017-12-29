@@ -12,6 +12,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,11 +51,12 @@ public class Recruiter implements Serializable {
     @Column(name = "company")
     private String company;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
 
     //TODO
     // photo
+    
     public Recruiter() {
         this.posts = new ArrayList<>();
     }

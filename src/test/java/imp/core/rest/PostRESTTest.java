@@ -5,6 +5,9 @@
  */
 package imp.core.rest;
 
+import imp.core.entity.post.Post;
+import imp.core.entity.user.Recruiter;
+import imp.core.entity.user.User;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,6 +16,11 @@ import org.junit.Test;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.*;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 import static org.hamcrest.Matchers.*;
 
 import org.json.simple.JSONObject;
@@ -23,29 +31,74 @@ import org.json.simple.JSONArray;
  * @author Leopold
  */
 public class PostRESTTest {
-
+    
+    private static EntityManagerFactory emf;
+    private static EntityManager em;
+    
+    private Recruiter recruiterTest;
+    
     public PostRESTTest() {
     }
-
+    
     @BeforeClass
     public static void setUpClass() {
         RESTSetupHelper.setUpServer();
+        
+        emf = Persistence.createEntityManagerFactory("imp-test-pu");
     }
 
     @AfterClass
     public static void tearDownClass() {
+        emf.close();
     }
 
     @Before
     public void setUp() {
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+                
+        User u = new User();
+        u.setEmail("test.test@test.test");
+        u.setFirstname("test");
+        u.setLastname("test");
+        u.setPassword("passtest");
+        u.setRole(User.Role.RECRUITER);
+        recruiterTest = new Recruiter(u, "Test&Co");
+     
+        em.persist(recruiterTest);
+        
+//        TypedQuery<Recruiter> query = em.createQuery("select r from Recruiter r", Recruiter.class);
+//        System.out.println(query.getResultList());
+
+        em.getTransaction().commit();
+
+        System.out.println(" @@@ " + recruiterTest.getId());
     }
 
     @After
     public void tearDown() {
+        TypedQuery<Recruiter> query = 
+                em.createQuery("select r from Recruiter r where r.id = :id", Recruiter.class);
+        System.out.println(query.setParameter("id", recruiterTest.getId()).getSingleResult());
+
+        em.getTransaction().begin();
+        // TODO
+        // remove all posts of the recruiterTest in the db
+        em.remove(em.merge(recruiterTest));
+        em.getTransaction().commit();
+        
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        
+        if (em.isOpen()) {
+            em.close();
+        }
     }
 
     @Test
     public void addPost() {
+
         JSONObject json = new JSONObject();
         json.put("contractType", "test contractType");
         json.put("description", "test description");
@@ -79,7 +132,7 @@ public class PostRESTTest {
         json.put("workplace", "test workplace");
 
         given().contentType(MediaType.APPLICATION_JSON).body(json)
-                .when().post("http://localhost:8080/imp/api/recruiters/13/post")
+                .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/post")
                 .then().statusCode(200)
                         .body("id", greaterThan(0))
                         .body("contractType", equalTo("test contractType"))
@@ -133,7 +186,7 @@ public class PostRESTTest {
 
         JSONObject newJson = 
                 given().contentType(MediaType.APPLICATION_JSON).body(json)
-                .when().post("http://localhost:8080/imp/api/recruiters/13/post")
+                .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/post")
                         .body().as(JSONObject.class);
                 
         // update the json
@@ -202,7 +255,7 @@ public class PostRESTTest {
 
         JSONObject newJson = 
                 given().contentType(MediaType.APPLICATION_JSON).body(json)
-                .when().post("http://localhost:8080/imp/api/recruiters/13/post")
+                .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/post")
                         .body().as(JSONObject.class);
                 
         // get id value 
