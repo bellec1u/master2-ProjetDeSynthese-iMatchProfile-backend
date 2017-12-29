@@ -84,7 +84,7 @@ public class DatabaseSeed {
         Post p = new Post("AP-20161107-1", "Chef de projet", "7 dans la fonction de Chef de projet", "PM7", 58000, 70000, "CDI", "Nancy", "CP-Axions", "Assistance MOA"/*, r*/);
         p.setDescription("Pour l’un de ses clients qui est un grand groupe dans le domaine bancaire,CP-Axions recherche un chef de projet qui sera rattaché(e) à la Direction Projet et impliqué(e) principalement dans les missions suivantes :...");
         p.setImportantNotes("Certains déplacements au sein de l’Union Européenne peuvent s’avérer nécessaire.");
-        
+
         PostSkill ps = new PostSkill(java, PostSkill.Type.OBLIGATOIRE);
         PostSkill ps2 = new PostSkill(j2ee, PostSkill.Type.PLUS);
 
@@ -96,7 +96,6 @@ public class DatabaseSeed {
         Post p2 = new Post("AP-20161107-2", "Chef de projet", "7 dans la fonction de Chef de projet", "PM7", 58000, 70000, "CDI", "Nancy", "CP-Axions", "Assistance MOA");
         p2.setDescription("Pour l’un de ses clients qui est un grand groupe dans le domaine bancaire,CP-Axions recherche un chef de projet qui sera rattaché(e) à la Direction Projet et impliqué(e) principalement dans les missions suivantes :...");
         p2.setImportantNotes("Certains déplacements au sein de l’Union Européenne peuvent s’avérer nécessaire.");
-        
         p2.addPostskill(ps);
         
         r.addPost(p2);
