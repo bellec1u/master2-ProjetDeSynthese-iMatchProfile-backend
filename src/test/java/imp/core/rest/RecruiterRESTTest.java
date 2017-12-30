@@ -27,6 +27,8 @@ import org.junit.Before;
  */
 public class RecruiterRESTTest {
     
+    private static final String API_URL = "http://localhost:8080/imp/api/recruiters/";
+    
     private static EntityManagerFactory emf;
     private static EntityManager em;
     
@@ -93,24 +95,34 @@ public class RecruiterRESTTest {
     }
     
     @Test
-    public void getOneRecruiter() {
+    public void getByIdExisting() {
         given().contentType(MediaType.APPLICATION_JSON)
-                .when().get("http://localhost:8080/imp/api/recruiters/"+recruiterTest.getId())
+                .when().get(API_URL + recruiterTest.getId())
                 .then().statusCode(200)
                 .body("id", equalTo(Math.toIntExact(recruiterTest.getId())))
                 .body("company", equalTo(recruiterTest.getCompany()));
     }
+
+    @Test
+    public void getByIdInexisting() {
+        given().contentType(MediaType.APPLICATION_JSON)
+                .when().get(API_URL + "-1")
+                .then().statusCode(404);
+    }
     
     @Test
-    public void getPostsRecruiter() {
+    public void getPostsByIdExisting() {
         given().contentType(MediaType.APPLICATION_JSON)
-                .when().get("http://localhost:8080/imp/api/recruiters/"+recruiterTest.getId()+"/post")
+                .when().get(API_URL + recruiterTest.getId() + "/post")
                 .then().statusCode(200)
                 .body("size()", greaterThan(0));
     }
     
-   
-    
-    
+    @Test
+    public void getPostsByIdInexisting() {
+        given().contentType(MediaType.APPLICATION_JSON)
+                .when().get(API_URL + "-1" + "/post")
+                .then().statusCode(404);
+    }
     
 }

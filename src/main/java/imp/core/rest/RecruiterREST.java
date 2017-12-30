@@ -36,7 +36,7 @@ public class RecruiterREST {
     /**
      * Returns all the recruiters.
      *
-     * @return A response containing all the candidates.
+     * @return A response containing all the recruiters.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -62,7 +62,12 @@ public class RecruiterREST {
     public Response getById(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.RecruiterREST.getById()");
         Recruiter result = recruiterRepository.getById(id);
-        return Response.ok(result).build();
+        if (result != null) {
+            return Response.ok(result).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Recruiter not found for id: " + id)
+                .build();
     }
     
     @POST
@@ -87,7 +92,15 @@ public class RecruiterREST {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPostsById(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.RecruiterREST.getPostsById()");
-        List<Post> postsRecruiter = recruiterRepository.getById(id).getPost();
+        // checking if the recruiter exists
+        Recruiter recruiter = recruiterRepository.getById(id);
+        if (recruiter == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("Recruiter not found for id: " + id)
+                .build();
+        }
+        
+        List<Post> postsRecruiter = recruiter.getPost();
         GenericEntity<List<Post>> posts = new GenericEntity<List<Post>>(postsRecruiter) {
         };
         return Response

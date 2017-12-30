@@ -90,7 +90,14 @@ public class CandidateREST {
     @DELETE
     @Path("{id}")
     public Response deleteCandidate(@PathParam("id") Long id) {
-        System.out.println("DELETE CANDIDAT");
+        Candidate result = candidateRepository.getById(id);
+        // if the candidate to delete does not exist
+        if (result == null) {   // return a 404
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("Candidate not found for id: " + id)
+                .build();
+        }
+        
         candidateRepository.removeById(id);
         return Response.status(Response.Status.NO_CONTENT).build();
     }

@@ -59,7 +59,7 @@ public class PostREST {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updatePost(@PathParam("id") Long id, Post json) {
+    public Response update(@PathParam("id") Long id, Post json) {
         System.out.println("imp.core.rest.PostREST.updatePost()");
         Post result = postRepository.edit(id, json);
         return Response.ok(result).build();
@@ -67,7 +67,7 @@ public class PostREST {
     
     @DELETE
     @Path("{id}")
-    public Response deletePost(@PathParam("id") Long id) {
+    public Response delete(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.PostREST.deletePost()");
         postRepository.removeById(id);
         return Response.status(Response.Status.NO_CONTENT).build();
