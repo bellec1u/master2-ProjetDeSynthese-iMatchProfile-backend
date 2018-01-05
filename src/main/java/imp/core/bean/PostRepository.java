@@ -39,15 +39,35 @@ public class PostRepository extends AbstractRepository<Post> {
         return em;
     }
 
-    /**
-     * Only for test purposes
-     *
-     * @return
-     */
-    public Post add() {
-        Post p = new Post();
-        em.persist(p);
-        return p;
+    public Post addPost(Long id, Post post) {
+        List<PostSkill> lps = new ArrayList<>();
+        // for each postskills
+        for (PostSkill ps : post.getPostskill()) {
+            // search it in the db
+            try {
+                TypedQuery<PostSkill> query = getEntityManager()
+                        .createNamedQuery("PostSkill.findBySkillAndType", PostSkill.class);
+                // if find it -> add it to the post
+                lps.add(query.setParameter("id_skill", ps.getSkill().getId())
+                        .setParameter("type", ps.getType())
+                        .getSingleResult());
+            } catch (NoResultException e) {
+                // otherwise -> create a new postskill and add it to the post
+                PostSkill nps = new PostSkill(ps.getSkill(), ps.getType());
+                lps.add(nps);
+            }
+        }
+        // set the new postskills list
+        post.setPostskill(lps);
+        // get the good recruiter
+        TypedQuery<Recruiter> query = getEntityManager()
+                .createNamedQuery("Recruiter.findById", Recruiter.class);
+        Recruiter recruiter = query.setParameter("id", id).getSingleResult();
+        // add the new post to the recruiter
+        recruiter.addPost(post);
+        // update the recruiter
+        //edit(recruiter);
+        return recruiter.getPost().get(recruiter.getPost().size() - 1);
     }
 
     public Post edit(long id, Post post) {
@@ -77,7 +97,7 @@ public class PostRepository extends AbstractRepository<Post> {
     public void removeById(Object id) {
         // get the post
         Post p = super.getById(id);
-        
+
         // get the recruiter of the post
         TypedQuery<Recruiter> query = getEntityManager().createNamedQuery("Recruiter.findCreatorOfPost", Recruiter.class);
         Recruiter r = query.setParameter("post", p).getSingleResult();

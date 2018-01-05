@@ -70,17 +70,6 @@ public class RecruiterREST {
                 .build();
     }
     
-    @POST
-    @Path("{id}/post")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addPost(@PathParam("id") Long id, Post json) {
-        json.setPublicationDate(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
-        System.out.println("imp.core.rest.RecruiterREST.addPost()");
-        Post result = recruiterRepository.addPost(id, json);
-        return Response.ok(result).build();
-    }
-    
     /**
      * Return all post of a recruiter
      *

@@ -7,6 +7,7 @@ package imp.core.rest;
 
 import imp.core.bean.PostRepository;
 import imp.core.entity.post.Post;
+import java.util.Calendar;
 import java.util.List;
 import javax.ws.rs.core.GenericEntity;
 import javax.ejb.*;
@@ -53,6 +54,17 @@ public class PostREST {
         return Response.status(Response.Status.NOT_FOUND)
                 .entity("Post not found for id: " + id)
                 .build();
+    }
+    
+    @POST
+    @Path("newPostFor/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addPost(@PathParam("id") Long id, Post json) {
+        System.out.println("imp.core.rest.RecruiterREST.addPost()");
+        json.setPublicationDate(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
+        Post result = postRepository.addPost(id, json);
+        return Response.ok(result).build();
     }
     
     @PUT
