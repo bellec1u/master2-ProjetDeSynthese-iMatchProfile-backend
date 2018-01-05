@@ -6,9 +6,9 @@
 package imp.core.entity.post;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,7 +20,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
 
 /**
  *
@@ -42,9 +41,8 @@ public class Post implements Serializable {
     /**
      * Date of publication of the post
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
     @Column(name = "publication_date")
-    private Date publicationDate;
+    private LocalDate publicationDate = LocalDate.now();
     
     /**
      * Reference of the specific post
@@ -123,9 +121,6 @@ public class Post implements Serializable {
      */
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<PostSkill> postskill;
-    
-    
-    
      
     public Post() {
     }
@@ -142,7 +137,6 @@ public class Post implements Serializable {
         this.organization = organization;
         this.workUnit = workUnit;
         this.postskill = new ArrayList<>();
-        this.publicationDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
     }
 
     public Long getId() {
@@ -153,11 +147,11 @@ public class Post implements Serializable {
         this.id = id;
     }
 
-    public Date getPublicationDate() {
+    public LocalDate getPublicationDate() {
         return publicationDate;
     }
 
-    public void setPublicationDate(Date publicationDate) {
+    public void setPublicationDate(LocalDate publicationDate) {
         this.publicationDate = publicationDate;
     }
 

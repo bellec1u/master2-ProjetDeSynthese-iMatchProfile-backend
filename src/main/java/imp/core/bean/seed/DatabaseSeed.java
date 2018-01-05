@@ -11,6 +11,7 @@ import imp.core.entity.user.Candidate;
 import imp.core.entity.Skill;
 import imp.core.entity.user.Recruiter;
 import imp.core.entity.user.User;
+import java.time.LocalDate;
 import java.util.Calendar;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -66,10 +67,8 @@ public class DatabaseSeed {
 
         Candidate cand = new Candidate();
         cand.setUser(user);
-        Calendar cal = Calendar.getInstance();
-        cal.set(1980, Calendar.JANUARY, 9);
-        cand.setBirthDate(cal.getTime());
-
+        cand.setBirthDate(LocalDate.of(1980, 1, 9));
+        
         cand.setDescription("Je cherche un stage !");
         cand.addSkill(java);
         cand.addSkill(marketing);

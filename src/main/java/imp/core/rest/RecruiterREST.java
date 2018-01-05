@@ -8,7 +8,6 @@ package imp.core.rest;
 import imp.core.bean.RecruiterRepository;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Recruiter;
-import java.util.Calendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -75,7 +74,6 @@ public class RecruiterREST {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addPost(@PathParam("id") Long id, Post json) {
-        json.setPublicationDate(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
         System.out.println("imp.core.rest.RecruiterREST.addPost()");
         Post result = recruiterRepository.addPost(id, json);
         return Response.ok(result).build();

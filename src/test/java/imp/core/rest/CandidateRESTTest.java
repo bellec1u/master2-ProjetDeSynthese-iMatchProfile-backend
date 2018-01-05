@@ -9,6 +9,7 @@ import imp.core.entity.user.Candidate;
 import imp.core.entity.Skill;
 import imp.core.entity.user.User;
 import static io.restassured.RestAssured.given;
+import java.time.LocalDate;
 import java.util.Calendar;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -76,9 +77,8 @@ public class CandidateRESTTest {
         
         candidateTest = new Candidate();
         candidateTest.setUser(user);
-        Calendar cal = Calendar.getInstance();
-        cal.set(1980, Calendar.JANUARY, 9);
-        candidateTest.setBirthDate(cal.getTime());
+        candidateTest.setBirthDate(LocalDate.of(1980, 1, 9));
+
         candidateTest.setDescription("Description test");
         candidateTest.addSkill(skillTest);
         

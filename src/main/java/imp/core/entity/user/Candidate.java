@@ -7,8 +7,8 @@ package imp.core.entity.user;
 
 import imp.core.entity.Skill;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,7 +21,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
 
 /**
  *
@@ -50,9 +49,8 @@ public class Candidate implements Serializable {
     /**
      * Date of birth of the user
      */
-    @Temporal(javax.persistence.TemporalType.DATE)
     @Column(name = "birth_date")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     /**
      * Description of the user
@@ -71,7 +69,7 @@ public class Candidate implements Serializable {
     public Candidate() {
     }
 
-    public Candidate(User user, Date birthDate, String description) {
+    public Candidate(User user, LocalDate birthDate, String description) {
         this.user = user;
         this.birthDate = birthDate;
         this.description = description;
@@ -93,11 +91,11 @@ public class Candidate implements Serializable {
         this.user = user;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

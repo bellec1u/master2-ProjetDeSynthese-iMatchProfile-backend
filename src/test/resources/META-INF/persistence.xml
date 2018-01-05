@@ -15,6 +15,7 @@
     <class>imp.core.entity.user.Candidate</class>
     <class>imp.core.entity.user.Recruiter</class>
     <class>imp.core.entity.user.User</class>
+    <class>imp.core.converter.LocalDateAttributeConverter</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>

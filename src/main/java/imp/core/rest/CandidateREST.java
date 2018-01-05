@@ -74,7 +74,8 @@ public class CandidateREST {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updatePost(@PathParam("id") Long id, Candidate candidate) {
+    public Response update(@PathParam("id") Long id, Candidate candidate) {
+        System.out.println("UPDATE : "+candidate);
         Candidate result = candidateRepository.getById(id);
         // if the candidate to update does not exist
         if (result == null) {   // return a 404
@@ -89,7 +90,7 @@ public class CandidateREST {
     
     @DELETE
     @Path("{id}")
-    public Response deleteCandidate(@PathParam("id") Long id) {
+    public Response delete(@PathParam("id") Long id) {
         Candidate result = candidateRepository.getById(id);
         // if the candidate to delete does not exist
         if (result == null) {   // return a 404
