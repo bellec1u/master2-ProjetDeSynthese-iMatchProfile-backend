@@ -31,6 +31,9 @@ import javax.persistence.Table;
     @NamedQuery(name = "Recruiter.findAll",
             query = "SELECT r FROM Recruiter r")
     ,
+    @NamedQuery(name = "Recruiter.findById",
+            query = "SELECT r FROM Recruiter r WHERE :id = r.id")
+    ,
     @NamedQuery(name = "Recruiter.findCreatorOfPost",
             query = "SELECT r FROM Recruiter r WHERE :post MEMBER OF r.posts")
 })
