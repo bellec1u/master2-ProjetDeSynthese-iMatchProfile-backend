@@ -72,16 +72,28 @@ public class PostREST {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Long id, Post json) {
         System.out.println("imp.core.rest.PostREST.updatePost()");
-        Post result = postRepository.edit(id, json);
-        return Response.ok(result).build();
+        Post result = postRepository.getById(id);
+        if (result != null) {
+            result = postRepository.edit(id, json);
+            return Response.ok(result).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Post not found for id: " + id)
+                .build();
     }
     
     @DELETE
     @Path("{id}")
     public Response delete(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.PostREST.deletePost()");
-        postRepository.removeById(id);
-        return Response.status(Response.Status.NO_CONTENT).build();
+        Post result = postRepository.getById(id);
+        if (result != null) {
+            postRepository.removeById(id);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Post not found for id: " + id)
+                .build();
     }
 
 }
