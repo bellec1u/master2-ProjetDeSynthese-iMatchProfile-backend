@@ -34,4 +34,10 @@ public class SkillRepository extends AbstractRepository<Skill> {
         return executeNamedQuery("Skill.findAll");
     }
 
+    public List<Skill> getLikeDescription(String description) {
+        return em.createNamedQuery("Skill.likeDescription")
+                .setParameter("description", description)
+                .getResultList();
+    }
+
 }

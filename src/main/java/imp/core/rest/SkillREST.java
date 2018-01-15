@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -31,12 +32,19 @@ public class SkillREST {
     /**
      * Returns all the skills.
      *
+     * @param description The description of the skills search.
      * @return A response containing all the candidates.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
-        List<Skill> list = skillRepository.getAll();
+    public Response getAll(@QueryParam("description") String description) {
+        List<Skill> list;
+        if (description != null) {
+            list = skillRepository.getLikeDescription(description);
+        }
+        else {
+            list = skillRepository.getAll();
+        }
         GenericEntity<List<Skill>> skills = new GenericEntity<List<Skill>>(list) {
         };
         return Response

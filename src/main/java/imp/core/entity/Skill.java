@@ -22,7 +22,9 @@ import javax.persistence.Table;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Skill.findAll",
-            query = "SELECT s FROM Skill s")
+            query = "SELECT s FROM Skill s"),
+    @NamedQuery(name = "Skill.likeDescription",
+            query = "SELECT s FROM Skill s WHERE LOWER(s.description) LIKE LOWER(CONCAT('%', :description, '%'))")
 })
 @Table(name = "Skills")
 public class Skill implements Serializable {

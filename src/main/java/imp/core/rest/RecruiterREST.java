@@ -96,4 +96,11 @@ public class RecruiterREST {
                 .build();
     }
 
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response create(Recruiter recruiter) {
+        Recruiter result = recruiterRepository.create(recruiter);
+        return Response.ok(result).build();
+    }
 }
