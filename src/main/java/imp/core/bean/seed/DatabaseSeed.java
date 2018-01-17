@@ -5,6 +5,7 @@
  */
 package imp.core.bean.seed;
 
+import imp.core.entity.user.Education;
 import imp.core.entity.post.Post;
 import imp.core.entity.post.PostSkill;
 import imp.core.entity.user.Candidate;
@@ -72,7 +73,15 @@ public class DatabaseSeed {
         cand.setDescription("Je cherche un stage !");
         cand.addSkill(java);
         cand.addSkill(marketing);
+        
+        Education e1 = new Education("dut informatique", "2016", "un dut à l'iut nancy charlemagne");
+        Education e2 = new Education("l3", "2017", "une licence à la fst nancy");
+        Education e3 = new Education("master informatique", "2018", "master à la fst Nancy");
 
+        cand.addEducation(e1);
+        cand.addEducation(e2);
+        cand.addEducation(e3);
+        
         em.persist(cand);
 
         // ---------- ---------- ---------- ---------- Recruiters

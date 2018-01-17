@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -64,7 +65,10 @@ public class Candidate implements Serializable {
      * Skills of the user
      */
     @ManyToMany
-    private List<Skill> skills = new ArrayList<Skill>();
+    private List<Skill> skills = new ArrayList<>();
+    
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Education> educations = new ArrayList<>();
 
     public Candidate() {
     }
@@ -117,6 +121,18 @@ public class Candidate implements Serializable {
 
     public void addSkill(Skill skill) {
         skills.add(skill);
+    }
+
+    public List<Education> getEducations() {
+        return educations;
+    }
+
+    public void setEducations(List<Education> educations) {
+        this.educations = educations;
+    }
+    
+    public void addEducation(Education education) {
+        educations.add(education);
     }
 
     @Override
