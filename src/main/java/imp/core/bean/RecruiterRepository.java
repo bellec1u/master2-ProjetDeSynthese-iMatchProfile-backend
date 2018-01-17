@@ -5,16 +5,11 @@
  */
 package imp.core.bean;
 
-import imp.core.entity.post.Post;
-import imp.core.entity.post.PostSkill;
 import imp.core.entity.user.Recruiter;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 /**
  *

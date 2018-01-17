@@ -5,6 +5,7 @@
  */
 package imp.core.config;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -18,6 +19,9 @@ public class DebugExceptionMapper implements ExceptionMapper<Exception> {
 
     @Override
     public Response toResponse(Exception exception) {
+        if (exception instanceof WebApplicationException) {
+            return ((WebApplicationException) exception).getResponse();
+        }
         exception.printStackTrace();
         return Response.serverError().entity(exception.getMessage()).build();
     } 

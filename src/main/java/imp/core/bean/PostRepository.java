@@ -39,7 +39,7 @@ public class PostRepository extends AbstractRepository<Post> {
         return em;
     }
 
-    public Post addPost(Long id, Post post) {
+    public Post addPost(Long recruiterId, Post post) {
         List<PostSkill> lps = new ArrayList<>();
         // for each postskills
         for (PostSkill ps : post.getPostskill()) {
@@ -62,7 +62,7 @@ public class PostRepository extends AbstractRepository<Post> {
         // get the good recruiter
         TypedQuery<Recruiter> query = getEntityManager()
                 .createNamedQuery("Recruiter.findById", Recruiter.class);
-        Recruiter recruiter = query.setParameter("id", id).getSingleResult();
+        Recruiter recruiter = query.setParameter("id", recruiterId).getSingleResult();
         // add the new post to the recruiter
         recruiter.addPost(post);
         // update the recruiter

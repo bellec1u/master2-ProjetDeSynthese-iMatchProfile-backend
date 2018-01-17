@@ -5,9 +5,11 @@
  */
 package imp.core.rest;
 
+import imp.core.bean.PostRepository;
 import imp.core.bean.RecruiterRepository;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Recruiter;
+import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -32,6 +34,9 @@ public class RecruiterREST {
     @EJB
     private RecruiterRepository recruiterRepository;
 
+    @EJB
+    private PostRepository postRepository;
+    
     /**
      * Returns all the recruiters.
      *
@@ -61,12 +66,10 @@ public class RecruiterREST {
     public Response getById(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.RecruiterREST.getById()");
         Recruiter result = recruiterRepository.getById(id);
-        if (result != null) {
-            return Response.ok(result).build();
+        if (result == null) {
+            throw new ServiceException(Response.Status.NOT_FOUND, "Recruiter not found for id: " + id);
         }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity("Recruiter not found for id: " + id)
-                .build();
+        return Response.ok(result).build();
     }
     
     /**
@@ -76,16 +79,14 @@ public class RecruiterREST {
      * @return
      */
     @GET
-    @Path("{id}/post")
+    @Path("{id}/posts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPostsById(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.RecruiterREST.getPostsById()");
         // checking if the recruiter exists
         Recruiter recruiter = recruiterRepository.getById(id);
         if (recruiter == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                .entity("Recruiter not found for id: " + id)
-                .build();
+            throw new ServiceException(Response.Status.NOT_FOUND, "Recruiter not found for id: " + id);
         }
         
         List<Post> postsRecruiter = recruiter.getPost();
@@ -101,6 +102,22 @@ public class RecruiterREST {
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(Recruiter recruiter) {
         Recruiter result = recruiterRepository.create(recruiter);
+        return Response.ok(result).build();
+    }
+
+    @POST
+    @Path(value = "{id}/posts")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response addPost(@PathParam(value = "id") Long id, Post json) {
+        System.out.println("imp.core.rest.RecruiterREST.addPost()");
+        // checking if the recruiter exists
+        Recruiter recruiter = recruiterRepository.getById(id);
+        if (recruiter == null) {
+            throw new ServiceException(Response.Status.NOT_FOUND, "Recruiter not found for id: " + id);
+        }
+
+        Post result = postRepository.addPost(id, json);
         return Response.ok(result).build();
     }
 }

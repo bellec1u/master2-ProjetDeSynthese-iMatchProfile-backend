@@ -7,6 +7,7 @@ package imp.core.rest;
 
 import imp.core.bean.PostRepository;
 import imp.core.entity.post.Post;
+import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ws.rs.core.GenericEntity;
 import javax.ejb.*;
@@ -47,23 +48,12 @@ public class PostREST {
     public Response getById(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.PostREST.getById()");
         Post result = postRepository.getById(id);
-        if (result != null) {
-            return Response.ok(result).build();
+        if (result == null) {
+            throw new ServiceException(Response.Status.NOT_FOUND, "Post not found for id: " + id);
         }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity("Post not found for id: " + id)
-                .build();
+            return Response.ok(result).build();        
     }
     
-    @POST
-    @Path("newPostFor/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addPost(@PathParam("id") Long id, Post json) {
-        System.out.println("imp.core.rest.RecruiterREST.addPost()");
-        Post result = postRepository.addPost(id, json);
-        return Response.ok(result).build();
-    }
     
     @PUT
     @Path("{id}")
@@ -72,13 +62,11 @@ public class PostREST {
     public Response update(@PathParam("id") Long id, Post json) {
         System.out.println("imp.core.rest.PostREST.updatePost()");
         Post result = postRepository.getById(id);
-        if (result != null) {
-            result = postRepository.edit(id, json);
-            return Response.ok(result).build();
+        if (result == null) {
+            throw new ServiceException(Response.Status.NOT_FOUND, "Post not found for id: " + id);
         }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity("Post not found for id: " + id)
-                .build();
+        result = postRepository.edit(id, json);
+        return Response.ok(result).build();
     }
     
     @DELETE
@@ -86,13 +74,11 @@ public class PostREST {
     public Response delete(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.PostREST.deletePost()");
         Post result = postRepository.getById(id);
-        if (result != null) {
-            postRepository.removeById(id);
-            return Response.status(Response.Status.NO_CONTENT).build();
+        if (result == null) {
+            throw new ServiceException(Response.Status.NOT_FOUND, "Post not found for id: " + id);
         }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity("Post not found for id: " + id)
-                .build();
+        postRepository.removeById(id);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
 }

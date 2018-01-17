@@ -7,6 +7,7 @@ package imp.core.rest;
 
 import imp.core.bean.CandidateRepository;
 import imp.core.entity.user.Candidate;
+import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -63,12 +64,10 @@ public class CandidateREST {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
         Candidate result = candidateRepository.getById(id);
-        if (result != null) {
-            return Response.ok(result).build();
+        if (result == null) {
+            throw new ServiceException(Response.Status.NOT_FOUND, "Candidate not found for id: " + id);
         }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity("Candidate not found for id: " + id)
-                .build();
+        return Response.ok(result).build();
     }
 
     @POST
@@ -87,9 +86,7 @@ public class CandidateREST {
         Candidate result = candidateRepository.getById(id);
         // if the candidate to update does not exist
         if (result == null) {   // return a 404
-            return Response.status(Response.Status.NOT_FOUND)
-                .entity("Candidate not found for id: " + id)
-                .build();
+            throw new ServiceException(Response.Status.NOT_FOUND, "Candidate not found for id: " + id);
         }
         
         result = candidateRepository.edit(candidate);
@@ -102,9 +99,7 @@ public class CandidateREST {
         Candidate result = candidateRepository.getById(id);
         // if the candidate to delete does not exist
         if (result == null) {   // return a 404
-            return Response.status(Response.Status.NOT_FOUND)
-                .entity("Candidate not found for id: " + id)
-                .build();
+            throw new ServiceException(Response.Status.NOT_FOUND, "Candidate not found for id: " + id);
         }
         
         candidateRepository.removeById(id);

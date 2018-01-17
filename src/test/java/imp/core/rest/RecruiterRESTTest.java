@@ -113,7 +113,7 @@ public class RecruiterRESTTest {
     @Test
     public void getPostsByIdExisting() {
         given().contentType(MediaType.APPLICATION_JSON)
-                .when().get(API_URL + recruiterTest.getId() + "/post")
+                .when().get(API_URL + recruiterTest.getId() + "/posts")
                 .then().statusCode(200)
                 .body("size()", greaterThan(0));
     }
@@ -121,7 +121,7 @@ public class RecruiterRESTTest {
     @Test
     public void getPostsByIdInexisting() {
         given().contentType(MediaType.APPLICATION_JSON)
-                .when().get(API_URL + "-1" + "/post")
+                .when().get(API_URL + "-1" + "/posts")
                 .then().statusCode(404);
     }
     

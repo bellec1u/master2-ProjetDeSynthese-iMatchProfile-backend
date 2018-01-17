@@ -153,7 +153,7 @@ public class PostRESTTest {
     @Test
     public void addPost() {
         given().contentType(MediaType.APPLICATION_JSON).body(generateJSONObject())
-                .when().post("http://localhost:8080/imp/api/posts/newPostFor/" + recruiterTest.getId())
+                .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/posts")
                 .then().statusCode(200)
                 .body("id", greaterThan(0))
                 .body("contractType", equalTo("test contractType"))
@@ -175,7 +175,7 @@ public class PostRESTTest {
     public void updatePost() {
         JSONObject newJson
                 = given().contentType(MediaType.APPLICATION_JSON).body(generateJSONObject())
-                        .when().post("http://localhost:8080/imp/api/posts/newPostFor/" + recruiterTest.getId())
+                        .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/posts")
                         .body().as(JSONObject.class);
 
         // update the json
@@ -211,7 +211,7 @@ public class PostRESTTest {
     @Test
     public void deletePost() {
         JSONObject newJson = given().contentType(MediaType.APPLICATION_JSON).body(generateJSONObject())
-                .when().post("http://localhost:8080/imp/api/posts/newPostFor/" + recruiterTest.getId())
+                .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/posts")
                 .body().as(JSONObject.class);
 
         // get id value 
@@ -279,7 +279,7 @@ public class PostRESTTest {
     public void methodeNotAllowed() {
         given().contentType(MediaType.APPLICATION_JSON)
                 .when().get("http://localhost:8080/imp/api/posts/test/error")
-                .then().statusCode(500);
+                .then().statusCode(404);
     }
 
 }
