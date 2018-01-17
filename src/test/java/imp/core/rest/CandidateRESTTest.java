@@ -10,7 +10,6 @@ import imp.core.entity.Skill;
 import imp.core.entity.user.User;
 import static io.restassured.RestAssured.given;
 import java.time.LocalDate;
-import java.util.Calendar;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;

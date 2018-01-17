@@ -3,56 +3,48 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity.post;
+package imp.core.entity.user;
 
-import imp.core.entity.Skill;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
  *
- * @author dyasar
+ * @author Leopold
  */
 @Entity
-@NamedQueries({
-    @NamedQuery(name = "PostSkill.findBySkillAndType",
-            query = "SELECT ps FROM PostSkill ps WHERE ps.skill.id = :id_skill AND ps.type = :type")
-})
-@Table(name = "PostSkills")
-public class PostSkill implements Serializable {
-
-    static public enum Type {
-        OBLIGATOIRE, PLUS
-    };
+@Table(name = "Educations")
+public class Education implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(name = "name")
+    private String name;
+    
+    @Column(name = "obtaining_date")
+    private String obtainingDate;
+    
+    @Column(name = "description")
+    private String description;
 
-    @ManyToOne
-    private Skill skill;
-
-    @Column(name = "type")
-    private Type type;
-
-    public PostSkill() {
+    public Education() {
+        
     }
-
-    public PostSkill(Skill skill, Type type) {
-        this.skill = skill;
-        this.type = type;
+    
+    public Education(String name, String obtainingDate, String description) {
+        this.name = name;
+        this.obtainingDate = obtainingDate;
+        this.description = description;
     }
-
+    
     public Long getId() {
         return id;
     }
@@ -61,20 +53,28 @@ public class PostSkill implements Serializable {
         this.id = id;
     }
 
-    public Skill getSkill() {
-        return skill;
+    public String getName() {
+        return name;
     }
 
-    public void setSkill(Skill skill) {
-        this.skill = skill;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Type getType() {
-        return type;
+    public String getObtainingDate() {
+        return obtainingDate;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setObtainingDate(String obtainingDate) {
+        this.obtainingDate = obtainingDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -87,10 +87,10 @@ public class PostSkill implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PostSkill)) {
+        if (!(object instanceof Education)) {
             return false;
         }
-        PostSkill other = (PostSkill) object;
+        Education other = (Education) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -99,7 +99,7 @@ public class PostSkill implements Serializable {
 
     @Override
     public String toString() {
-        return "PostSkill{" + "id=" + id + ", skill=" + skill + ", type=" + type + '}';
+        return "Education{" + "id=" + id + ", name=" + name + ", obtainingDate=" + obtainingDate + ", description=" + description + '}';
     }
-
+    
 }
