@@ -18,7 +18,11 @@ import static io.restassured.RestAssured.given;
 import javax.persistence.EntityManager;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 
 /**
@@ -123,6 +127,33 @@ public class RecruiterRESTTest {
         given().contentType(MediaType.APPLICATION_JSON)
                 .when().get(API_URL + "-1" + "/posts")
                 .then().statusCode(404);
+    }
+    
+    @Test
+    public void createRecruiterAccount() throws ParseException {
+        JSONObject json = new JSONObject();
+        json.put("company", "aaa");
+        
+        JSONObject user = new JSONObject();
+        user.put("email", "a.a@a.fr");
+        user.put("firstname", "a");
+        user.put("lastname", "d");
+        user.put("password", "f");
+        user.put("reportNumber", "0");
+        user.put("role", "RECRUITER");
+        user.put("state", "OK");
+        
+        json.put("user", user);
+                
+        Recruiter res = given().contentType(MediaType.APPLICATION_JSON).body(json)
+                .then().statusCode(200)
+                .when().post(API_URL).body().as(Recruiter.class);
+                
+        assertEquals("a.a@a.fr", res.getUser().getEmail());
+        assertEquals("a", res.getUser().getFirstname());
+        assertEquals("d", res.getUser().getLastname());
+        assertEquals("f", res.getUser().getPassword());
+        assertEquals(0, res.getUser().getReportNumber());
     }
     
 }
