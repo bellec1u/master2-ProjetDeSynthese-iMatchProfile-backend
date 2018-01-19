@@ -19,7 +19,6 @@ import io.restassured.response.Response;
 import javax.persistence.EntityManager;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -133,8 +132,7 @@ public class RecruiterRESTTest {
                 .body("user.password", equalTo(recruiterTest.getUser().getPassword()))
                 .body("user.reportNumber", equalTo(Math.toIntExact(recruiterTest.getUser().getReportNumber())))
                 .body("user.role", equalTo(recruiterTest.getUser().getRole().toString()))
-                .body("user.state", equalTo(recruiterTest.getUser().getState().toString()))
-;
+                .body("user.state", equalTo(recruiterTest.getUser().getState().toString()));
     }
 
     @Test
