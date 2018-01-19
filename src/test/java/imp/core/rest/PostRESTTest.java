@@ -154,7 +154,7 @@ public class PostRESTTest {
     public void addPost() {
         given().contentType(MediaType.APPLICATION_JSON).body(generateJSONObject())
                 .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/posts")
-                .then().statusCode(200)
+                .then().statusCode(201)
                 .body("id", greaterThan(0))
                 .body("contractType", equalTo("test contractType"))
                 .body("description", equalTo("test description"))

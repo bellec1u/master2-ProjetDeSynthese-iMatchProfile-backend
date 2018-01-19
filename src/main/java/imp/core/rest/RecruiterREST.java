@@ -7,6 +7,7 @@ package imp.core.rest;
 
 import imp.core.bean.PostRepository;
 import imp.core.bean.RecruiterRepository;
+import imp.core.bean.UserRepository;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Recruiter;
 import imp.core.rest.exception.ServiceException;
@@ -37,6 +38,8 @@ public class RecruiterREST {
     @EJB
     private PostRepository postRepository;
     
+    @EJB
+    private UserRepository userRepository;
     /**
      * Returns all the recruiters.
      *
@@ -100,9 +103,14 @@ public class RecruiterREST {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Recruiter recruiter) {
+    public Response create(Recruiter recruiter) {        
+        // checking if email is already used
+        if (!userRepository.findByEmail(recruiter.getUser().getEmail()).isEmpty()) {
+            throw new ServiceException(Response.Status.CONFLICT, "Email already used: " + recruiter.getUser().getEmail());
+        }
+        
         Recruiter result = recruiterRepository.create(recruiter);
-        return Response.ok(result).build();
+        return Response.status(Response.Status.CREATED).entity(result).build();
     }
 
     @POST
@@ -118,6 +126,6 @@ public class RecruiterREST {
         }
 
         Post result = postRepository.addPost(id, json);
-        return Response.ok(result).build();
+        return Response.status(Response.Status.CREATED).entity(result).build();
     }
 }

@@ -6,11 +6,14 @@
 package imp.core.rest;
 
 import imp.core.bean.CandidateRepository;
+import imp.core.bean.UserRepository;
 import imp.core.entity.user.Candidate;
+import imp.core.entity.user.User;
 import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -35,6 +38,9 @@ public class CandidateREST {
     @EJB
     private CandidateRepository candidateRepository;
 
+    @EJB
+    private UserRepository userRepository;
+    
     /**
      * Returns all the candidates.
      *
@@ -73,16 +79,21 @@ public class CandidateREST {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Candidate candidate) {
+    public Response create(@Valid Candidate candidate) {        
+        // checking if email is already used
+        if (!userRepository.findByEmail(candidate.getUser().getEmail()).isEmpty()) {
+            throw new ServiceException(Response.Status.CONFLICT, "Email already used: " + candidate.getUser().getEmail());
+        }
+        
         Candidate result = candidateRepository.create(candidate);
-        return Response.ok(result).build();
+        return Response.status(Response.Status.CREATED).entity(result).build();
     }
     
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") Long id, Candidate candidate) {
+    public Response update(@PathParam("id") Long id, @Valid Candidate candidate) {
         Candidate result = candidateRepository.getById(id);
         // if the candidate to update does not exist
         if (result == null) {   // return a 404

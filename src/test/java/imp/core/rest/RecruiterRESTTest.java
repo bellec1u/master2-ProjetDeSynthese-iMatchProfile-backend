@@ -8,16 +8,19 @@ package imp.core.rest;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Recruiter;
 import imp.core.entity.user.User;
+import static io.restassured.RestAssured.given;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.ws.rs.core.MediaType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static io.restassured.RestAssured.given;
+import io.restassured.response.Response;
 import javax.persistence.EntityManager;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 
@@ -33,6 +36,7 @@ public class RecruiterRESTTest {
     private static EntityManager em;
     
     private Recruiter recruiterTest;
+    private Recruiter recruiterCreate;
     private Post postTest;
     
     @BeforeClass
@@ -69,6 +73,19 @@ public class RecruiterRESTTest {
 
         em.persist(recruiterTest);
 
+        // Recruiter for create testing
+        User user2 = new User();
+        user2.setEmail("Createprénom.Createnom@mail.fr");
+        user2.setFirstname("Createprénom");
+        user2.setLastname("Createnom");
+        user2.setPassword("createpassword");
+        user2.setRole(User.Role.RECRUITER);
+
+        recruiterCreate = new Recruiter();
+        recruiterCreate.setUser(user2);
+        recruiterCreate.setCompany("Createcompany");
+        // ^ DON'T PERSIST IT ON THIS METHOD ^
+        
 //        TypedQuery<Recruiter> query = em.createQuery("select r from Recruiter r", Recruiter.class);
 //        System.out.println(query.getResultList());
         // ---------- ---------- ---------- ---------- commit the new entities for the tests
@@ -81,6 +98,14 @@ public class RecruiterRESTTest {
         // ---------- ---------- ---------- ---------- remove all test entities
         em.getTransaction().begin();
         em.remove(em.merge(recruiterTest));
+        
+        // recruiterCreate is inserted by a POST in a test method
+        // so delete it only if possible (id is set), after the test method call
+        if (recruiterCreate.getId() != null) {
+            em.remove(em.merge(recruiterCreate));
+        }
+
+        
         em.getTransaction().commit();
 
         // ---------- ---------- ---------- ---------- if one transaction has not finished
@@ -100,7 +125,16 @@ public class RecruiterRESTTest {
                 .when().get(API_URL + recruiterTest.getId())
                 .then().statusCode(200)
                 .body("id", equalTo(Math.toIntExact(recruiterTest.getId())))
-                .body("company", equalTo(recruiterTest.getCompany()));
+                .body("company", equalTo(recruiterTest.getCompany()))
+                .body("user.id", equalTo(Math.toIntExact(recruiterTest.getUser().getId())))
+                .body("user.lastname", equalTo(recruiterTest.getUser().getLastname()))
+                .body("user.firstname", equalTo(recruiterTest.getUser().getFirstname()))
+                .body("user.email", equalTo(recruiterTest.getUser().getEmail()))
+                .body("user.password", equalTo(recruiterTest.getUser().getPassword()))
+                .body("user.reportNumber", equalTo(Math.toIntExact(recruiterTest.getUser().getReportNumber())))
+                .body("user.role", equalTo(recruiterTest.getUser().getRole().toString()))
+                .body("user.state", equalTo(recruiterTest.getUser().getState().toString()))
+;
     }
 
     @Test
@@ -108,6 +142,74 @@ public class RecruiterRESTTest {
         given().contentType(MediaType.APPLICATION_JSON)
                 .when().get(API_URL + "-1")
                 .then().statusCode(404);
+    }
+    
+    @Test
+    public void createValid() {
+        JSONObject json = new JSONObject();
+        json.put("id", recruiterCreate.getId());
+        json.put("company", recruiterCreate.getCompany());
+
+        JSONObject newUser = new JSONObject();
+        newUser.put("id", recruiterCreate.getUser().getId());
+        newUser.put("lastname", recruiterCreate.getUser().getLastname());
+        newUser.put("firstname", recruiterCreate.getUser().getFirstname());
+        newUser.put("email", recruiterCreate.getUser().getEmail());
+        newUser.put("password", recruiterCreate.getUser().getPassword());
+        newUser.put("role", recruiterCreate.getUser().getRole());
+
+        json.put("user", newUser);
+
+        Response response = given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(json)
+                .when().post(API_URL)
+                .then().statusCode(201)
+                .extract()
+                .response();
+
+        int recruiterCreateId = response.path("id");
+        int userCreateId = response.path("user.id");
+
+        // testing that the recruiter has been created
+        given().contentType(MediaType.APPLICATION_JSON)
+                .when().get(API_URL + recruiterCreateId)
+                .then().statusCode(200)
+                .body("id", equalTo(recruiterCreateId))
+                .body("company", equalTo(recruiterCreate.getCompany()))
+                .body("user.lastname", equalTo(recruiterCreate.getUser().getLastname()))
+                .body("user.firstname", equalTo(recruiterCreate.getUser().getFirstname()))
+                .body("user.email", equalTo(recruiterCreate.getUser().getEmail()))
+                .body("user.password", equalTo(recruiterCreate.getUser().getPassword()))
+                .body("user.reportNumber", equalTo(Math.toIntExact(recruiterCreate.getUser().getReportNumber())))
+                .body("user.role", equalTo(recruiterCreate.getUser().getRole().toString()))
+                .body("user.state", equalTo(recruiterCreate.getUser().getState().toString()));
+        
+        // set id of recruiter for removing it later
+        recruiterCreate.setId(new Long(recruiterCreateId));
+        recruiterCreate.getUser().setId(new Long(userCreateId));
+    }
+    
+    @Test
+    public void createAlreadyUsedEmail() {
+        JSONObject json = new JSONObject();
+        json.put("id", recruiterTest.getId());
+        json.put("company", recruiterTest.getCompany());
+
+        JSONObject newUser = new JSONObject();
+        newUser.put("id", recruiterTest.getUser().getId());
+        newUser.put("lastname", recruiterTest.getUser().getLastname());
+        newUser.put("firstname", recruiterTest.getUser().getFirstname());
+        newUser.put("email", recruiterTest.getUser().getEmail());
+        newUser.put("password", recruiterTest.getUser().getPassword());
+        newUser.put("role", recruiterTest.getUser().getRole());
+
+        json.put("user", newUser);
+
+        given().contentType(MediaType.APPLICATION_JSON)
+                .body(json)
+                .when().post(API_URL)
+                .then().statusCode(409);        
     }
     
     @Test

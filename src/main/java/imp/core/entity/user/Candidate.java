@@ -22,6 +22,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 
 /**
  *
@@ -45,6 +48,8 @@ public class Candidate implements Serializable {
      * Link to basics profile informations
      */
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @NotNull
+    @Valid
     private User user;
 
     /**
