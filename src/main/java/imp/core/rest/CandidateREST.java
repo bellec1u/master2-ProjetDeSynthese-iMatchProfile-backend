@@ -8,7 +8,6 @@ package imp.core.rest;
 import imp.core.bean.CandidateRepository;
 import imp.core.bean.UserRepository;
 import imp.core.entity.user.Candidate;
-import imp.core.entity.user.User;
 import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ejb.EJB;

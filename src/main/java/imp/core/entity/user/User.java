@@ -45,21 +45,21 @@ public class User implements Serializable {
     private Long id;
 
     @Column(name = "email")
-    @NotNull
-    @Email
+    @NotNull(message = "{user.email.notNull}")
+    @Email(message = "{user.email.email}")
     private String email;
 
     @Column(name = "password")
-    @NotNull
-    @Size(min = 6)
+    @NotNull(message = "{user.password.notNull}")
+    @Size(min = 6, message = "{user.password.min}")
     private String password;
 
     @Column(name = "lastname")
-    @NotBlank
+    @NotBlank(message = "{user.lastname.notBlank}")
     private String lastname;
 
     @Column(name = "firstname")
-    @NotBlank
+    @NotBlank(message = "{user.firstname.notBlank}")
     private String firstname;
 
     /**

@@ -30,12 +30,13 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(imp.core.config.CorsFilter.class);
-        resources.add(imp.core.config.DebugExceptionMapper.class);
         resources.add(imp.core.rest.CandidateREST.class);
         resources.add(imp.core.rest.ExempleREST.class);
         resources.add(imp.core.rest.PostREST.class);
         resources.add(imp.core.rest.RecruiterREST.class);
         resources.add(imp.core.rest.SkillREST.class);
+        resources.add(imp.core.rest.exception.mapper.DebugExceptionMapper.class);
+        resources.add(imp.core.rest.exception.mapper.RestValidationExceptionMapper.class);
     }
     
 }
