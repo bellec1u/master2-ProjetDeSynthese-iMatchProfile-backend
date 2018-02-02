@@ -36,6 +36,7 @@ public class DatabaseSeed {
     private EntityManager em;
 
     private List<Skill> skills;
+    private List<String> emails;
 
     @PostConstruct
     public void seed() {
@@ -66,7 +67,11 @@ public class DatabaseSeed {
         // ---------- ---------- ---------- ---------- Candidates
         for (int i = 0; i < 10; i++) {
             User user = new User();
-            user.setEmail(faker.internet().emailAddress());
+            String email = "";
+            do {
+                email = faker.internet().emailAddress();
+            } while (emails.contains(email));
+            user.setEmail(email);
             user.setFirstname(faker.name().firstName());
             user.setLastname(faker.name().lastName());
             user.setPassword(faker.internet().password());
