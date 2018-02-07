@@ -13,6 +13,8 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ejb.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -51,9 +53,18 @@ public class PostREST {
         if (result == null) {
             throw new ServiceException(Response.Status.NOT_FOUND, "Post not found for id: " + id);
         }
-            return Response.ok(result).build();        
+        return Response.ok(result).build();        
     }
     
+    @GET
+    @Path("{id}/bySkills")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBySkills(@PathParam("id") Long id) throws ParseException {
+        System.out.println("imp.core.rest.PostREST.getBySkills()");
+        JSONArray json = postRepository.getBySkills(id);
+        
+        return Response.ok(json.toJSONString()).build();
+    }
     
     @PUT
     @Path("{id}")
