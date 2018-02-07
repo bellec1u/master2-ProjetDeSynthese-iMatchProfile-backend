@@ -13,6 +13,8 @@ import imp.core.entity.post.PostSkill.Type;
 import imp.core.entity.user.Candidate;
 import imp.core.entity.user.Recruiter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import static javafx.scene.input.KeyCode.J;
 import javax.ejb.Stateless;
@@ -125,7 +127,8 @@ public class PostRepository extends AbstractRepository<Post> {
      * @return
      */
     public JSONArray getBySkills(Long id) throws ParseException {
-        JSONArray json = new JSONArray();
+        // [candidate: Candidate, percent: double]
+        List<Object[]> couples = new ArrayList<>();
 
         // [nameSkill: String, coef: int]
         List<Object[]> skillsNeeded = new ArrayList<>();
@@ -169,18 +172,37 @@ public class PostRepository extends AbstractRepository<Post> {
             // generate %
             double percent = (x / tot) * 100;
 
-            // generate json
-            JSONObject obj = new JSONObject();
-            
-            String candidateJSON = (new Gson()).toJson(c);
-            JSONParser parser = new JSONParser();
-            
-            obj.put("user", (JSONObject) parser.parse(candidateJSON));
-            obj.put("percent", percent);
-            
-            json.add(obj);
+            Object[] couple = {c, percent};
+            couples.add(couple);
         }
 
+        // sort by percent
+        Collections.sort(couples, new Comparator<Object[]>() {
+            @Override
+            public int compare(Object[] o1, Object[] o2) {
+                if ((double) o1[1] > (double) o2[1]) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+        
+        JSONArray json = new JSONArray();
+        for (Object[] couple : couples) {
+            if ((double) couple[1] != 0) {
+                // generate json
+                JSONObject obj = new JSONObject();
+
+                String candidateJSON = (new Gson()).toJson((Candidate) couple[0]);
+                JSONParser parser = new JSONParser();
+
+                obj.put("candidate", (JSONObject) parser.parse(candidateJSON));
+                obj.put("percent", (double) couple[1]);
+
+                json.add(obj);
+            }
+        }
         return json;
     }
 

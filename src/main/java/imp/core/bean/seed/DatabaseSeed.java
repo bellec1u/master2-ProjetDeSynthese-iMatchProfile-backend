@@ -83,7 +83,7 @@ public class DatabaseSeed {
             candidate.setBirthDate(LocalDate.of(faker.number().numberBetween(1940, 2000), faker.number().numberBetween(1, 12), faker.number().numberBetween(1, 25)));
             candidate.setDescription(faker.lorem().sentence(faker.number().numberBetween(5, 30)));
             for (int j = 0; j < skills.size(); j++) {
-                if (faker.number().numberBetween(0, 100) < 10) {
+                if (faker.number().numberBetween(0, 100) < 30) {
                     candidate.addSkill(skills.get(j));
                 }
             }
