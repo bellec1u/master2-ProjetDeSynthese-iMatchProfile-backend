@@ -14,7 +14,6 @@ import imp.core.entity.user.Candidate;
 import imp.core.entity.user.Recruiter;
 import java.util.ArrayList;
 import java.util.List;
-import static javafx.scene.input.KeyCode.J;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -184,4 +183,37 @@ public class PostRepository extends AbstractRepository<Post> {
         return json;
     }
 
+    public List<Candidate> getCandidatebyMandatorySkills(Long postId) {
+        
+        List<Skill> skillsNeeded = new ArrayList<>();
+
+        // get the post
+        Post p = super.getById(postId);
+        
+        //get Mandatory skills
+        for (PostSkill ps : p.getPostskill()) {
+            if (Type.OBLIGATOIRE.equals(ps.getType())) {
+                Skill s = ps.getSkill();
+                skillsNeeded.add(s);
+            }
+        }
+
+        // get all users
+        List<Candidate> candidates = em.createNamedQuery("Candidate.findAll", Candidate.class)
+                .getResultList();
+        
+         List<Candidate> res = new ArrayList<>();
+         
+        for (Candidate c : candidates) {
+            int tmp = 0;
+          for (Skill s : c.getSkills()) {
+                  if(skillsNeeded.contains(s))
+                      tmp++;               
+            }
+          if(tmp == skillsNeeded.size())
+              res.add(c);
+        }
+         return res;
+    }
+        
 }
