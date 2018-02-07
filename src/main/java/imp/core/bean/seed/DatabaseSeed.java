@@ -71,6 +71,7 @@ public class DatabaseSeed {
             do {
                 email = faker.internet().emailAddress();
             } while (emails.contains(email));
+            emails.add(email);
             user.setEmail(email);
             user.setFirstname(faker.name().firstName());
             user.setLastname(faker.name().lastName());
