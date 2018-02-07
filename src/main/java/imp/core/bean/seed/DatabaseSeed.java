@@ -41,7 +41,7 @@ public class DatabaseSeed {
     @PostConstruct
     public void seed() {
         Faker faker = new Faker();
-
+        emails = new ArrayList<>();
         // ---------- ---------- ---------- ---------- Skills
         this.skills = new ArrayList<>();
         this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Java"));
