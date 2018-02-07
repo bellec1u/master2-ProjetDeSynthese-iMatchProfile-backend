@@ -14,10 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
@@ -43,8 +44,8 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "email")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+    @Column(name = "email")                                                                                                                                                                                     
     @NotNull(message = "{user.email.notNull}")
     @Email(message = "{user.email.email}")
     private String email;
@@ -55,23 +56,27 @@ public class User implements Serializable {
     private String password;
 
     @Column(name = "lastname")
-    @NotBlank(message = "{user.lastname.notBlank}")
+    @NotNull(message = "{user.lastname.notNull}")
+    @NotEmpty(message = "{user.lastname.notEmpty}")
     private String lastname;
 
     @Column(name = "firstname")
-    @NotBlank(message = "{user.firstname.notBlank}")
+    @NotNull(message = "{user.firstname.notNull}")
+    @NotEmpty(message = "{user.firstname.notEmpty}")
     private String firstname;
 
     /**
      * Link between the entity User and the entities Recruiter and Candidate.
      */
     @Column(name = "role")
+    @NotNull(message = "{user.role.notNull}")
     private Role role;
 
     /**
      * Number of reports that this user has received.
      */
     @Column(name = "report_number")
+    @Min(value = 0, message = "{user.reportNumber.min}")
     private long reportNumber = 0;
 
     @Column(name = "state")
