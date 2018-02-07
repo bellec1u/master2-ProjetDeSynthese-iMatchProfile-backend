@@ -5,8 +5,10 @@
  */
 package imp.core.rest;
 
+import imp.core.bean.CandidateRepository;
 import imp.core.bean.PostRepository;
 import imp.core.entity.post.Post;
+import imp.core.entity.user.Candidate;
 import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ws.rs.core.GenericEntity;
@@ -26,6 +28,9 @@ public class PostREST {
 
     @EJB
     private PostRepository postRepository;
+    
+    @EJB
+        private CandidateRepository candidateRepository;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -90,6 +95,25 @@ public class PostREST {
         }
         postRepository.removeById(id);
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+    
+    @GET
+    @Path("{id}/candidatebyMandatorySkills")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCandidatebyMandatorySkills(@PathParam("id") Long id) {
+        System.out.println("imp.core.rest.PostREST.getCandidatebyMandatorySkills()");
+        Post result = postRepository.getById(id);
+        if (result == null) {
+            throw new ServiceException(Response.Status.NOT_FOUND, "Post not found for id: " + id);
+        }
+                
+            
+         Candidate c = candidateRepository.getById(id);
+        List<Candidate> list = candidateRepository.getAll();
+        GenericEntity<List<Candidate>> candidates = new GenericEntity<List<Candidate>>(list) {};
+
+
+        return Response.ok(candidates).build();        
     }
 
 }
