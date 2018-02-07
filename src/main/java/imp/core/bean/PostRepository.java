@@ -167,7 +167,6 @@ public class PostRepository extends AbstractRepository<Post> {
             }
 
             // generate %
-                    System.out.println("----- ----- ----- ----- " + x + " - " + tot);
             double percent = (x / tot) * 100;
 
             // generate json
