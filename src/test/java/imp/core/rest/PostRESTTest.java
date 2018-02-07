@@ -152,6 +152,7 @@ public class PostRESTTest {
 
     @Test
     public void addPost() {
+        System.out.println("----- " + recruiterTest);
         given().contentType(MediaType.APPLICATION_JSON).body(generateJSONObject())
                 .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/posts")
                 .then().statusCode(201)

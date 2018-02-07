@@ -81,6 +81,12 @@
             <artifactId>hibernate-validator</artifactId>
             <version>6.0.7.Final</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>0.14</version>
+        </dependency>
     </dependencies>
 
     <build>
