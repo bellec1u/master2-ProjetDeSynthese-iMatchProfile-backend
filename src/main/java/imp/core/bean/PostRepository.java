@@ -205,6 +205,9 @@ public class PostRepository extends AbstractRepository<Post> {
 
     @Schedule
     public void checkMatching() {
+        // clear matching table
+        em.createNamedQuery("Matching.cleanTable").executeUpdate();
+        
         // get all posts and candidates available
         List<Post> posts = getAll();
         List<Candidate> candidates = em
@@ -238,12 +241,13 @@ public class PostRepository extends AbstractRepository<Post> {
 
         // tot = skill * coef
         double tot = 0;
+        int coef = 2;
 
         for (PostSkill ps : post.getPostskill()) {
             if (Type.OBLIGATOIRE.equals(ps.getType())) {
-                Object[] s = {ps.getSkill().getDescription(), 2};
+                Object[] s = {ps.getSkill().getDescription(), coef};
                 skillsNeeded.add(s);
-                tot += 2;
+                tot += coef;
             } else if (Type.PLUS.equals(ps.getType())) {
                 Object[] s = {ps.getSkill().getDescription(), 1};
                 skillsNeeded.add(s);

@@ -9,9 +9,11 @@ import imp.core.entity.post.Post;
 import imp.core.entity.user.Candidate;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -23,7 +25,9 @@ import javax.persistence.Table;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Matching.findByPost",
-            query = "SELECT m FROM Matching m WHERE m.post.id = :id")
+            query = "SELECT m FROM Matching m WHERE m.post.id = :id"),
+    @NamedQuery(name = "Matching.cleanTable",
+            query = "DELETE FROM Matching")
 })
 @Table(name = "Matchings")
 public class Matching implements Serializable {
@@ -32,9 +36,11 @@ public class Matching implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Candidate candidate;
-    private Post post;
     private double percent;
+    @ManyToOne
+    private Candidate candidate;
+    @ManyToOne
+    private Post post;
 
     public Matching() {
         
