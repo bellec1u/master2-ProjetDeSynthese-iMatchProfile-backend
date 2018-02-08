@@ -6,6 +6,7 @@
 package imp.core.bean.seed;
 
 import com.github.javafaker.Faker;
+import imp.core.bean.PostRepository;
 import imp.core.entity.user.Education;
 import imp.core.entity.post.Post;
 import imp.core.entity.post.PostSkill;
@@ -14,10 +15,10 @@ import imp.core.entity.Skill;
 import imp.core.entity.user.Recruiter;
 import imp.core.entity.user.User;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
@@ -34,6 +35,9 @@ public class DatabaseSeed {
 
     @PersistenceContext(unitName = "imp-pu")
     private EntityManager em;
+    
+    @EJB
+    private PostRepository postRepository;
 
     private List<Skill> skills;
     private List<String> emails;
@@ -83,7 +87,7 @@ public class DatabaseSeed {
             candidate.setBirthDate(LocalDate.of(faker.number().numberBetween(1940, 2000), faker.number().numberBetween(1, 12), faker.number().numberBetween(1, 25)));
             candidate.setDescription(faker.lorem().sentence(faker.number().numberBetween(5, 30)));
             for (int j = 0; j < skills.size(); j++) {
-                if (faker.number().numberBetween(0, 100) < 30) {
+                if (faker.number().numberBetween(0, 100) < 50) {
                     candidate.addSkill(skills.get(j));
                 }
             }
@@ -144,5 +148,7 @@ public class DatabaseSeed {
             
             em.persist( recruiter );
         }
+
+        postRepository.checkMatching();
     }
 }

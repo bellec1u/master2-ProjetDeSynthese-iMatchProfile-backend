@@ -6,6 +6,7 @@
 package imp.core.bean;
 
 import com.google.gson.Gson;
+import imp.core.entity.Matching;
 import imp.core.entity.Skill;
 import imp.core.entity.post.Post;
 import imp.core.entity.post.PostSkill;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -77,7 +79,12 @@ public class PostRepository extends AbstractRepository<Post> {
         recruiter.addPost(post);
         // update the recruiter
         //edit(recruiter);
-        return recruiter.getPost().get(recruiter.getPost().size() - 1);
+        Post newPost = recruiter.getPost().get(recruiter.getPost().size() - 1);
+        
+        // generate all matchings for newPost
+        generateMatchingForPost(newPost);
+        
+        return newPost;
     }
 
     public Post edit(long id, Post post) {
@@ -126,92 +133,48 @@ public class PostRepository extends AbstractRepository<Post> {
      * @return
      */
     public JSONArray getBySkills(Long id) throws ParseException {
-        // [candidate: Candidate, percent: double]
-        List<Object[]> couples = new ArrayList<>();
-
-        // [nameSkill: String, coef: int]
-        List<Object[]> skillsNeeded = new ArrayList<>();
-
-        // get the post
-        Post p = super.getById(id);
-        for (PostSkill ps : p.getPostskill()) {
-            if (Type.OBLIGATOIRE.equals(ps.getType())) {
-                Object[] s = {ps.getSkill().getDescription(), 2};
-                skillsNeeded.add(s);
-            } else if (Type.PLUS.equals(ps.getType())) {
-                Object[] s = {ps.getSkill().getDescription(), 1};
-                skillsNeeded.add(s);
-            }
-        }
-
-        // get all users
-        List<Candidate> candidates = em.createNamedQuery("Candidate.findAll", Candidate.class)
+        List<Matching> matchings = em
+                .createNamedQuery("Matching.findByPost", Matching.class)
+                .setParameter("id", id)
                 .getResultList();
 
-        for (Candidate c : candidates) {
-            double tot = 0;
-            for (Object[] skillNeeded : skillsNeeded) {
-                tot += 1 * ((int) skillNeeded[1]);
-            }
-
-            // calculation of the percentage of matching
-            double x = 0;
-            // for each skills of the candidate
-            for (Skill s : c.getSkills()) {
-                // for each skills of the post
-                for (Object[] skillNeeded : skillsNeeded) {
-                    // if both skill description are equals
-                    if (s.getDescription().equals(skillNeeded[0])) {
-                        // skill matching
-                        x += 1 * ((int) skillNeeded[1]);
-                    }
-                }
-            }
-
-            // generate %
-            double percent = (x / tot) * 100;
-
-            Object[] couple = {c, percent};
-            couples.add(couple);
-        }
-
         // sort by percent
-        Collections.sort(couples, new Comparator<Object[]>() {
+        Collections.sort(matchings, new Comparator<Matching>() {
             @Override
-            public int compare(Object[] o1, Object[] o2) {
-                if ((double) o1[1] > (double) o2[1]) {
+            public int compare(Matching o1, Matching o2) {
+                if (o1.getPercent() > o2.getPercent()) {
                     return -1;
                 } else {
                     return 1;
                 }
             }
+
         });
-        
+
+        // product json
         JSONArray json = new JSONArray();
-        for (Object[] couple : couples) {
-            if ((double) couple[1] != 0) {
-                // generate json
-                JSONObject obj = new JSONObject();
+        for (Matching matching : matchings) {
+            // generate json
+            JSONObject obj = new JSONObject();
 
-                String candidateJSON = (new Gson()).toJson((Candidate) couple[0]);
-                JSONParser parser = new JSONParser();
+            String candidateJSON = (new Gson()).toJson(matching.getCandidate());
+            JSONParser parser = new JSONParser();
 
-                obj.put("candidate", (JSONObject) parser.parse(candidateJSON));
-                obj.put("percent", (double) couple[1]);
+            obj.put("candidate", (JSONObject) parser.parse(candidateJSON));
+            obj.put("percent", matching.getPercent());
 
-                json.add(obj);
-            }
+            json.add(obj);
         }
         return json;
     }
 
     public List<Candidate> getCandidatebyMandatorySkills(Long postId) {
-        
+
         List<Skill> skillsNeeded = new ArrayList<>();
 
         // get the post
         Post p = super.getById(postId);
-        
+
         //get Mandatory skills
         for (PostSkill ps : p.getPostskill()) {
             if (Type.OBLIGATOIRE.equals(ps.getType())) {
@@ -223,19 +186,93 @@ public class PostRepository extends AbstractRepository<Post> {
         // get all users
         List<Candidate> candidates = em.createNamedQuery("Candidate.findAll", Candidate.class)
                 .getResultList();
-        
-         List<Candidate> res = new ArrayList<>();
-         
+
+        List<Candidate> res = new ArrayList<>();
+
         for (Candidate c : candidates) {
             int tmp = 0;
-          for (Skill s : c.getSkills()) {
-                  if(skillsNeeded.contains(s))
-                      tmp++;               
+            for (Skill s : c.getSkills()) {
+                if (skillsNeeded.contains(s)) {
+                    tmp++;
+                }
             }
-          if(tmp == skillsNeeded.size())
-              res.add(c);
+            if (tmp == skillsNeeded.size()) {
+                res.add(c);
+            }
         }
-         return res;
+        return res;
     }
-        
+
+    @Schedule
+    public void checkMatching() {
+        // get all posts and candidates available
+        List<Post> posts = getAll();
+        List<Candidate> candidates = em
+                .createNamedQuery("Candidate.findAll", Candidate.class)
+                .getResultList();
+
+        // for each post from posts
+        for (Post post : posts) {
+            // for each candidate from candidates
+            for (Candidate candidate : candidates) {
+                // generate matching
+                generateMatching(post, candidate);
+            }
+        }
+    }
+
+    private void generateMatchingForPost(Post post) {
+        List<Candidate> candidates = em
+                .createNamedQuery("Candidate.findAll", Candidate.class)
+                .getResultList();
+
+        // for each candidate from candidates
+        for (Candidate candidate : candidates) {
+            // generate matching
+            generateMatching(post, candidate);
+        }
+    }
+
+    private void generateMatching(Post post, Candidate candidate) {
+        List<Object[]> skillsNeeded = new ArrayList<>();
+
+        // tot = skill * coef
+        double tot = 0;
+
+        for (PostSkill ps : post.getPostskill()) {
+            if (Type.OBLIGATOIRE.equals(ps.getType())) {
+                Object[] s = {ps.getSkill().getDescription(), 2};
+                skillsNeeded.add(s);
+                tot += 2;
+            } else if (Type.PLUS.equals(ps.getType())) {
+                Object[] s = {ps.getSkill().getDescription(), 1};
+                skillsNeeded.add(s);
+                tot += 1;
+            }
+        }
+
+        // matching calculation
+        double x = 0;
+        // for each skills of the candidate
+        for (Skill s : candidate.getSkills()) {
+            // for each skills of the post
+            for (Object[] skillNeeded : skillsNeeded) {
+                // if both skill description are equals
+                if (s.getDescription().equals(skillNeeded[0])) {
+                    // skill matching
+                    x += 1 * ((int) skillNeeded[1]);
+                }
+            }
+        }
+
+        // generate %
+        double percent = (x / tot) * 100;
+
+        // if percent > 0 -> add it
+        if (percent > 0) {
+            Matching matching = new Matching(candidate, post, percent);
+            em.persist(matching);
+        }
+    }
+
 }
