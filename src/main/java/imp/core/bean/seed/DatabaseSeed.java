@@ -69,6 +69,18 @@ public class DatabaseSeed {
         }
 
         // ---------- ---------- ---------- ---------- Candidates
+        User usertest = new User();
+        usertest.setEmail("john.doe@gmail.com");
+        usertest.setFirstname("John");
+        usertest.setLastname("Doe");
+        usertest.setPassword("candidate");
+        usertest.setRole(User.Role.CANDIDATE);
+        
+        Candidate candidatetest = new Candidate();
+        candidatetest.setUser(usertest);
+        
+        em.persist(candidatetest);
+        
         for (int i = 0; i < 10; i++) {
             User user = new User();
             String email = "";
@@ -137,7 +149,7 @@ public class DatabaseSeed {
                             post.addPostskill( postSkill );
                         }
                     }
-                    if (post.getPostskill().size() == 0) {
+                    if (post.getPostskill().isEmpty()) {
                             PostSkill postSkill = new PostSkill(skills.get(0), PostSkill.Type.OBLIGATOIRE);
                             post.addPostskill( postSkill );
                     }
