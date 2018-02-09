@@ -113,6 +113,17 @@ public class DatabaseSeed {
         }
 
         // ---------- ---------- ---------- ---------- Recruiters
+        User usertest2 = new User();
+        usertest2.setEmail("mr.recruiter@gmail.com");
+        usertest2.setFirstname("Mr");
+        usertest2.setLastname("Recruiter");
+        usertest2.setPassword("recruiter");
+        usertest2.setRole(User.Role.RECRUITER);
+        
+        Recruiter recruitertest = new Recruiter(usertest2, "Recruiter&Co");
+        
+        em.persist(recruitertest);
+        
         for (int i = 0; i < 10; i++) {
             User user = new User();
             user.setEmail(faker.internet().emailAddress());
