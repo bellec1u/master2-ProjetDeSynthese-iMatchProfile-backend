@@ -38,7 +38,7 @@ public class ExempleREST {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
         List<Exemple> list = exempleRepo.getAll();
-        // because ok() method expects an Entity as parameter
+        // because json mashalling is not defined for Collection classes
         GenericEntity<List<Exemple>> gen = new GenericEntity<List<Exemple>>(list) {};
         return Response.ok(gen).build();
     }
