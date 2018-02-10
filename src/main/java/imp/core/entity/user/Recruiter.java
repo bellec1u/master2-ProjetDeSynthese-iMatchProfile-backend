@@ -36,6 +36,9 @@ import javax.persistence.Table;
     ,
     @NamedQuery(name = "Recruiter.findCreatorOfPost",
             query = "SELECT r FROM Recruiter r WHERE :post MEMBER OF r.posts")
+    ,
+    @NamedQuery(name = "Recruiter.findByUserId",
+            query = "SELECT r FROM Recruiter r WHERE :id = r.user.id")
 })
 @Table(name = "Recruiters")
 public class Recruiter implements Serializable {
@@ -59,7 +62,6 @@ public class Recruiter implements Serializable {
 
     //TODO
     // photo
-    
     public Recruiter() {
         this.posts = new ArrayList<>();
     }
@@ -122,7 +124,7 @@ public class Recruiter implements Serializable {
             }
         }
     }
-    
+
     public void removePostById(Object id) {
         int index = -1;
         for (int i = 0; i < this.posts.size(); i++) {
