@@ -13,6 +13,7 @@ import imp.core.entity.post.PostSkill;
 import imp.core.entity.post.PostSkill.Type;
 import imp.core.entity.user.Candidate;
 import imp.core.entity.user.Recruiter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -270,7 +271,7 @@ public class PostRepository extends AbstractRepository<Post> {
         }
 
         // generate %
-        double percent = (x / tot) * 100;
+        double percent = (Math.round((x / tot) * 100 * 100)) / 100.0;
 
         // if percent > 0 -> add it
         if (percent > 0) {
