@@ -115,6 +115,16 @@ public class PostRepository extends AbstractRepository<Post> {
     public void removeById(Object id) {
         // get the post
         Post p = super.getById(id);
+        
+        // remove matchings
+        List<Matching> matchings = em
+                .createNamedQuery("Matching.findByPost", Matching.class)
+                .setParameter("id", id)
+                .getResultList();
+        
+        for (Matching m : matchings) { 
+            em.remove(getEntityManager().merge(m));
+        }
 
         // get the recruiter of the post
         TypedQuery<Recruiter> query = getEntityManager().createNamedQuery("Recruiter.findCreatorOfPost", Recruiter.class);
@@ -122,7 +132,7 @@ public class PostRepository extends AbstractRepository<Post> {
 
         //remove the post from posts of recruiter
         r.removePostById(id);
-
+        
         // remove the post
         super.removeById(id);
     }

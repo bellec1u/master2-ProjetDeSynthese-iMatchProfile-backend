@@ -35,17 +35,18 @@ public class DatabaseSeed {
 
     @PersistenceContext(unitName = "imp-pu")
     private EntityManager em;
-    
+
     @EJB
     private PostRepository postRepository;
 
     private List<Skill> skills;
+    private List<PostSkill> postskills;
     private List<String> emails;
 
     @PostConstruct
     public void seed() {
         Faker faker = new Faker();
-        emails = new ArrayList<>();
+        this.emails = new ArrayList<>();
         // ---------- ---------- ---------- ---------- Skills
         this.skills = new ArrayList<>();
         this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Java"));
@@ -68,6 +69,19 @@ public class DatabaseSeed {
             em.persist(s);
         }
 
+        this.postskills = new ArrayList<>();
+        for (Skill s : skills) {
+            if (faker.number().numberBetween(0, 100) < 50) {
+                this.postskills.add(
+                        new PostSkill(s, PostSkill.Type.PLUS)
+                );
+            } else {
+                this.postskills.add(
+                        new PostSkill(s, PostSkill.Type.OBLIGATOIRE)
+                );
+            }
+        }
+
         // ---------- ---------- ---------- ---------- Candidates
         User usertest = new User();
         usertest.setEmail("john.doe@gmail.com");
@@ -75,12 +89,12 @@ public class DatabaseSeed {
         usertest.setLastname("Doe");
         usertest.setPassword("candidate");
         usertest.setRole(User.Role.CANDIDATE);
-        
+
         Candidate candidatetest = new Candidate();
         candidatetest.setUser(usertest);
-        
+
         em.persist(candidatetest);
-        
+
         for (int i = 0; i < 10; i++) {
             User user = new User();
             String email = "";
@@ -119,11 +133,11 @@ public class DatabaseSeed {
         usertest2.setLastname("Recruiter");
         usertest2.setPassword("recruiter");
         usertest2.setRole(User.Role.RECRUITER);
-        
+
         Recruiter recruitertest = new Recruiter(usertest2, "Recruiter&Co");
-        
+
         em.persist(recruitertest);
-        
+
         for (int i = 0; i < 10; i++) {
             User user = new User();
             user.setEmail(faker.internet().emailAddress());
@@ -150,26 +164,19 @@ public class DatabaseSeed {
                 post.setDescription(faker.lorem().sentence(faker.number().numberBetween(10, 30)));
                 post.setImportantNotes(faker.lorem().sentence(faker.number().numberBetween(3, 10)));
 
-                for (int k = 0; k < skills.size(); k++) {
+                for (int k = 0; k < postskills.size(); k++) {
                     if (faker.number().numberBetween(0, 100) < 10) {
-                        if (faker.number().numberBetween(0, 100) < 50) {
-                            PostSkill postSkill = new PostSkill(skills.get(k), PostSkill.Type.PLUS);
-                            post.addPostskill( postSkill );
-                        } else {
-                            PostSkill postSkill = new PostSkill(skills.get(k), PostSkill.Type.OBLIGATOIRE);
-                            post.addPostskill( postSkill );
-                        }
+                        post.addPostskill(postskills.get(k));
                     }
                     if (post.getPostskill().isEmpty()) {
-                            PostSkill postSkill = new PostSkill(skills.get(0), PostSkill.Type.OBLIGATOIRE);
-                            post.addPostskill( postSkill );
+                        post.addPostskill(postskills.get(0));
                     }
                 }
-                
-                recruiter.addPost( post );
+
+                recruiter.addPost(post);
             }
-            
-            em.persist( recruiter );
+
+            em.persist(recruiter);
         }
 
         postRepository.checkMatching();

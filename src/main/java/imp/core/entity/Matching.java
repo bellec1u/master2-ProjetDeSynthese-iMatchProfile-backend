@@ -9,7 +9,6 @@ import imp.core.entity.post.Post;
 import imp.core.entity.user.Candidate;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
