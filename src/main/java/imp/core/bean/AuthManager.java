@@ -51,26 +51,32 @@ public class AuthManager {
 
         }
         Long id = -1L;
+        Long idUser = -1L;
         switch (u.getRole()) {
             case RECRUITER:
-                id = em
+                Recruiter recruiter = em
                         .createNamedQuery("Recruiter.findByUserId", Recruiter.class)
                         .setParameter("id", u.getId())
-                        .getSingleResult()
-                        .getId();
+                        .getSingleResult();
+                
+                id = recruiter.getId();
+                idUser = recruiter.getUser().getId();
                 break;
             case CANDIDATE:
-                id = em
+                Candidate candidate = em
                         .createNamedQuery("Candidate.findByUserId", Candidate.class)
                         .setParameter("id", u.getId())
-                        .getSingleResult()
-                        .getId();
+                        .getSingleResult();
+                
+                id = candidate.getId();
+                idUser = candidate.getUser().getId();
                 break;
         }
 
         String jwtToken = Jwts.builder()
                 .setSubject(u.getEmail())
                 .claim("id", id + "")
+                .claim("idUser", idUser + "")
                 .claim("role", u.getRole())
                 .setExpiration(toDate(LocalDateTime.now().plusHours(2L)))
                 .signWith(SignatureAlgorithm.HS512, key)

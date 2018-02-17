@@ -16,8 +16,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -25,6 +26,14 @@ import javax.persistence.Table;
  * @author yasar
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "Conversation.findByUserId",
+            query = "SELECT c FROM Conversation c WHERE c.user1.id = :id OR c.user2.id = :id"),
+    @NamedQuery(name = "Conversation.findByUsers",
+            query = "SELECT c FROM Conversation c "
+                    + "WHERE (c.user1.id = :id1 OR c.user2.id = :id1)"
+                    + "AND (c.user1.id = :id2 OR c.user2.id = :id2)")
+})
 @Table(name = "Conversations")
 public class Conversation implements Serializable {
 
@@ -37,14 +46,14 @@ public class Conversation implements Serializable {
      * User who start the conversation
      */
     @ManyToOne
-    private User User1;
+    private User user1;
 
     /**
      * Second user of the conversation
      */
     @ManyToOne
     @JoinColumn(name = "user2")
-    private User User2;
+    private User user2;
 
     /**
      * list of messages corresponding to the conversation
@@ -56,8 +65,8 @@ public class Conversation implements Serializable {
     }
 
     public Conversation(User User1, User User2) {
-        this.User1 = User1;
-        this.User2 = User2;
+        this.user1 = User1;
+        this.user2 = User2;
         this.messages = new ArrayList<>();
     }
 
@@ -70,19 +79,19 @@ public class Conversation implements Serializable {
     }
 
     public User getUser1() {
-        return User1;
+        return user1;
     }
 
     public void setUser1(User User1) {
-        this.User1 = User1;
+        this.user1 = User1;
     }
 
     public User getUser2() {
-        return User2;
+        return user2;
     }
 
     public void setUser2(User User2) {
-        this.User2 = User2;
+        this.user2 = User2;
     }
 
     public List<Message> getMsg() {
@@ -121,8 +130,8 @@ public class Conversation implements Serializable {
     public String toString() {
         return "entity.Conversation[ "
                 + "id=" + id + ", "
-                + "User1=" + User1 + ", "
-                + "User2=" + User2 + ", "
+                + "User1=" + user1 + ", "
+                + "User2=" + user2 + ", "
                 + "messages=" + messages
                 + " ]";
     }
