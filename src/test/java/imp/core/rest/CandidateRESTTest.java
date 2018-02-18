@@ -114,7 +114,10 @@ public class CandidateRESTTest {
     public void tearDown() {
         // remove all test entities
         em.getTransaction().begin();
+       
+        //em.merge(candidateTest);
         em.remove(em.merge(candidateTest));
+        em.remove(em.merge(candidateTest.getUser()));
         em.remove(em.merge(skillTest));
 
         em.remove(em.merge(newSkillTest));
@@ -123,6 +126,7 @@ public class CandidateRESTTest {
         // so delete it only if possible (id is set), after the test method call
         if (candidateCreate.getId() != null) {
             em.remove(em.merge(candidateCreate));
+            em.remove(em.merge(candidateCreate.getUser()));
         }
 
         em.getTransaction().commit();
@@ -218,7 +222,30 @@ public class CandidateRESTTest {
         candidateCreate.setId(new Long(candidateCreateId));
         candidateCreate.getUser().setId(new Long(userCreateId));
     }
+    
+    @Test
+    public void createInvalidUser() {
+        JSONObject json = new JSONObject();
+        json.put("id", candidateCreate.getId());
+        json.put("description", candidateCreate.getDescription());
+        json.put("birthDate", candidateCreate.getBirthDate().toString());
 
+        JSONObject newUser = new JSONObject();
+        newUser.put("id", candidateCreate.getUser().getId());
+        newUser.put("lastname", candidateCreate.getUser().getLastname());
+        newUser.put("firstname", candidateCreate.getUser().getFirstname());
+        newUser.put("email", candidateCreate.getUser().getEmail());
+        newUser.put("password", candidateCreate.getUser().getPassword());
+        // Role omitted on purpose
+
+        json.put("user", newUser);
+
+        given().contentType(MediaType.APPLICATION_JSON)
+                .body(json)
+                .when().post(API_URL)
+                .then().statusCode(400);
+    }
+    
     @Test
     public void createAlreadyUsedEmail() {
         JSONObject json = new JSONObject();
@@ -247,7 +274,7 @@ public class CandidateRESTTest {
         String newDescription = "new description";
         LocalDate newBirthDate = LocalDate.of(1993, 10, 18);
         String newLastname = "NewLastname";
-        String newFirstname = "NewFirtname";
+        String newFirstname = "NewFirstname";
         String newEmail = "newmail@mail.fr";
         String newPassword = "newpassword";
         int newReportNumber = 1;
@@ -273,13 +300,15 @@ public class CandidateRESTTest {
         JSONArray skills = new JSONArray();
         JSONObject s1 = new JSONObject();
         s1.put("description", skillTest.getDescription());
+        s1.put("type", skillTest.getType());
         s1.put("id", skillTest.getId());
         JSONObject s2 = new JSONObject();
         s2.put("description", newSkillTest.getDescription());
+        s2.put("type", newSkillTest.getType());
         s2.put("id", newSkillTest.getId());
         skills.add(s1);
         skills.add(s2);
-
+        
         json.put("skills", skills);
 
         given().contentType(MediaType.APPLICATION_JSON)
@@ -320,35 +349,43 @@ public class CandidateRESTTest {
     @Test
     public void updateInexisting() {
         String newDescription = "new description";
+        LocalDate newBirthDate = LocalDate.of(1993, 10, 18);
+        String newLastname = "NewLastname";
+        String newFirstname = "NewFirtname";
         String newEmail = "newmail@mail.fr";
+        String newPassword = "newpassword";
+        int newReportNumber = 1;
+        User.State newState = User.State.SUSPENDED;
 
         JSONObject json = new JSONObject();
         json.put("id", candidateTest.getId());
         json.put("description", newDescription);
-        json.put("birthDate", candidateTest.getBirthDate());
+        json.put("birthDate", newBirthDate.toString());
 
         JSONObject newUser = new JSONObject();
         newUser.put("id", candidateTest.getUser().getId());
-        newUser.put("lastname", candidateTest.getUser().getLastname());
-        newUser.put("firstname", candidateTest.getUser().getFirstname());
+        newUser.put("lastname", newLastname);
+        newUser.put("firstname", newFirstname);
         newUser.put("email", newEmail);
-        newUser.put("password", candidateTest.getUser().getPassword());
-        newUser.put("reportNumber", candidateTest.getUser().getReportNumber());
+        newUser.put("password", newPassword);
+        newUser.put("reportNumber", newReportNumber);
         newUser.put("role", candidateTest.getUser().getRole());
-        newUser.put("state", candidateTest.getUser().getState());
+        newUser.put("state", newState);
 
         json.put("user", newUser);
 
         JSONArray skills = new JSONArray();
         JSONObject s1 = new JSONObject();
         s1.put("description", skillTest.getDescription());
+        s1.put("type", skillTest.getType());
         s1.put("id", skillTest.getId());
         JSONObject s2 = new JSONObject();
         s2.put("description", newSkillTest.getDescription());
+        s2.put("type", newSkillTest.getType());
         s2.put("id", newSkillTest.getId());
         skills.add(s1);
         skills.add(s2);
-
+        
         json.put("skills", skills);
 
         given().contentType(MediaType.APPLICATION_JSON)

@@ -18,7 +18,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -56,13 +56,11 @@ public class User implements Serializable {
     private String password;
 
     @Column(name = "lastname")
-    @NotNull(message = "{user.lastname.notNull}")
-    @NotEmpty(message = "{user.lastname.notEmpty}")
+    @NotBlank(message = "{user.lastname.notBlank}")
     private String lastname;
 
     @Column(name = "firstname")
-    @NotNull(message = "{user.firstname.notNull}")
-    @NotEmpty(message = "{user.firstname.notEmpty}")
+    @NotBlank(message = "{user.firstname.notBlank}")
     private String firstname;
 
     /**

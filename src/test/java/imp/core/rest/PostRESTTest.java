@@ -57,17 +57,17 @@ public class PostRESTTest {
 
     @Before
     public void setUp() {
-        // ---------- ---------- ---------- ---------- init the entity manager
+        //  init the entity manager
         em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        // ---------- ---------- ---------- ---------- create a new skill for the tests
+        //  create a new skill for the tests
         skillTest = new Skill();
         skillTest.setDescription("test");
 
         em.persist(skillTest);
 
-        // ---------- ---------- ---------- ---------- create a new recruiter for the tests
+        // create a new recruiter for the tests
         User u = new User();
         u.setEmail("test.test@test.test");
         u.setFirstname("test");
@@ -76,9 +76,9 @@ public class PostRESTTest {
         u.setRole(User.Role.RECRUITER);
         recruiterTest = new Recruiter(u, "Test&Co");
 
-        postTest = new Post("1", "1", "1", "1", 1, 2, "1", "1", "1", "1");
-        postTest.setDescription("1 1 1");
-        postTest.setImportantNotes("1 1");
+        postTest = new Post("test reference", "test title", "test experience", "test salary index", 1000, 2000, "test contract type", "test workplace", "test organization", "test work unit");
+        postTest.setDescription("test description test test test");
+        postTest.setImportantNotes("test important notes");
 
         postskillTest = new PostSkill(skillTest, PostSkill.Type.OBLIGATOIRE);
 
@@ -88,27 +88,25 @@ public class PostRESTTest {
 
         em.persist(recruiterTest);
 
-//        TypedQuery<Recruiter> query = em.createQuery("select r from Recruiter r", Recruiter.class);
-//        System.out.println(query.getResultList());
-        // ---------- ---------- ---------- ---------- commit the new entities for the tests
+        // commit the new entities for the tests
         em.getTransaction().commit();
     }
 
     @After
     public void tearDown() {
-        // ---------- ---------- ---------- ---------- remove all test entities
+        // remove all test entities
         em.getTransaction().begin();
         em.remove(em.merge(recruiterTest));
         em.remove(em.merge(postskillTest));
         em.remove(em.merge(skillTest));
         em.getTransaction().commit();
 
-        // ---------- ---------- ---------- ---------- if one transaction has not finished
+        // if one transaction has not finished
         if (em.getTransaction().isActive()) {
             em.getTransaction().rollback();
         }
 
-        // ---------- ---------- ---------- ---------- close the entity manager
+        // close the entity manager
         if (em.isOpen()) {
             em.close();
         }
@@ -128,6 +126,7 @@ public class PostRESTTest {
         JSONObject s1 = new JSONObject();
         JSONObject java = new JSONObject();
         java.put("description", "Java");
+        java.put("type", Skill.Typeskill.TECHNQUES);
         java.put("id", 2);
         s1.put("skill", java);
         s1.put("type", "OBLIGATOIRE");
@@ -135,6 +134,7 @@ public class PostRESTTest {
         JSONObject s2 = new JSONObject();
         JSONObject angular = new JSONObject();
         angular.put("description", "Angular");
+        angular.put("type", Skill.Typeskill.TECHNQUES);
         angular.put("id", 1);
         s2.put("skill", angular);
         s2.put("type", "OBLIGATOIRE");
@@ -273,13 +273,6 @@ public class PostRESTTest {
     public void deletePostWithElementDoesNotExist() {
         given().contentType(MediaType.APPLICATION_JSON)
                 .when().delete("http://localhost:8080/imp/api/posts/" + "100000")
-                .then().statusCode(404);
-    }
-    
-    @Test
-    public void methodeNotAllowed() {
-        given().contentType(MediaType.APPLICATION_JSON)
-                .when().get("http://localhost:8080/imp/api/posts/test/error")
                 .then().statusCode(404);
     }
 

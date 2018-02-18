@@ -14,6 +14,7 @@ import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -103,7 +104,7 @@ public class RecruiterREST {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Recruiter recruiter) {        
+    public Response create(@Valid Recruiter recruiter) {        
         // checking if email is already used
         if (!userRepository.findByEmail(recruiter.getUser().getEmail()).isEmpty()) {
             throw new ServiceException(Response.Status.CONFLICT, "Email already used: " + recruiter.getUser().getEmail());
@@ -117,7 +118,7 @@ public class RecruiterREST {
     @Path(value = "{id}/posts")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response addPost(@PathParam(value = "id") Long id, Post json) {
+    public Response addPost(@PathParam(value = "id") Long id, @Valid Post json) {
         System.out.println("imp.core.rest.RecruiterREST.addPost()");
         // checking if the recruiter exists
         Recruiter recruiter = recruiterRepository.getById(id);

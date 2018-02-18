@@ -44,14 +44,18 @@ public class PostRepository extends AbstractRepository<Post> {
         // for each postskills
         for (PostSkill ps : post.getPostskill()) {
             // search it in the db
-            try {
-                TypedQuery<PostSkill> query = getEntityManager()
-                        .createNamedQuery("PostSkill.findBySkillAndType", PostSkill.class);
-                // if find it -> add it to the post
-                lps.add(query.setParameter("id_skill", ps.getSkill().getId())
-                        .setParameter("type", ps.getType())
-                        .getSingleResult());
-            } catch (NoResultException e) {
+            TypedQuery<PostSkill> query = getEntityManager()
+                    .createNamedQuery("PostSkill.findBySkillAndType", PostSkill.class);
+
+            List<PostSkill> findPostSkills = query.setParameter("id_skill", ps.getSkill().getId())
+                    .setParameter("type", ps.getType())
+                    .getResultList();
+            
+            // if find it -> add it to the post
+            if (!findPostSkills.isEmpty()) {
+                lps.add(findPostSkills.get(0));
+            }
+            else {
                 // otherwise -> create a new postskill and add it to the post
                 PostSkill nps = new PostSkill(ps.getSkill(), ps.getType());
                 lps.add(nps);

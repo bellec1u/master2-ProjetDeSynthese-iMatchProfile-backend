@@ -25,7 +25,6 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-
 /**
  *
  * @author alexis
@@ -48,7 +47,7 @@ public class Candidate implements Serializable {
      * Link to basics profile informations
      */
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @NotNull
+    @NotNull(message = "{candidate.user.notNull}")
     @Valid
     private User user;
 
@@ -70,9 +69,11 @@ public class Candidate implements Serializable {
      * Skills of the user
      */
     @ManyToMany
+    @Valid
     private List<Skill> skills = new ArrayList<>();
     
     @OneToMany(cascade = CascadeType.ALL)
+    @Valid
     private List<Education> educations = new ArrayList<>();
 
     public Candidate() {

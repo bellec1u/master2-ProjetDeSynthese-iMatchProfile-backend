@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -27,9 +28,11 @@ public class Education implements Serializable {
     private Long id;
     
     @Column(name = "name")
+    @NotBlank(message = "education.name.notBlank")
     private String name;
     
     @Column(name = "obtaining_date")
+    @NotBlank(message = "education.obtainingDate.notBlank")
     private String obtainingDate;
     
     @Column(name = "description")

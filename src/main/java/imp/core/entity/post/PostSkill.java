@@ -15,8 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -40,9 +41,12 @@ public class PostSkill implements Serializable {
     private Long id;
 
     @ManyToOne
+    @NotNull(message = "postSkill.skill.notNull")
+    @Valid
     private Skill skill;
 
     @Column(name = "type")
+    @NotNull(message = "postSkill.type.notNull")
     private Type type;
 
     public PostSkill() {

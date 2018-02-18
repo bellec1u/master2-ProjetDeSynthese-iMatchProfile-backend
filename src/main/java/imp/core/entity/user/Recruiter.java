@@ -21,6 +21,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -49,12 +52,16 @@ public class Recruiter implements Serializable {
      * Link to basics profile informations
      */
     @OneToOne(cascade = CascadeType.ALL)
+    @NotNull(message = "{recruiter.user.notNull}")
+    @Valid
     private User user;
 
     @Column(name = "company")
+    @NotBlank(message = "{recruiter.company.notBlank}")
     private String company;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Valid
     private List<Post> posts;
 
     //TODO

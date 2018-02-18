@@ -8,7 +8,6 @@ package imp.core.entity.post;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,6 +19,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -48,51 +52,64 @@ public class Post implements Serializable {
      * Reference of the specific post
      */
     @Column(name = "reference")
+    @NotBlank(message = "post.reference.notBlank")
     private String reference;
     
     /**
      * Title of the post
      */
     @Column(name = "title")
+    @NotBlank(message = "{post.title.notBlank}")
+    @Size(min = 5, message = "{post.title.min}")
     private String title;
     
     @Column(name = "experience")
+    @NotBlank(message = "post.experience.notBlank")
     private String experience;
     
     /**
      * Salary of the post
      */
     @Column(name = "salary_index")
+    @NotBlank(message = "post.salaryIndex.notBlank")
     private String salaryIndex;
     
     /**
      * Minimal salary
      */
     @Column(name = "minimal_salary")
+    @NotNull(message = "post.minSalary.notNull")
+    @Min(value=1, message = "post.minSalary.min")
     private int minSalary;
     
     /**
      * Maximal salary
      */
     @Column(name = "maximal_salary")
+    @NotNull(message = "post.maxSalary.notNull")
+    @Min(value=1, message = "post.maxSalary.min")
     private int maxSalary;
     
     /**
      * Type of the contract
      */
     @Column(name = "contract_type")
+    @NotBlank(message = "post.contractType.notBlank")
     private String contractType;
     
     /**
      * Description of the post
      */
     @Column(name = "description")
+    @NotBlank(message = "{post.description.notBlank}")
+    @Size(min = 10, message = "{post.description.size}")
     private String description;
     
     /**
      * Importants points of the post
      */
     @Column(name = "important_notes")
+    @NotBlank(message = "{post.importantNotes.notBlank}")
     private String importantNotes;
     
     
@@ -102,24 +119,28 @@ public class Post implements Serializable {
      * Localisation of the job
      */
     @Column(name = "workplace")
+    @NotBlank(message = "{post.workplace.notBlank}")
     private String workplace;
     
     /**
      * Company of the post
      */
-    @Column(name = "organisation")
+    @Column(name = "organization")
+    @NotBlank(message = "{post.organization.notBlank}")
     private String organization;
     
     /**
      * Service of the post (info/...)
      */
     @Column(name = "work_unit")
+    @NotBlank(message = "{post.workUnit.notBlank}")
     private String workUnit;
     
     /**
      * Skills recommanded for the post
      */
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Valid
     private List<PostSkill> postskill;
      
     public Post() {

@@ -36,7 +36,6 @@ public class RecruiterRESTTest {
     
     private Recruiter recruiterTest;
     private Recruiter recruiterCreate;
-    private Post postTest;
     
     @BeforeClass
     public static void setUpClass() {
@@ -51,11 +50,11 @@ public class RecruiterRESTTest {
     
     @Before
     public void setUp() {
-        // ---------- ---------- ---------- ---------- init the entity manager
+        // init the entity manager
         em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        // ---------- ---------- ---------- ---------- create a new recruiter for the tests
+        // create a new recruiter for the tests
         User u = new User();
         u.setEmail("test.test@test.test");
         u.setFirstname("test");
@@ -64,12 +63,12 @@ public class RecruiterRESTTest {
         u.setRole(User.Role.RECRUITER);
         recruiterTest = new Recruiter(u, "Test&Co");
 
-        postTest = new Post("1", "1", "1", "1", 1, 2, "1", "1", "1", "1");
-        postTest.setDescription("1 1 1");
-        postTest.setImportantNotes("1 1");
+        Post postTest = new Post("test reference", "test title", "test experience", "test salary index", 1000, 2000, "test contract type", "test workplace", "test organization", "test work unit");
+        postTest.setDescription("test description test test test");
+        postTest.setImportantNotes("test important notes");
 
         recruiterTest.addPost(postTest);
-
+        
         em.persist(recruiterTest);
 
         // Recruiter for create testing
@@ -84,17 +83,15 @@ public class RecruiterRESTTest {
         recruiterCreate.setUser(user2);
         recruiterCreate.setCompany("Createcompany");
         // ^ DON'T PERSIST IT ON THIS METHOD ^
-        
-//        TypedQuery<Recruiter> query = em.createQuery("select r from Recruiter r", Recruiter.class);
-//        System.out.println(query.getResultList());
-        // ---------- ---------- ---------- ---------- commit the new entities for the tests
+
+        // commit the new entities for the tests
         em.getTransaction().commit();
     }
 
     @After
     public void tearDown() {
         
-        // ---------- ---------- ---------- ---------- remove all test entities
+        // remove all test entities
         em.getTransaction().begin();
         em.remove(em.merge(recruiterTest));
         
@@ -103,16 +100,15 @@ public class RecruiterRESTTest {
         if (recruiterCreate.getId() != null) {
             em.remove(em.merge(recruiterCreate));
         }
-
         
         em.getTransaction().commit();
 
-        // ---------- ---------- ---------- ---------- if one transaction has not finished
+        // if one transaction has not finished
         if (em.getTransaction().isActive()) {
             em.getTransaction().rollback();
         }
 
-        // ---------- ---------- ---------- ---------- close the entity manager
+        // close the entity manager
         if (em.isOpen()) {
             em.close();
         }
@@ -186,6 +182,50 @@ public class RecruiterRESTTest {
         // set id of recruiter for removing it later
         recruiterCreate.setId(new Long(recruiterCreateId));
         recruiterCreate.getUser().setId(new Long(userCreateId));
+    }
+    
+    @Test
+    public void createInvalidUser() {
+        JSONObject json = new JSONObject();
+        json.put("id", recruiterCreate.getId());
+        json.put("company", recruiterCreate.getCompany());
+
+        JSONObject newUser = new JSONObject();
+        newUser.put("id", recruiterCreate.getUser().getId());
+        newUser.put("lastname", recruiterCreate.getUser().getLastname());
+        newUser.put("firstname", recruiterCreate.getUser().getFirstname());
+        newUser.put("email", recruiterCreate.getUser().getEmail());
+        newUser.put("password", recruiterCreate.getUser().getPassword());
+        // Role omitted on purpose
+
+        json.put("user", newUser);
+
+        given().contentType(MediaType.APPLICATION_JSON)
+                .body(json)
+                .when().post(API_URL)
+                .then().statusCode(400);
+    }
+    
+    @Test
+    public void createInvalidCompany() {
+        JSONObject json = new JSONObject();
+        json.put("id", recruiterCreate.getId());
+        // Company omitted on purpose
+        
+        JSONObject newUser = new JSONObject();
+        newUser.put("id", recruiterCreate.getUser().getId());
+        newUser.put("lastname", recruiterCreate.getUser().getLastname());
+        newUser.put("firstname", recruiterCreate.getUser().getFirstname());
+        newUser.put("email", recruiterCreate.getUser().getEmail());
+        newUser.put("password", recruiterCreate.getUser().getPassword());
+        newUser.put("role", recruiterCreate.getUser().getRole());
+        
+        json.put("user", newUser);
+
+        given().contentType(MediaType.APPLICATION_JSON)
+                .body(json)
+                .when().post(API_URL)
+                .then().statusCode(400);
     }
     
     @Test

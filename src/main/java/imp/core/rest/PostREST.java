@@ -11,6 +11,7 @@ import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ws.rs.core.GenericEntity;
 import javax.ejb.*;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -59,7 +60,7 @@ public class PostREST {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") Long id, Post json) {
+    public Response update(@PathParam("id") Long id, @Valid Post json) {
         System.out.println("imp.core.rest.PostREST.updatePost()");
         Post result = postRepository.getById(id);
         if (result == null) {

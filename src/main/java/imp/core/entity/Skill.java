@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -39,9 +41,11 @@ public class Skill implements Serializable {
     private Long id;
 
     @Column(name = "type")
+    @NotNull(message = "{skill.typeSkill.notNull}")
     private Typeskill type;
 
     @Column(name = "description")
+    @NotBlank(message = "{skill.description.notBlank}")
     private String description;
 
     public Skill() {
