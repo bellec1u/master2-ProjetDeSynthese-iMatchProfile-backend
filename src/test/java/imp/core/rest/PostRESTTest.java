@@ -183,17 +183,17 @@ public class PostRESTTest {
         newJson.put("title", "new test title");
 
         // get id value 
-        double id = (double) newJson.get("id");
+        Long id = Long.parseLong(newJson.get("id").toString());
 
         // need to reformat in int value
         newJson.put("maxSalary", 3);
         newJson.put("minSalary", 2);
-        newJson.put("id", (int) id);
+        newJson.put("id", id);
 
         given().contentType(MediaType.APPLICATION_JSON).body(newJson)
-                .when().put("http://localhost:8080/imp/api/posts/" + (int) id)
+                .when().put("http://localhost:8080/imp/api/posts/" + id)
                 .then().statusCode(200)
-                .body("id", equalTo((int) id))
+                .body("id", equalTo(Math.toIntExact(id)))
                 .body("contractType", equalTo("test contractType"))
                 .body("description", equalTo("test description"))
                 .body("experience", equalTo("test experience"))
@@ -216,10 +216,10 @@ public class PostRESTTest {
                 .body().as(JSONObject.class);
 
         // get id value 
-        double id = (double) newJson.get("id");
+        Long id = Long.parseLong(newJson.get("id").toString());
 
         given().contentType(MediaType.APPLICATION_JSON)
-                .when().delete("http://localhost:8080/imp/api/posts/" + (int) id)
+                .when().delete("http://localhost:8080/imp/api/posts/" + id)
                 .then().statusCode(204);
     }
 
