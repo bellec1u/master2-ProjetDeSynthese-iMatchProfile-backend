@@ -28,7 +28,9 @@ import org.hibernate.validator.constraints.NotBlank;
 @Table(name = "Users")
 @NamedQueries({
     @NamedQuery(name = "User.findByEmail",
-            query = "SELECT u FROM User u WHERE u.email = :email")
+            query = "SELECT u FROM User u WHERE u.email = :email"),
+    @NamedQuery(name = "User.findById",
+            query = "SELECT u FROM User u WHERE u.id = :id")
 })
 public class User implements Serializable {
 

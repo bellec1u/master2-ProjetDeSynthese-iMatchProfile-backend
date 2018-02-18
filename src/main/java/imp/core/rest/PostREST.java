@@ -7,6 +7,7 @@ package imp.core.rest;
 
 import imp.core.bean.PostRepository;
 import imp.core.entity.post.Post;
+import imp.core.entity.user.Candidate;
 import imp.core.rest.exception.ServiceException;
 import java.util.List;
 import javax.ws.rs.core.GenericEntity;
@@ -14,6 +15,8 @@ import javax.ejb.*;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -25,7 +28,7 @@ public class PostREST {
 
     @EJB
     private PostRepository postRepository;
-
+  
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
@@ -52,9 +55,18 @@ public class PostREST {
         if (result == null) {
             throw new ServiceException(Response.Status.NOT_FOUND, "Post not found for id: " + id);
         }
-            return Response.ok(result).build();        
+        return Response.ok(result).build();        
     }
     
+    @GET
+    @Path("{id}/bySkills")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBySkills(@PathParam("id") Long id) throws ParseException {
+        System.out.println("imp.core.rest.PostREST.getBySkills()");
+        JSONArray json = postRepository.getBySkills(id);
+        
+        return Response.ok(json.toJSONString()).build();
+    }
     
     @PUT
     @Path("{id}")
@@ -80,6 +92,19 @@ public class PostREST {
         }
         postRepository.removeById(id);
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+   
+    @GET
+    @Path("{id}/candidatebyMandatorySkills")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCandidatebyMandatorySkills(@PathParam("id") Long postId) {
+        System.out.println("imp.core.rest.PostREST.getCandidatebyMandatorySkills()");
+ 
+        List<Candidate> list = postRepository.getCandidatebyMandatorySkills(postId);
+        GenericEntity<List<Candidate>> candidates = new GenericEntity<List<Candidate>>(list) {};
+
+
+        return Response.ok(candidates).build();  
     }
 
 }

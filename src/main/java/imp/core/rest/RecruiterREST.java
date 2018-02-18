@@ -124,8 +124,7 @@ public class RecruiterREST {
         Recruiter recruiter = recruiterRepository.getById(id);
         if (recruiter == null) {
             throw new ServiceException(Response.Status.NOT_FOUND, "Recruiter not found for id: " + id);
-        }
-
+        }        
         Post result = postRepository.addPost(id, json);
         return Response.status(Response.Status.CREATED).entity(result).build();
     }

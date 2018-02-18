@@ -42,14 +42,18 @@ public class Message implements Serializable {
      */
     @Column(name = "message")
     private String msg;
+    
+    @Column(name = "is_new")
+    private boolean isNew;
 
     public Message() {
     }
 
-    public Message(Long id, User autor, String msg) {
+    public Message(Long id, User author, String msg) {
         this.id = id;
-        this.author = autor;
+        this.author = author;
         this.msg = msg;
+        this.isNew = true;
     }
 
     public Long getId() {
@@ -60,11 +64,11 @@ public class Message implements Serializable {
         this.id = id;
     }
 
-    public User getAutor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAutor(User author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 
@@ -74,6 +78,14 @@ public class Message implements Serializable {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public boolean isIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(boolean isNew) {
+        this.isNew = isNew;
     }
 
     @Override
@@ -98,7 +110,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Message{" + "id=" + id + ", author=" + author + ", msg=" + msg + '}';
+        return "Message{" + "id=" + id + ", author=" + author + ", msg=" + msg + ", isNew=" + isNew + '}';
     }
 
 }

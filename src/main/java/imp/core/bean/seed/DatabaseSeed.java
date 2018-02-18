@@ -6,6 +6,7 @@
 package imp.core.bean.seed;
 
 import com.github.javafaker.Faker;
+import imp.core.bean.PostRepository;
 import imp.core.entity.user.Education;
 import imp.core.entity.post.Post;
 import imp.core.entity.post.PostSkill;
@@ -14,10 +15,10 @@ import imp.core.entity.Skill;
 import imp.core.entity.user.Recruiter;
 import imp.core.entity.user.User;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
@@ -35,13 +36,17 @@ public class DatabaseSeed {
     @PersistenceContext(unitName = "imp-pu")
     private EntityManager em;
 
+    @EJB
+    private PostRepository postRepository;
+
     private List<Skill> skills;
+    private List<PostSkill> postskills;
     private List<String> emails;
 
     @PostConstruct
     public void seed() {
         Faker faker = new Faker();
-        emails = new ArrayList<>();
+        this.emails = new ArrayList<>();
         // ---------- ---------- ---------- ---------- Skills
         this.skills = new ArrayList<>();
         this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Java"));
@@ -64,7 +69,32 @@ public class DatabaseSeed {
             em.persist(s);
         }
 
+        this.postskills = new ArrayList<>();
+        for (Skill s : skills) {
+            if (faker.number().numberBetween(0, 100) < 50) {
+                this.postskills.add(
+                        new PostSkill(s, PostSkill.Type.PLUS)
+                );
+            } else {
+                this.postskills.add(
+                        new PostSkill(s, PostSkill.Type.OBLIGATOIRE)
+                );
+            }
+        }
+
         // ---------- ---------- ---------- ---------- Candidates
+        User usertest = new User();
+        usertest.setEmail("john.doe@gmail.com");
+        usertest.setFirstname("John");
+        usertest.setLastname("Doe");
+        usertest.setPassword("candidate");
+        usertest.setRole(User.Role.CANDIDATE);
+
+        Candidate candidatetest = new Candidate();
+        candidatetest.setUser(usertest);
+
+        em.persist(candidatetest);
+
         for (int i = 0; i < 10; i++) {
             User user = new User();
             String email = "";
@@ -83,7 +113,7 @@ public class DatabaseSeed {
             candidate.setBirthDate(LocalDate.of(faker.number().numberBetween(1940, 2000), faker.number().numberBetween(1, 12), faker.number().numberBetween(1, 25)));
             candidate.setDescription(faker.lorem().sentence(faker.number().numberBetween(5, 30)));
             for (int j = 0; j < skills.size(); j++) {
-                if (faker.number().numberBetween(0, 100) < 10) {
+                if (faker.number().numberBetween(0, 100) < 50) {
                     candidate.addSkill(skills.get(j));
                 }
             }
@@ -97,6 +127,17 @@ public class DatabaseSeed {
         }
 
         // ---------- ---------- ---------- ---------- Recruiters
+        User usertest2 = new User();
+        usertest2.setEmail("mr.recruiter@gmail.com");
+        usertest2.setFirstname("Mr");
+        usertest2.setLastname("Recruiter");
+        usertest2.setPassword("recruiter");
+        usertest2.setRole(User.Role.RECRUITER);
+
+        Recruiter recruitertest = new Recruiter(usertest2, "Recruiter&Co");
+
+        em.persist(recruitertest);
+
         for (int i = 0; i < 10; i++) {
             User user = new User();
             user.setEmail(faker.internet().emailAddress());
@@ -123,26 +164,21 @@ public class DatabaseSeed {
                 post.setDescription(faker.lorem().sentence(faker.number().numberBetween(10, 30)));
                 post.setImportantNotes(faker.lorem().sentence(faker.number().numberBetween(3, 10)));
 
-                for (int k = 0; k < skills.size(); k++) {
+                for (int k = 0; k < postskills.size(); k++) {
                     if (faker.number().numberBetween(0, 100) < 10) {
-                        if (faker.number().numberBetween(0, 100) < 50) {
-                            PostSkill postSkill = new PostSkill(skills.get(k), PostSkill.Type.PLUS);
-                            post.addPostskill( postSkill );
-                        } else {
-                            PostSkill postSkill = new PostSkill(skills.get(k), PostSkill.Type.OBLIGATOIRE);
-                            post.addPostskill( postSkill );
-                        }
+                        post.addPostskill(postskills.get(k));
                     }
-                    if (post.getPostskill().size() == 0) {
-                            PostSkill postSkill = new PostSkill(skills.get(0), PostSkill.Type.OBLIGATOIRE);
-                            post.addPostskill( postSkill );
+                    if (post.getPostskill().isEmpty()) {
+                        post.addPostskill(postskills.get(0));
                     }
                 }
-                
-                recruiter.addPost( post );
+
+                recruiter.addPost(post);
             }
-            
-            em.persist( recruiter );
+
+            em.persist(recruiter);
         }
+
+        postRepository.checkMatching();
     }
 }

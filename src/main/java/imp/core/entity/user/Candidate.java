@@ -33,6 +33,9 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
     @NamedQuery(name = "Candidate.findAll",
             query = "SELECT c FROM Candidate c")
+    ,
+    @NamedQuery(name = "Candidate.findByUserId",
+            query = "SELECT c FROM Candidate c WHERE :id = c.user.id")
 })
 @Table(name = "Candidates")
 public class Candidate implements Serializable {
