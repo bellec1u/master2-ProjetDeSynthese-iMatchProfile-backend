@@ -5,7 +5,7 @@
  */
 package imp.core.rest.filter;
 
-import imp.core.bean.AuthManager;
+import imp.core.bean.authentication.AuthManager;
 import io.jsonwebtoken.SignatureException;
 import java.io.IOException;
 import javax.annotation.Priority;

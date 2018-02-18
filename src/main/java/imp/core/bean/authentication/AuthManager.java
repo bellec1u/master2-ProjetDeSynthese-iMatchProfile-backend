@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.bean;
+package imp.core.bean.authentication;
 
+import imp.core.bean.UserRepository;
 import imp.core.entity.user.AccessData;
 import imp.core.entity.user.Candidate;
 import imp.core.entity.user.Recruiter;
@@ -18,8 +19,6 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -30,12 +29,11 @@ public class AuthManager {
 
     @EJB
     private UserRepository userRepository;
-
-    @PersistenceContext(unitName = "imp-pu")
-    private EntityManager em;
-
-    private final static String key = "secretKey";
-
+    
+    @EJB
+    private KeyManager keyManager;
+    
+    
     public AccessData login(String email, String password) {
         List<User> list = userRepository.findByEmail(email);
         if (list.isEmpty()) {
@@ -46,47 +44,33 @@ public class AuthManager {
         if (!u.getPassword().equals(password)) {
             return null;
         }
-
-        if (u.getRole().equals(User.Role.RECRUITER)) {
-
-        }
+        
         Long id = -1L;
-        Long idUser = -1L;
         switch (u.getRole()) {
             case RECRUITER:
-                Recruiter recruiter = em
-                        .createNamedQuery("Recruiter.findByUserId", Recruiter.class)
-                        .setParameter("id", u.getId())
-                        .getSingleResult();
-                
+                Recruiter recruiter = userRepository.getConcreteUser(Recruiter.class, u.getId());
                 id = recruiter.getId();
-                idUser = recruiter.getUser().getId();
                 break;
             case CANDIDATE:
-                Candidate candidate = em
-                        .createNamedQuery("Candidate.findByUserId", Candidate.class)
-                        .setParameter("id", u.getId())
-                        .getSingleResult();
-                
+                Candidate candidate = userRepository.getConcreteUser(Candidate.class, u.getId());
                 id = candidate.getId();
-                idUser = candidate.getUser().getId();
                 break;
         }
 
         String jwtToken = Jwts.builder()
                 .setSubject(u.getEmail())
                 .claim("id", id + "")
-                .claim("idUser", idUser + "")
+                .claim("idUser", u.getId() + "")
                 .claim("role", u.getRole())
                 .setExpiration(toDate(LocalDateTime.now().plusHours(2L)))
-                .signWith(SignatureAlgorithm.HS512, key)
+                .signWith(SignatureAlgorithm.HS512, keyManager.getJwtKey())
                 .compact();
 
         return new AccessData(jwtToken);
     }
 
     public void validateToken(String token) throws SignatureException {
-        Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+        Jwts.parser().setSigningKey(keyManager.getJwtKey()).parseClaimsJws(token);
     }
 
     private Date toDate(LocalDateTime localDateTime) {

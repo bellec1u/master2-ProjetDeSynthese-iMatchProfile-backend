@@ -5,7 +5,7 @@
  */
 package imp.core.rest;
 
-import imp.core.bean.AuthManager;
+import imp.core.bean.authentication.AuthManager;
 import imp.core.entity.user.AccessData;
 import imp.core.entity.user.Credentials;
 import imp.core.rest.exception.ServiceException;
@@ -36,7 +36,7 @@ public class AuthenticateREST {
     public Response login() {
         AccessData ad = authManager.login("john.doe@gmail.com", "candidate");
         if (ad == null) {
-            throw new ServiceException(Response.Status.UNAUTHORIZED, "Pas trouvé");
+            throw new ServiceException(Response.Status.UNAUTHORIZED, "User not found");
         }
         
         return Response.ok(ad).build();
@@ -50,7 +50,7 @@ public class AuthenticateREST {
         System.out.println(creds.getEmail() + " " + creds.getPassword());
         AccessData ad = authManager.login(creds.getEmail(), creds.getPassword());
         if (ad == null) {
-            throw new ServiceException(Response.Status.UNAUTHORIZED, "Pas trouvé");
+            throw new ServiceException(Response.Status.UNAUTHORIZED, "User not found");
         }
         
         return Response.ok(ad).build();

@@ -1,5 +1,7 @@
+# Project
 .DS_Store
 /target
+**/jwt-config.json
 
 # NetBeans specific #
 **/nbproject/private/

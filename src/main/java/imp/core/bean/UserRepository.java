@@ -5,6 +5,7 @@
  */
 package imp.core.bean;
 
+import imp.core.entity.user.Candidate;
 import imp.core.entity.user.User;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -35,6 +36,16 @@ public class UserRepository extends AbstractRepository<User> {
         TypedQuery<User> query = getEntityManager().createNamedQuery("User.findByEmail", User.class);
         query.setParameter("email", email);
         return query.getResultList();
+    }
+    
+    public <T> T getConcreteUser(Class<T> userClass, Long userId) {
+        String query = userClass == Candidate.class ? 
+            "Candidate.findByUserId" :
+            "Recruiter.findByUserId";
+        
+        return em.createNamedQuery(query, userClass)
+                .setParameter("id", userId)
+                .getSingleResult();
     }
     
 }
