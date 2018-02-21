@@ -42,7 +42,6 @@ public class PostSkill implements Serializable {
 
     @ManyToOne
     @NotNull(message = "postSkill.skill.notNull")
-    @Valid
     private Skill skill;
 
     @Column(name = "type")
