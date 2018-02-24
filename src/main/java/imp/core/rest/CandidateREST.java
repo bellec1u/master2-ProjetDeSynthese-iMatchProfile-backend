@@ -5,8 +5,10 @@
  */
 package imp.core.rest;
 
+import imp.core.bean.AssociatedCandidateRepository;
 import imp.core.bean.CandidateRepository;
 import imp.core.bean.UserRepository;
+import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.user.Candidate;
 import imp.core.rest.exception.ServiceException;
 import java.util.List;
@@ -39,6 +41,9 @@ public class CandidateREST {
 
     @EJB
     private UserRepository userRepository;
+    
+    @EJB
+    private AssociatedCandidateRepository associatedCandidateRepository;
     
     /**
      * Returns all the candidates.
@@ -74,6 +79,17 @@ public class CandidateREST {
         }
         return Response.ok(result).build();
     }
+    
+    @GET
+    @Path("{id}/offers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOfferById(@PathParam("id") Long id) {
+        List<AssociatedCandidate> list = associatedCandidateRepository.getOffer(id);
+        GenericEntity<List<AssociatedCandidate>> associatedCandidates = new GenericEntity<List<AssociatedCandidate>>(list) {};
+
+        return Response.ok(associatedCandidates).build();
+    }
+
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -103,6 +119,20 @@ public class CandidateREST {
         return Response.ok(result).build();
     }
     
+    @PUT
+    @Path("{id}/offers")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response acceptOffer(@PathParam("id") Long id) {
+        AssociatedCandidate result = associatedCandidateRepository.getById(id);
+        if (result == null) {   // return a 404
+            throw new ServiceException(Response.Status.NOT_FOUND, "Offer not found for id: " + id);
+        }
+        result.setState(AssociatedCandidate.AssociatedState.ACCEPTER);
+        associatedCandidateRepository.edit(result);
+        return Response.ok(result).build();
+    }
+    
     @DELETE
     @Path("{id}")
     public Response delete(@PathParam("id") Long id) {
@@ -113,6 +143,18 @@ public class CandidateREST {
         }
         
         candidateRepository.removeById(id);
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+    
+    @DELETE
+    @Path("{id}/offers")
+    public Response refuseOffers(@PathParam("id") Long id) {
+        AssociatedCandidate result = associatedCandidateRepository.getById(id);
+        if (result == null) {   // return a 404
+            throw new ServiceException(Response.Status.NOT_FOUND, "Offers not found for id: " + id);
+        }
+        
+        associatedCandidateRepository.removeById(id);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 

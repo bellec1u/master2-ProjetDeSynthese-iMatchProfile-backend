@@ -26,7 +26,9 @@ import javax.persistence.Table;
     @NamedQuery(name = "AssociatedCandidate.findByPost",
             query = "SELECT a FROM AssociatedCandidate a WHERE a.post.id = :postid"),
     @NamedQuery(name = "AssociatedCandidate.isAssociated",
-            query = "SELECT a FROM AssociatedCandidate a WHERE a.post.id = :postid AND a.candidat.id = :candidateId")
+            query = "SELECT a FROM AssociatedCandidate a WHERE a.post.id = :postid AND a.candidat.id = :candidateId"),
+    @NamedQuery(name = "AssociatedCandidate.findOffer",
+            query = "SELECT a FROM AssociatedCandidate a WHERE a.candidat.id = :id")       
 })@Table(name = "AssociatedCandidates")
 public class AssociatedCandidate implements Serializable {
 

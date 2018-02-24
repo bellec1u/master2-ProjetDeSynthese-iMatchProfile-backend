@@ -50,4 +50,13 @@ public class AssociatedCandidateRepository extends AbstractRepository<Associated
               return true;
     }
 
+    public List<AssociatedCandidate> getOffer(Long id) {
+                List<AssociatedCandidate> associatedCandidate = em
+                .createNamedQuery("AssociatedCandidate.findOffer", AssociatedCandidate.class)
+                .setParameter("id", id)
+                .getResultList();
+
+        return associatedCandidate; 
+    }
+
 }
