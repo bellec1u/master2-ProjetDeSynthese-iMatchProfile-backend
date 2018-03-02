@@ -135,12 +135,11 @@ public class PostREST {
     @Path("{id}/associatedOneCandidate")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response addAssociatedCandidate(@PathParam("id") Long postId,String c) {
+    public Response addAssociatedCandidate(@PathParam("id") Long postId, @Valid Long c) {
         System.out.println("imp.core.rest.PostREST.addAssociatedCandidate()");
-        Long candidateId = parseLong(c);
+        Long candidateId = c;//parseLong(c);
          if (associatedCandidateRepository.exist(postId,candidateId)) {
-             System.out.println("ouiiiiiiii");
-            throw new ServiceException(Response.Status.NOT_FOUND, "Ce candidat est déjà associé à ce poste");
+            throw new ServiceException(Response.Status.FOUND, "You have already applied to this post !");
         }
         AssociatedCandidate a = new AssociatedCandidate(postRepository.getById(postId),candidateRepository.getById(candidateId));
         AssociatedCandidate result = associatedCandidateRepository.create(a);

@@ -34,4 +34,13 @@ public class CandidateRepository extends AbstractRepository<Candidate> {
         return executeNamedQuery("Candidate.findAll");
     }
     
+    public Candidate getByUserId(Long userId){
+        Candidate candidate = em
+                .createNamedQuery("Candidate.findByUserId", Candidate.class)
+                .setParameter("id", userId)
+                .getSingleResult();
+
+        return candidate;
+    }
+    
 }
