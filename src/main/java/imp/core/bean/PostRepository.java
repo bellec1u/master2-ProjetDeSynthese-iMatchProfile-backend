@@ -12,11 +12,14 @@ import imp.core.entity.post.Post;
 import imp.core.entity.post.PostSkill;
 import imp.core.entity.post.PostSkill.Type;
 import imp.core.entity.user.Candidate;
+import imp.core.entity.user.Notification;
 import imp.core.entity.user.Recruiter;
+import imp.core.entity.user.User;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -27,6 +30,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import javax.mail.*;
+import javax.mail.internet.*;
 
 /**
  *
@@ -87,6 +92,9 @@ public class PostRepository extends AbstractRepository<Post> {
         
         // generate all matchings for newPost
         generateMatchingForPost(newPost);
+        
+        // send email and notification to candidates that match with this post
+        sendNotificationsCandidate(post);
         
         return newPost;
     }
@@ -293,6 +301,50 @@ public class PostRepository extends AbstractRepository<Post> {
         if (percent > 0) {
             Matching matching = new Matching(candidate, post, percent);
             em.persist(matching);
+        }
+    }
+    
+    private void sendEmail(String userEmail, Post post){
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "localhost");
+        props.put("mail.smtp.port", "25");
+        
+        String from = "no-reply@imp.com";
+
+        try {
+            Session session = Session.getDefaultInstance(props, null);
+            session.setDebug(false);
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO,
+                InternetAddress.parse(userEmail));
+            message.setSubject("Vous avez un Match ! - "+post.getTitle() + " - ");
+            message.setText("Lien vers l'offre : "
+                + "\n\n http://localhost:4200/post/"+post.getId());
+
+            Transport.send(message);
+
+            System.out.println("Done");
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public void sendNotification(User user, Post post){
+        String message = "Vous avez un Match ! - "+post.getTitle() + " - " ;
+        String link = "/post/" + post.getId();
+        Notification notif = new Notification(message,link,user,true);
+        em.persist(notif);
+    }
+    
+    private void sendNotificationsCandidate(Post post){
+        List<Candidate> candidateMandatorySkills = new ArrayList<Candidate>();
+        candidateMandatorySkills = getCandidatebyMandatorySkills(post.getId());
+        for (Candidate candidateMandatorySkill : candidateMandatorySkills) {
+            // sendEmail is commented for dev environnement
+            //sendEmail(candidateMandatorySkill.getUser().getEmail(),post);
+            sendNotification(candidateMandatorySkill.getUser(),post);
         }
     }
 }
