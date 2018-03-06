@@ -347,4 +347,12 @@ public class PostRepository extends AbstractRepository<Post> {
             sendNotification(candidateMandatorySkill.getUser(),post);
         }
     }
+
+    public Recruiter isMyPost(Long postId) {
+        Post p = em.find(Post.class, postId);
+        List<Recruiter> r =  em.createNamedQuery("Recruiter.findCreatorOfPost", Recruiter.class)
+                .setParameter("post", p)
+                .getResultList();
+        return r.get(0);
+    }
 }

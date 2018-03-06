@@ -11,6 +11,7 @@ import imp.core.bean.PostRepository;
 import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Candidate;
+import imp.core.entity.user.Recruiter;
 import imp.core.rest.exception.ServiceException;
 import static java.lang.Long.parseLong;
 import java.util.List;
@@ -129,6 +130,18 @@ public class PostREST {
 
 
         return Response.ok(associatedCandidates).build();  
+    }
+    
+    @GET
+    @Path("{idPost}/isMyPost")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response isMyPost(@PathParam("idPost") Long postId) {
+        System.out.println("imp.core.rest.PostREST.isMyPost()");
+ 
+        Recruiter r = postRepository.isMyPost(postId);
+       
+        return Response.ok(r).build();  
     }
         
     @POST
