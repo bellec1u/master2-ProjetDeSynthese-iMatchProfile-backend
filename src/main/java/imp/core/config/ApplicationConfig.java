@@ -40,13 +40,6 @@ public class ApplicationConfig extends Application {
         resources.add(imp.core.rest.exception.mapper.DebugExceptionMapper.class);
         resources.add(imp.core.rest.exception.mapper.RestValidationExceptionMapper.class);
         resources.add(imp.core.rest.filter.JWTTokenNeededFilter.class);
-        resources.add(service.CandidateFacadeREST.class);
-        resources.add(service.EducationFacadeREST.class);
-        resources.add(service.MatchingFacadeREST.class);
-        resources.add(service.PostFacadeREST.class);
-        resources.add(service.PostSkillFacadeREST.class);
-        resources.add(service.SkillFacadeREST.class);
-        resources.add(service.UserFacadeREST.class);
     }
     
 }
