@@ -5,10 +5,15 @@
  */
 package imp.core.rest;
 
+import imp.core.bean.AssociatedCandidateRepository;
+import imp.core.bean.CandidateRepository;
 import imp.core.bean.PostRepository;
+import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Candidate;
+import imp.core.entity.user.Recruiter;
 import imp.core.rest.exception.ServiceException;
+import static java.lang.Long.parseLong;
 import java.util.List;
 import javax.ws.rs.core.GenericEntity;
 import javax.ejb.*;
@@ -28,7 +33,13 @@ public class PostREST {
 
     @EJB
     private PostRepository postRepository;
-  
+    
+    @EJB
+    private AssociatedCandidateRepository associatedCandidateRepository;
+    
+    @EJB
+    private CandidateRepository candidateRepository;
+ 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
@@ -106,5 +117,49 @@ public class PostREST {
 
         return Response.ok(candidates).build();  
     }
+
+    @GET
+    // post id
+    @Path("{id}/associatedCandidate")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAssociatedCandidate(@PathParam("id") Long postId) {
+        System.out.println("imp.core.rest.PostREST.getAssociatedCandidate()");
+ 
+        List<AssociatedCandidate> list = associatedCandidateRepository.getAssociatedCandidates(postId);
+        GenericEntity<List<AssociatedCandidate>> associatedCandidates = new GenericEntity<List<AssociatedCandidate>>(list) {};
+
+
+        return Response.ok(associatedCandidates).build();  
+    }
+    
+    @GET
+    @Path("{idPost}/isMyPost")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response isMyPost(@PathParam("idPost") Long postId) {
+        System.out.println("imp.core.rest.PostREST.isMyPost()");
+ 
+        Recruiter r = postRepository.isMyPost(postId);
+       
+        return Response.ok(r).build();  
+    }
+        
+    @POST
+    @Path("{id}/associatedOneCandidate")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response addAssociatedCandidate(@PathParam("id") Long postId,String c) {
+        System.out.println("imp.core.rest.PostREST.addAssociatedCandidate()");
+        Long candidateId = parseLong(c);
+         if (associatedCandidateRepository.exist(postId,candidateId)) {
+             System.out.println("ouiiiiiiii");
+            throw new ServiceException(Response.Status.NOT_FOUND, "Ce candidat est déjà associé à ce poste");
+        }
+        AssociatedCandidate a = new AssociatedCandidate(postRepository.getById(postId),candidateRepository.getById(candidateId));
+        AssociatedCandidate result = associatedCandidateRepository.create(a);
+        return Response.status(Response.Status.CREATED).entity(result).build();
+    }
+    
+ 
 
 }

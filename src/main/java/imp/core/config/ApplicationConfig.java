@@ -34,6 +34,7 @@ public class ApplicationConfig extends Application {
         resources.add(imp.core.rest.CandidateREST.class);
         resources.add(imp.core.rest.ConversationREST.class);
         resources.add(imp.core.rest.ExempleREST.class);
+        resources.add(imp.core.rest.NotificationREST.class);
         resources.add(imp.core.rest.PostREST.class);
         resources.add(imp.core.rest.RecruiterREST.class);
         resources.add(imp.core.rest.SkillREST.class);

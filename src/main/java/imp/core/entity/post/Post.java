@@ -33,7 +33,9 @@ import org.hibernate.validator.constraints.NotBlank;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Post.findAll",
-            query = "SELECT p FROM Post p")
+            query = "SELECT p FROM Post p"),
+    @NamedQuery(name = "Post.findById",
+            query = "SELECT p FROM Post p where p.id = :id")
 })
 @Table(name = "Posts")
 @PostMaxSalaryGTEMin
