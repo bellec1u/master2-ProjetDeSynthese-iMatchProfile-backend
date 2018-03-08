@@ -38,7 +38,7 @@ public class DatabaseSeed {
 
     @EJB
     private PostRepository postRepository;
-
+    
     private List<Skill> skills;
     private List<PostSkill> postskills;
     private List<String> emails;
@@ -68,7 +68,9 @@ public class DatabaseSeed {
         for (Skill s : skills) {
             em.persist(s);
         }
-
+        // force skills persistence to DB in order to get their id
+        em.flush();
+        
         this.postskills = new ArrayList<>();
         for (Skill s : skills) {
             if (faker.number().numberBetween(0, 100) < 50) {
@@ -175,7 +177,6 @@ public class DatabaseSeed {
 
                 recruiter.addPost(post);
             }
-
             em.persist(recruiter);
         }
 

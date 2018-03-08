@@ -6,6 +6,7 @@
 package imp.core.entity.post;
 
 import imp.core.entity.Skill;
+import imp.core.rest.validator.SkillExists;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -42,6 +42,7 @@ public class PostSkill implements Serializable {
 
     @ManyToOne
     @NotNull(message = "postSkill.skill.notNull")
+    @SkillExists(message = "{postSkill.skill.skillExists}")
     private Skill skill;
 
     @Column(name = "type")

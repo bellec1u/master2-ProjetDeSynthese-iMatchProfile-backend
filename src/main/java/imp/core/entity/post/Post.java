@@ -5,6 +5,7 @@
  */
 package imp.core.entity.post;
 
+import imp.core.rest.validator.PostMaxSalaryGTEMin;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import org.hibernate.validator.constraints.NotBlank;
             query = "SELECT p FROM Post p")
 })
 @Table(name = "Posts")
+@PostMaxSalaryGTEMin
 public class Post implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -52,7 +54,7 @@ public class Post implements Serializable {
      * Reference of the specific post
      */
     @Column(name = "reference")
-    @NotBlank(message = "post.reference.notBlank")
+    @NotBlank(message = "{post.reference.notBlank}")
     private String reference;
     
     /**
@@ -64,37 +66,37 @@ public class Post implements Serializable {
     private String title;
     
     @Column(name = "experience")
-    @NotBlank(message = "post.experience.notBlank")
+    @NotBlank(message = "{post.experience.notBlank}")
     private String experience;
     
     /**
      * Salary of the post
      */
     @Column(name = "salary_index")
-    @NotBlank(message = "post.salaryIndex.notBlank")
+    @NotBlank(message = "{post.salaryIndex.notBlank}")
     private String salaryIndex;
     
     /**
      * Minimal salary
      */
     @Column(name = "minimal_salary")
-    @NotNull(message = "post.minSalary.notNull")
-    @Min(value=1, message = "post.minSalary.min")
+    @NotNull(message = "{post.minSalary.notNull}")
+    @Min(value=1, message = "{post.minSalary.min}")
     private int minSalary;
     
     /**
      * Maximal salary
      */
     @Column(name = "maximal_salary")
-    @NotNull(message = "post.maxSalary.notNull")
-    @Min(value=1, message = "post.maxSalary.min")
+    @NotNull(message = "{post.maxSalary.notNull}")
+    @Min(value=1, message = "{post.maxSalary.min}")
     private int maxSalary;
     
     /**
      * Type of the contract
      */
     @Column(name = "contract_type")
-    @NotBlank(message = "post.contractType.notBlank")
+    @NotBlank(message = "{post.contractType.notBlank}")
     private String contractType;
     
     /**
@@ -141,7 +143,8 @@ public class Post implements Serializable {
      */
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Valid
-    private List<PostSkill> postskill;
+    @Size(min=1, message = "{post.postSkill.size}")
+    private List<PostSkill> postSkill;
      
     public Post() {
     }
@@ -157,7 +160,7 @@ public class Post implements Serializable {
         this.workplace = workplace;
         this.organization = organization;
         this.workUnit = workUnit;
-        this.postskill = new ArrayList<>();
+        this.postSkill = new ArrayList<>();
     }
 
     public Long getId() {
@@ -273,15 +276,15 @@ public class Post implements Serializable {
     }
 
     public List<PostSkill> getPostskill() {
-        return postskill;
+        return postSkill;
     }
 
     public void setPostskill(List<PostSkill> postskill) {
-        this.postskill = postskill;
+        this.postSkill = postskill;
     }
     
     public void addPostskill(PostSkill postskill) {
-        this.postskill.add(postskill);
+        this.postSkill.add(postskill);
     }
 
     @Override
@@ -306,7 +309,7 @@ public class Post implements Serializable {
 
     @Override
     public String toString() {
-        return "Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", experience=" + experience + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + ", postskill=" + postskill + '}';
+        return "Post{" + "id=" + id + ", publicationDate=" + publicationDate + ", reference=" + reference + ", title=" + title + ", experience=" + experience + ", salaryIndex=" + salaryIndex + ", minSalary=" + minSalary + ", maxSalary=" + maxSalary + ", contractType=" + contractType + ", description=" + description + ", importantNotes=" + importantNotes + ", workplace=" + workplace + ", organization=" + organization + ", workUnit=" + workUnit + ", postskill=" + postSkill + '}';
     }
 
 
