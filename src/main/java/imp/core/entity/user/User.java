@@ -17,6 +17,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import org.eclipse.persistence.oxm.annotations.XmlReadOnly;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -32,6 +35,7 @@ import org.hibernate.validator.constraints.NotBlank;
     @NamedQuery(name = "User.findById",
             query = "SELECT u FROM User u WHERE u.id = :id")
 })
+@XmlAccessorType(XmlAccessType.FIELD)
 public class User implements Serializable {
 
     public static enum Role {
@@ -53,6 +57,7 @@ public class User implements Serializable {
     private String email;
 
     @Column(name = "password")
+    @XmlReadOnly
     @NotNull(message = "{user.password.notNull}")
     @Size(min = 6, message = "{user.password.min}")
     private String password;

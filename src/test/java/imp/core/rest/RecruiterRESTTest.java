@@ -125,7 +125,6 @@ public class RecruiterRESTTest {
                 .body("user.lastname", equalTo(recruiterTest.getUser().getLastname()))
                 .body("user.firstname", equalTo(recruiterTest.getUser().getFirstname()))
                 .body("user.email", equalTo(recruiterTest.getUser().getEmail()))
-                .body("user.password", equalTo(recruiterTest.getUser().getPassword()))
                 .body("user.reportNumber", equalTo(Math.toIntExact(recruiterTest.getUser().getReportNumber())))
                 .body("user.role", equalTo(recruiterTest.getUser().getRole().toString()))
                 .body("user.state", equalTo(recruiterTest.getUser().getState().toString()));
@@ -174,7 +173,6 @@ public class RecruiterRESTTest {
                 .body("user.lastname", equalTo(recruiterCreate.getUser().getLastname()))
                 .body("user.firstname", equalTo(recruiterCreate.getUser().getFirstname()))
                 .body("user.email", equalTo(recruiterCreate.getUser().getEmail()))
-                .body("user.password", equalTo(recruiterCreate.getUser().getPassword()))
                 .body("user.reportNumber", equalTo(Math.toIntExact(recruiterCreate.getUser().getReportNumber())))
                 .body("user.role", equalTo(recruiterCreate.getUser().getRole().toString()))
                 .body("user.state", equalTo(recruiterCreate.getUser().getState().toString()));
