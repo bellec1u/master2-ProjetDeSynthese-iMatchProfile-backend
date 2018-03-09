@@ -5,6 +5,7 @@
  */
 package imp.core.entity.user;
 
+import imp.core.password.Passwords;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,12 +14,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import org.eclipse.persistence.oxm.annotations.XmlReadOnly;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
@@ -37,7 +40,7 @@ import org.hibernate.validator.constraints.NotBlank;
 })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class User implements Serializable {
-
+    
     public static enum Role {
         CANDIDATE, RECRUITER, MODERATOR
     };
@@ -62,6 +65,13 @@ public class User implements Serializable {
     @Size(min = 6, message = "{user.password.min}")
     private String password;
 
+    /**
+     * Random salt generated and then concatenated with the password prior to hashing
+     */
+    @Column(name = "password_salt")
+    @XmlTransient
+    private Byte[] passwordSalt = Passwords.getSalt64();
+    
     @Column(name = "lastname")
     @NotBlank(message = "{user.lastname.notBlank}")
     private String lastname;
@@ -112,6 +122,14 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public Byte[] getPasswordSalt() {
+        return passwordSalt;
+    }
+
+    public void setPasswordSalt(Byte[] passwordSalt) {
+        this.passwordSalt = passwordSalt;
     }
 
     public String getLastname() {
@@ -178,5 +196,13 @@ public class User implements Serializable {
     public String toString() {
         return "entity.User{" + "id=" + id + ", email=" + email + ", password=" + password + ", lastname=" + lastname + ", firstname=" + firstname + ", role=" + role + ", reportNumber=" + reportNumber + ", state=" + state + '}';
     }
-
+    
+    /**
+     * Before persisting : hash the password concatenated with the salt and encode it in Base64.
+     */
+    @PrePersist
+    public void hashPassword() {
+        this.password = Passwords.hash(password, this.passwordSalt);
+    }
+    
 }

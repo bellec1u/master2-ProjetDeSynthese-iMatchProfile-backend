@@ -21,8 +21,6 @@ public class PostMaxSalaryGTEMinValidator implements ConstraintValidator<PostMax
 
     @Override
     public boolean isValid(Post value, ConstraintValidatorContext context) {
-        System.out.println("OMG");
-        //return false;
         return value.getMaxSalary() >= value.getMinSalary();
     }
     
