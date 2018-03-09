@@ -10,6 +10,7 @@ import imp.core.entity.user.AccessData;
 import imp.core.entity.user.Candidate;
 import imp.core.entity.user.Recruiter;
 import imp.core.entity.user.User;
+import imp.core.password.Passwords;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
@@ -41,7 +42,8 @@ public class AuthManager {
         }
 
         User u = list.get(0);
-        if (!u.getPassword().equals(password)) {
+        // checking if (Base64 hashed) database password is equal to sent password
+        if (!u.getPassword().equals(Passwords.hash(password, u.getPasswordSalt()))) {
             return null;
         }
         
