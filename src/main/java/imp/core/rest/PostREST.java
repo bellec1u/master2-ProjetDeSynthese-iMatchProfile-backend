@@ -7,7 +7,9 @@ package imp.core.rest;
 
 import imp.core.bean.AssociatedCandidateRepository;
 import imp.core.bean.CandidateRepository;
+import imp.core.bean.MatchingRepository;
 import imp.core.bean.PostRepository;
+import imp.core.entity.Matching;
 import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Candidate;
@@ -35,6 +37,9 @@ public class PostREST {
     private PostRepository postRepository;
     
     @EJB
+    private MatchingRepository matchingRepository;
+    
+    @EJB
     private AssociatedCandidateRepository associatedCandidateRepository;
     
     @EJB
@@ -42,9 +47,15 @@ public class PostREST {
  
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
+    public Response getAll(@DefaultValue("-1") @QueryParam("limit") int limit) {
         System.out.println("imp.core.rest.PostREST.getAll()");
-        List<Post> list = postRepository.getAll();
+        List<Post> list;
+        if (limit >= 0) {
+            list = postRepository.getAll(limit);
+        }
+        else {
+            list = postRepository.getAll();
+        }
         // because ok() method expects an Entity as parameter
         GenericEntity<List<Post>> gen = new GenericEntity<List<Post>>(list) {
         };
@@ -70,11 +81,11 @@ public class PostREST {
     }
     
     @GET
-    @Path("{id}/bySkills")
+    @Path("{id}/matchings")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBySkills(@PathParam("id") Long id) throws ParseException {
+    public Response getMatchings(@PathParam("id") Long id) throws ParseException {
         System.out.println("imp.core.rest.PostREST.getBySkills()");
-        JSONArray json = postRepository.getBySkills(id);
+        JSONArray json = matchingRepository.getByPostId(id);
         
         return Response.ok(json.toJSONString()).build();
     }
@@ -106,10 +117,10 @@ public class PostREST {
     }
    
     @GET
-    @Path("{id}/candidatebyMandatorySkills")
+    @Path("{id}/candidateByMandatorySkills")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCandidatebyMandatorySkills(@PathParam("id") Long postId) {
-        System.out.println("imp.core.rest.PostREST.getCandidatebyMandatorySkills()");
+    public Response getCandidateByMandatorySkills(@PathParam("id") Long postId) {
+        System.out.println("imp.core.rest.PostREST.getCandidateByMandatorySkills()");
  
         List<Candidate> list = postRepository.getCandidatebyMandatorySkills(postId);
         GenericEntity<List<Candidate>> candidates = new GenericEntity<List<Candidate>>(list) {};

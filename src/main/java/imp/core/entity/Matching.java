@@ -35,9 +35,12 @@ public class Matching implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     private double percent;
+    
     @ManyToOne
     private Candidate candidate;
+    
     @ManyToOne
     private Post post;
 

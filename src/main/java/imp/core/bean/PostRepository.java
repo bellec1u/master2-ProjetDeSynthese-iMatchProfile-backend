@@ -5,7 +5,6 @@
  */
 package imp.core.bean;
 
-import com.google.gson.Gson;
 import imp.core.entity.Matching;
 import imp.core.entity.Skill;
 import imp.core.entity.post.Post;
@@ -16,8 +15,6 @@ import imp.core.entity.user.Notification;
 import imp.core.entity.user.Recruiter;
 import imp.core.entity.user.User;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import javax.ejb.Schedule;
@@ -26,10 +23,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import javax.mail.*;
 import javax.mail.internet.*;
 
@@ -50,7 +43,11 @@ public class PostRepository extends AbstractRepository<Post> {
     public List<Post> getAll() {
         return executeNamedQuery("Post.findAll");
     }
-
+    
+    public List<Post> getAll(int limit) {
+        return getEntityManager().createNamedQuery("Post.findAll", Post.class).setMaxResults(limit).getResultList();
+    }
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;
@@ -146,48 +143,6 @@ public class PostRepository extends AbstractRepository<Post> {
         
         // remove the post
         super.removeById(id);
-    }
-
-    /**
-     * return all users with matching %
-     *
-     * @param id
-     * @return
-     */
-    public JSONArray getBySkills(Long id) throws ParseException {
-        List<Matching> matchings = em
-                .createNamedQuery("Matching.findByPost", Matching.class)
-                .setParameter("id", id)
-                .getResultList();
-
-        // sort by percent
-        Collections.sort(matchings, new Comparator<Matching>() {
-            @Override
-            public int compare(Matching o1, Matching o2) {
-                if (o1.getPercent() > o2.getPercent()) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-
-        });
-
-        // product json
-        JSONArray json = new JSONArray();
-        for (Matching matching : matchings) {
-            // generate json
-            JSONObject obj = new JSONObject();
-
-            String candidateJSON = (new Gson()).toJson(matching.getCandidate());
-            JSONParser parser = new JSONParser();
-
-            obj.put("candidate", (JSONObject) parser.parse(candidateJSON));
-            obj.put("percent", matching.getPercent());
-
-            json.add(obj);
-        }
-        return json;
     }
 
     public List<Candidate> getCandidatebyMandatorySkills(Long postId) {

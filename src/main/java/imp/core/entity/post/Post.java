@@ -33,7 +33,7 @@ import org.hibernate.validator.constraints.NotBlank;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Post.findAll",
-            query = "SELECT p FROM Post p"),
+            query = "SELECT p FROM Post p ORDER BY p.publicationDate"),
     @NamedQuery(name = "Post.findById",
             query = "SELECT p FROM Post p where p.id = :id")
 })
