@@ -16,6 +16,7 @@ import imp.core.entity.user.Candidate;
 import imp.core.entity.user.Recruiter;
 import imp.core.rest.exception.ServiceException;
 import static java.lang.Long.parseLong;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.GenericEntity;
 import javax.ejb.*;
@@ -123,6 +124,9 @@ public class PostREST {
         System.out.println("imp.core.rest.PostREST.getCandidateByMandatorySkills()");
  
         List<Candidate> list = postRepository.getCandidatebyMandatorySkills(postId);
+        if (list == null) {
+            list = new ArrayList<>();
+        }
         GenericEntity<List<Candidate>> candidates = new GenericEntity<List<Candidate>>(list) {};
 
 
