@@ -57,6 +57,7 @@ public class CandidateREST {
         // because ok() method expects an Entity as parameter
         GenericEntity<List<Candidate>> candidates = new GenericEntity<List<Candidate>>(list) {
         };
+               
         return Response
                 .ok(candidates)
                 .build();
