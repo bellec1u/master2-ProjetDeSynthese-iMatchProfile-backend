@@ -18,7 +18,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -61,8 +60,6 @@ public class User implements Serializable {
 
     @Column(name = "password")
     @XmlReadOnly
-    @NotNull(message = "{user.password.notNull}")
-    @Size(min = 6, message = "{user.password.min}")
     private String password;
 
     /**

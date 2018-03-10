@@ -11,6 +11,7 @@ import imp.core.bean.UserRepository;
 import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.user.Candidate;
 import imp.core.rest.exception.ServiceException;
+import imp.core.rest.validator.CandidatePassword;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -95,7 +96,7 @@ public class CandidateREST {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@Valid Candidate candidate) {        
+    public Response create(@Valid @CandidatePassword(minSize = 6, message = "{user.password.notNull}") Candidate candidate) {        
         // checking if email is already used
         if (!userRepository.findByEmail(candidate.getUser().getEmail()).isEmpty()) {
             throw new ServiceException(Response.Status.CONFLICT, "Email already used: " + candidate.getUser().getEmail());
@@ -109,7 +110,8 @@ public class CandidateREST {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") Long id, @Valid Candidate candidate) {
+    public Response update(@PathParam("id") Long id,
+            @Valid @CandidatePassword(required = false, minSize = 6, message = "{user.password.min}") Candidate candidate) {
         Candidate result = candidateRepository.getById(id);
         // if the candidate to update does not exist
         if (result == null) {   // return a 404

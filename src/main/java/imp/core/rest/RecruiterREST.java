@@ -24,6 +24,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import imp.core.rest.validator.RecruiterPassword;
 
 /**
  *
@@ -104,7 +105,7 @@ public class RecruiterREST {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@Valid Recruiter recruiter) {        
+    public Response create(@Valid @RecruiterPassword(minSize = 6, message = "{user.password.notNull}") Recruiter recruiter) {        
         // checking if email is already used
         if (!userRepository.findByEmail(recruiter.getUser().getEmail()).isEmpty()) {
             throw new ServiceException(Response.Status.CONFLICT, "Email already used: " + recruiter.getUser().getEmail());
@@ -128,4 +129,5 @@ public class RecruiterREST {
         Post result = postRepository.addPost(id, json);
         return Response.status(Response.Status.CREATED).entity(result).build();
     }
+    
 }
