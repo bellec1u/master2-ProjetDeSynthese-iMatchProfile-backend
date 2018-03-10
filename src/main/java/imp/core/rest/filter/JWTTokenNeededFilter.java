@@ -6,6 +6,8 @@
 package imp.core.rest.filter;
 
 import imp.core.bean.authentication.AuthManager;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import java.io.IOException;
 import javax.annotation.Priority;
@@ -30,18 +32,29 @@ public class JWTTokenNeededFilter implements ContainerRequestFilter {
     private AuthManager authManager;
  
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
- 
+    public void filter(ContainerRequestContext requestContext) throws IOException {        
         // Get the HTTP Authorization header from the request
         String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+        if (authorizationHeader == null || authorizationHeader.isEmpty()) {
+            requestContext.abortWith(generateAbortResponse("No authorization header"));
+            return;
+        }
  
         // Extract the token from the HTTP Authorization header
+        if (authorizationHeader.length() <= "Bearer ".length()) {
+            requestContext.abortWith(generateAbortResponse("No token provided"));
+            return;
+        }
         String token = authorizationHeader.substring("Bearer".length()).trim();
  
-        try {
-            authManager.validateToken(token);
-        } catch (SignatureException e) {
-            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
-        }
+        
+        if (!authManager.isTokenValid(token)) {
+            requestContext.abortWith(generateAbortResponse("Invalid or expired token"));
+        } 
+    }
+    
+    private Response generateAbortResponse(String message) {
+        return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("{\"error\": \""+message+"\"}").build();
     }
 }
