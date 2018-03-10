@@ -294,12 +294,14 @@ public class PostRepository extends AbstractRepository<Post> {
     }
     
     private void sendNotificationsCandidate(Post post){
-        List<Candidate> candidateMandatorySkills = new ArrayList<Candidate>();
+        List<Candidate> candidateMandatorySkills = new ArrayList<>();
         candidateMandatorySkills = getCandidatebyMandatorySkills(post.getId());
+        if(candidateMandatorySkills != null){
         for (Candidate candidateMandatorySkill : candidateMandatorySkills) {
             // sendEmail is commented for dev environnement
             //sendEmail(candidateMandatorySkill.getUser().getEmail(),post);
             sendNotification(candidateMandatorySkill.getUser(),post);
+        }
         }
     }
 
