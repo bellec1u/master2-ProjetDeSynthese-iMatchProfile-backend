@@ -185,6 +185,7 @@ public class PostRepository extends AbstractRepository<Post> {
         List<Candidate> res = new ArrayList<>();
 
         for (Candidate c : candidates) {
+            if(c.getUser().getState() == User.State.OK){
             int tmp = 0;
             for (Skill s : c.getSkills()) {
                 if (skillsNeeded.contains(s)) {
@@ -194,6 +195,7 @@ public class PostRepository extends AbstractRepository<Post> {
             if (tmp == skillsNeeded.size()) {
                 res.add(c);
             }
+        }
         }
         return res;
     }
@@ -213,8 +215,11 @@ public class PostRepository extends AbstractRepository<Post> {
         for (Post post : posts) {
             // for each candidate from candidates
             for (Candidate candidate : candidates) {
+               if(candidate.getUser().getState() == User.State.OK){
+
                 // generate matching
                 generateMatching(post, candidate);
+               }
             }
         }
     }
@@ -226,8 +231,10 @@ public class PostRepository extends AbstractRepository<Post> {
 
         // for each candidate from candidates
         for (Candidate candidate : candidates) {
+         if(candidate.getUser().getState() == User.State.OK){
             // generate matching
             generateMatching(post, candidate);
+         }
         }
     }
 
