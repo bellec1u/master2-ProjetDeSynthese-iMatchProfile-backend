@@ -11,11 +11,9 @@ import imp.core.entity.user.Candidate;
 import imp.core.entity.user.Recruiter;
 import imp.core.entity.user.User;
 import imp.core.password.Passwords;
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -74,31 +72,26 @@ public class AuthManager {
     }
 
     /**
-     * Checks if the token is valid and not expired
+     * Checks if the token is valid and not expired and returns the body of the
+     * token.
      * 
      * The method should catch all the runtime exceptions thrown by parseClaimsJws()
      * so they are not catched by the EJB Container
      * @param token
-     * @return bolean
+     * @return Claims
      */
-    public boolean isTokenValid(String token) {
+    public Claims validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(keyManager.getJwtKey()).parseClaimsJws(token);
-            return true;
+            return Jwts.parser().setSigningKey(keyManager.getJwtKey())
+                    .parseClaimsJws(token).getBody();
         } catch (RuntimeException e) {
-            System.err.println("TOKEN ERROR");
-            return false;
+            System.err.println("TOKEN Exception");
+            return null;
         }/* catch (MalformedJwtException | SignatureException | ExpiredJwtException e) {
             System.err.println("TOKEN ERROR");
             return false;
         }*/
     }
-    
-    public boolean hasTokenSameId(String authHeader, Long id) {
-        String token = authHeader.substring("Bearer".length()).trim();
-        return Jwts.parser().setSigningKey(keyManager.getJwtKey())
-                .parseClaimsJws(token).getBody().get("id").equals(id+"");
-    } 
 
     private Date toDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
