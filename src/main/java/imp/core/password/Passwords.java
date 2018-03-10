@@ -11,7 +11,6 @@ import java.util.Base64;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateless;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
@@ -20,7 +19,6 @@ import org.bouncycastle.jcajce.provider.digest.SHA3;
  *
  * @author alexis
  */
-@Stateless
 public class Passwords {
 
     private static final Random RANDOM = new SecureRandom();

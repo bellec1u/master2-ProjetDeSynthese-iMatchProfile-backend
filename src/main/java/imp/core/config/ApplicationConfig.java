@@ -38,7 +38,6 @@ public class ApplicationConfig extends Application {
         resources.add(imp.core.rest.PostREST.class);
         resources.add(imp.core.rest.RecruiterREST.class);
         resources.add(imp.core.rest.SkillREST.class);
-        resources.add(imp.core.rest.exception.mapper.DebugExceptionMapper.class);
         resources.add(imp.core.rest.exception.mapper.RestValidationExceptionMapper.class);
         resources.add(imp.core.rest.filter.JWTTokenNeededFilter.class);
     }

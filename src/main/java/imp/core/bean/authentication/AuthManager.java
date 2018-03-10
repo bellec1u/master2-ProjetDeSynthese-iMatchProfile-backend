@@ -11,9 +11,9 @@ import imp.core.entity.user.Candidate;
 import imp.core.entity.user.Recruiter;
 import imp.core.entity.user.User;
 import imp.core.password.Passwords;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -71,8 +71,26 @@ public class AuthManager {
         return new AccessData(jwtToken);
     }
 
-    public void validateToken(String token) throws SignatureException {
-        Jwts.parser().setSigningKey(keyManager.getJwtKey()).parseClaimsJws(token);
+    /**
+     * Checks if the token is valid and not expired and returns the body of the
+     * token.
+     * 
+     * The method should catch all the runtime exceptions thrown by parseClaimsJws()
+     * so they are not catched by the EJB Container
+     * @param token
+     * @return Claims
+     */
+    public Claims validateToken(String token) {
+        try {
+            return Jwts.parser().setSigningKey(keyManager.getJwtKey())
+                    .parseClaimsJws(token).getBody();
+        } catch (RuntimeException e) {
+            System.err.println("TOKEN Exception");
+            return null;
+        }/* catch (MalformedJwtException | SignatureException | ExpiredJwtException e) {
+            System.err.println("TOKEN ERROR");
+            return false;
+        }*/
     }
 
     private Date toDate(LocalDateTime localDateTime) {

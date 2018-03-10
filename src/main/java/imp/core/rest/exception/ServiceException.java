@@ -5,6 +5,7 @@
  */
 package imp.core.rest.exception;
 
+import javax.ejb.ApplicationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,14 +14,15 @@ import javax.ws.rs.core.Response;
  *
  * @author auktis
  */
+@ApplicationException
 public class ServiceException extends WebApplicationException {
     
-    private Response.Status status;
-    private String message;
+    private final Response.Status status;
+    private final String message;
     
     
     public ServiceException(Response.Status status, String message) {
-        super();
+        super(status);
         this.status = status;
         this.message = message;
     }

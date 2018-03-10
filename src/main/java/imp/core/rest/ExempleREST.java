@@ -6,8 +6,10 @@
 package imp.core.rest;
 
 import imp.core.bean.ExempleRepository;
+import imp.core.bean.authentication.AuthManager;
 import imp.core.entity.Exemple;
 import imp.core.rest.exception.ServiceException;
+import imp.core.rest.filter.JWTTokenNeeded;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -34,6 +36,9 @@ public class ExempleREST {
     @EJB
     private ExempleRepository exempleRepo;
     
+    @EJB
+    private AuthManager authManager;
+    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
@@ -47,6 +52,18 @@ public class ExempleREST {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
+        Exemple ex = exempleRepo.getById(id);
+        if (ex == null) {
+            throw new ServiceException(Response.Status.NOT_FOUND, "Exemple not found");
+        }
+        return Response.ok(ex).build();
+    }
+    
+    @GET
+    @Path("{id}/auth")
+    @Produces(MediaType.APPLICATION_JSON)
+    @JWTTokenNeeded(pathParam = "id")
+    public Response getByIdAuth(@PathParam("id") Long id) {
         Exemple ex = exempleRepo.getById(id);
         if (ex == null) {
             throw new ServiceException(Response.Status.NOT_FOUND, "Exemple not found");
