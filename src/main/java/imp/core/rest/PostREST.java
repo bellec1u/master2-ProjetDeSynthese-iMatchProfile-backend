@@ -9,7 +9,6 @@ import imp.core.bean.AssociatedCandidateRepository;
 import imp.core.bean.CandidateRepository;
 import imp.core.bean.MatchingRepository;
 import imp.core.bean.PostRepository;
-import imp.core.entity.Matching;
 import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Candidate;

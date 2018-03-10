@@ -115,6 +115,21 @@ public class PostRepository extends AbstractRepository<Post> {
         }
         // set the list of postskill
         post.setPostskill(lps);
+        
+        //delete this post matching
+       List<Matching> matchings = em
+                .createNamedQuery("Matching.findByPost", Matching.class)
+                .setParameter("id", post.getId())
+                .getResultList();
+        
+        for (Matching m : matchings) { 
+            em.remove(getEntityManager().merge(m));
+        }        
+        
+        //generate new matching
+        generateMatchingForPost(post);
+
+        
         // update the post
         return super.edit(post);
     }
