@@ -46,6 +46,15 @@ public class NotificationREST {
                 .build();
     }
     
+    @GET
+    @Path("user/{id}/count")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNoReadNotificationCount(@PathParam("id") Long id){
+        long count = notificationRepository.getCountNoReadNotification(id);
+        String c = "{\"count\": " + count + "}";
+        return Response.ok(c).build();
+    } 
+    
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -60,5 +69,7 @@ public class NotificationREST {
         result = notificationRepository.edit(notification);
         return Response.ok(result).build();
     }
+    
+    
     
 }

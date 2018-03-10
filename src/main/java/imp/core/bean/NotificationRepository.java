@@ -38,4 +38,12 @@ public class NotificationRepository extends AbstractRepository<Notification> {
         return userNotifications;
     }
     
+    public long getCountNoReadNotification(Long id){
+        long count = getEntityManager().createNamedQuery("Notification.countNoReadNotification",Long.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        System.out.println("imp.core.bean.NotificationRepository.getCountNoReadNotification()"+id);
+        return count;
+    }
+    
 }

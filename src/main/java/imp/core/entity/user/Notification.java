@@ -23,12 +23,13 @@ import javax.persistence.Table;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Notification.findAll",
-            query = "SELECT n FROM Notification n")
-    ,
+            query = "SELECT n FROM Notification n"),
     @NamedQuery(name = "Notification.findByUserId",
             query = "SELECT n FROM Notification n WHERE n.user.id = :id"),
     @NamedQuery(name = "Notification.findById",
-            query = "SELECT n FROM Notification n WHERE n.id = :id")
+            query = "SELECT n FROM Notification n WHERE n.id = :id"),
+    @NamedQuery(name = "Notification.countNoReadNotification",
+            query = "SELECT COUNT(n.id) FROM Notification n WHERE n.user.id = :id AND n.state = TRUE")
 })
 @Table(name = "Notifications")
 public class Notification {
