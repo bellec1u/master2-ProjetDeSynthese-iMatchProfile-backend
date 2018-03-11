@@ -5,10 +5,12 @@
  */
 package imp.core.rest;
 
+import imp.core.bean.ApplyRepository;
 import imp.core.bean.AssociatedCandidateRepository;
 import imp.core.bean.CandidateRepository;
 import imp.core.bean.MatchingRepository;
 import imp.core.bean.PostRepository;
+import imp.core.entity.post.Apply;
 import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Candidate;
@@ -44,6 +46,9 @@ public class PostREST {
     
     @EJB
     private CandidateRepository candidateRepository;
+    
+    @EJB
+    private ApplyRepository applyRepository;
  
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -175,5 +180,18 @@ public class PostREST {
     }
     
  
+    @POST
+    @Path("{id}/apply")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response apply(@PathParam("id") Long postId, @Valid Long candidateId) {
+        System.out.println("imp.core.rest.PostREST.apply()");
+         if (applyRepository.exist(postId,candidateId)) {
+            throw new ServiceException(Response.Status.FOUND, "You have already applied to this post !");
+        }
+        Apply a = new Apply(postRepository.getById(postId),candidateRepository.getById(candidateId));
+        Apply result = applyRepository.create(a);
+        return Response.status(Response.Status.CREATED).entity(result).build();
+    }
 
 }
