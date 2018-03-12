@@ -155,6 +155,7 @@ public class CandidateREST {
     @Path("{id}")
     @JWTTokenNeeded(pathParam = "id")
     public Response delete(@PathParam("id") Long id) {
+        System.out.println("DELETE "+id);
         Candidate result = candidateRepository.getById(id);
         // if the candidate to delete does not exist
         if (result == null) {   // return a 404

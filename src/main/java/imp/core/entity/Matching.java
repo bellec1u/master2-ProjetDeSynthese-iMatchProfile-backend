@@ -25,6 +25,8 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "Matching.findByPost",
             query = "SELECT m FROM Matching m WHERE m.post.id = :id"),
+    @NamedQuery(name = "Matching.findByCandidate",
+            query = "SELECT m FROM Matching m WHERE m.candidate.id = :id"),
     @NamedQuery(name = "Matching.cleanTable",
             query = "DELETE FROM Matching")
 })
