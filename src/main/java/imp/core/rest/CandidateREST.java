@@ -87,7 +87,8 @@ public class CandidateREST {
     @GET
     @Path("{id}/offers")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOfferById(@PathParam("id") Long id) {
+    @JWTTokenNeeded(pathParam = "id")
+    public Response getOffer(@PathParam("id") Long id) {
         List<AssociatedCandidate> list = associatedCandidateRepository.getOffer(id);
         GenericEntity<List<AssociatedCandidate>> associatedCandidates = new GenericEntity<List<AssociatedCandidate>>(list) {};
 
@@ -139,6 +140,7 @@ public class CandidateREST {
     @Path("{id}/offers")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @JWTTokenNeeded(pathParam = "id")
     public Response acceptOffer(@PathParam("id") Long id) {
         AssociatedCandidate result = associatedCandidateRepository.getById(id);
         if (result == null) {   // return a 404
@@ -151,6 +153,7 @@ public class CandidateREST {
     
     @DELETE
     @Path("{id}")
+    @JWTTokenNeeded(pathParam = "id")
     public Response delete(@PathParam("id") Long id) {
         Candidate result = candidateRepository.getById(id);
         // if the candidate to delete does not exist
@@ -164,6 +167,7 @@ public class CandidateREST {
     
     @DELETE
     @Path("{id}/offers")
+    @JWTTokenNeeded(pathParam = "id")
     public Response refuseOffers(@PathParam("id") Long id) {
         AssociatedCandidate result = associatedCandidateRepository.getById(id);
         if (result == null) {   // return a 404

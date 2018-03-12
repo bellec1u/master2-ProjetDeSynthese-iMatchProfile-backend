@@ -8,6 +8,7 @@ package imp.core.rest;
 import imp.core.bean.NotificationRepository;
 import imp.core.entity.user.Notification;
 import imp.core.rest.exception.ServiceException;
+import imp.core.rest.filter.JWTTokenNeeded;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -69,7 +70,5 @@ public class NotificationREST {
         result = notificationRepository.edit(notification);
         return Response.ok(result).build();
     }
-    
-    
     
 }

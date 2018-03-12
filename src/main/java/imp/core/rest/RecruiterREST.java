@@ -11,6 +11,7 @@ import imp.core.bean.UserRepository;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Recruiter;
 import imp.core.rest.exception.ServiceException;
+import imp.core.rest.filter.JWTTokenNeeded;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -119,6 +120,7 @@ public class RecruiterREST {
     @Path(value = "{id}/posts")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
+    @JWTTokenNeeded(pathParam = "id")
     public Response addPost(@PathParam(value = "id") Long id, @Valid Post json) {
         System.out.println("imp.core.rest.RecruiterREST.addPost()");
         // checking if the recruiter exists
