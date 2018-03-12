@@ -10,7 +10,9 @@ import imp.core.bean.CandidateRepository;
 import imp.core.bean.UserRepository;
 import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.user.Candidate;
+import imp.core.password.Passwords;
 import imp.core.rest.exception.ServiceException;
+import imp.core.rest.filter.JWTTokenNeeded;
 import imp.core.rest.validator.CandidatePassword;
 import java.util.List;
 import javax.ejb.EJB;
@@ -110,12 +112,23 @@ public class CandidateREST {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @JWTTokenNeeded(pathParam = "id")
     public Response update(@PathParam("id") Long id,
             @Valid @CandidatePassword(required = false, minSize = 6, message = "{user.password.min}") Candidate candidate) {
         Candidate result = candidateRepository.getById(id);
         // if the candidate to update does not exist
         if (result == null) {   // return a 404
             throw new ServiceException(Response.Status.NOT_FOUND, "Candidate not found for id: " + id);
+        }
+          
+        // set the same password salt
+        candidate.getUser().setPasswordSalt(result.getUser().getPasswordSalt());
+        // if password is not set
+        if (candidate.getUser().getPassword() == null) {
+            // take the old one
+            candidate.getUser().setPassword(result.getUser().getPassword());
+        } else {    // hash the new password
+            candidate.getUser().setPassword(Passwords.hash(candidate.getUser().getPassword(), result.getUser().getPasswordSalt()));
         }
         
         result = candidateRepository.edit(candidate);
