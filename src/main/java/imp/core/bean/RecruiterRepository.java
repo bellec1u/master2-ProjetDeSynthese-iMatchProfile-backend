@@ -43,7 +43,7 @@ public class RecruiterRepository extends AbstractRepository<Recruiter> {
                 .createNamedQuery("Recruiter.findCreatorOfPost", Recruiter.class)
                 .setParameter("post", p)
                 .getSingleResult()
-                .getId();
+                .getUser().getId();
     }
 
 }

@@ -79,4 +79,46 @@ public class MatchingRepository extends AbstractRepository<Matching> {
         return json;
     }
     
+    /**
+     * Return all matchings for this candidate.
+     *
+     * @param candidateId The candidate id.
+     * @return
+     */
+    public JSONArray getByCandidateId(Long candidateId) throws ParseException {
+        List<Matching> matchings = em
+                .createNamedQuery("Matching.findByCandidate", Matching.class)
+                .setParameter("id", candidateId)
+                .getResultList();
+
+        // sort by percent
+        Collections.sort(matchings, new Comparator<Matching>() {
+            @Override
+            public int compare(Matching o1, Matching o2) {
+                if (o1.getPercent() > o2.getPercent()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+
+        });
+
+        // product json
+        JSONArray json = new JSONArray();
+        for (Matching matching : matchings) {
+            // generate json
+            JSONObject obj = new JSONObject();
+
+            String postJSON = (new Gson()).toJson(matching.getPost());
+            JSONParser parser = new JSONParser();
+
+            obj.put("post", (JSONObject) parser.parse(postJSON));
+            obj.put("percent", matching.getPercent());
+
+            json.add(obj);
+        }
+        return json;
+    }
+    
 }

@@ -7,6 +7,7 @@ package imp.core.rest;
 
 import imp.core.bean.AssociatedCandidateRepository;
 import imp.core.bean.CandidateRepository;
+import imp.core.bean.MatchingRepository;
 import imp.core.bean.UserRepository;
 import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.user.Candidate;
@@ -29,6 +30,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.ParseException;
 
 /**
  * REST service for the candidate entity.
@@ -47,6 +50,9 @@ public class CandidateREST {
     
     @EJB
     private AssociatedCandidateRepository associatedCandidateRepository;
+    
+    @EJB
+    private MatchingRepository matchingRepository;
     
     /**
      * Returns all the candidates.
@@ -95,6 +101,15 @@ public class CandidateREST {
         return Response.ok(associatedCandidates).build();
     }
 
+    @GET
+    @Path("{id}/matchings")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMatchings(@PathParam("id") Long id) throws ParseException {
+        System.out.println("imp.core.rest.PostREST.getBySkills()");
+        JSONArray json = matchingRepository.getByCandidateId(id);
+        
+        return Response.ok(json.toJSONString()).build();
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
