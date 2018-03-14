@@ -138,7 +138,7 @@ public class PostRESTTest {
         JSONObject s1 = new JSONObject();
         JSONObject java = new JSONObject();
         java.put("description", "Java");
-        java.put("type", Skill.Typeskill.TECHNQUES);
+        java.put("type", Skill.Typeskill.TECHNIQUES);
         java.put("id", 2);
         s1.put("skill", java);
         s1.put("type", "OBLIGATOIRE");
@@ -146,7 +146,7 @@ public class PostRESTTest {
         JSONObject s2 = new JSONObject();
         JSONObject angular = new JSONObject();
         angular.put("description", "Angular");
-        angular.put("type", Skill.Typeskill.TECHNQUES);
+        angular.put("type", Skill.Typeskill.TECHNIQUES);
         angular.put("id", 1);
         s2.put("skill", angular);
         s2.put("type", "OBLIGATOIRE");

@@ -46,7 +46,6 @@ public class ConversationREST {
     @GET
     @Path("forUser/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @JWTTokenNeeded(pathParam = "id")
     public Response getConversationsByUserId(@PathParam("id") Long id) {
         System.out.println("imp.core.rest.ConversationREST.getConversationByUserId()");
         
@@ -66,7 +65,6 @@ public class ConversationREST {
     @Path("{id}/{id2}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @JWTTokenNeeded(pathParam = "id")
     public Response addMessage(@PathParam("id") Long id1, @PathParam("id2") Long id2, Message message) {
         System.out.println("imp.core.rest.ConversationREST.addMessage()");
         
@@ -85,7 +83,6 @@ public class ConversationREST {
     @Path("{id}/ownerOf/{idPost}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @JWTTokenNeeded(pathParam = "id")
     public Response sendMessage(@PathParam("id") Long idUser, @PathParam("idPost") Long idPost, Message message) {
         System.out.println("imp.core.rest.ConversationREST.sendMessage()");
         
