@@ -184,14 +184,28 @@ public class PostREST {
     @Path("{id}/apply")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response apply(@PathParam("id") Long postId, @Valid Long candidateId) {
+    public Response apply(@PathParam("id") Long postId, @Valid String candidateId) {
+        Long id = parseLong(candidateId);
         System.out.println("imp.core.rest.PostREST.apply()");
-         if (applyRepository.exist(postId,candidateId)) {
+        if (applyRepository.exist(postId,id)) {
             throw new ServiceException(Response.Status.FOUND, "You have already applied to this post !");
         }
-        Apply a = new Apply(postRepository.getById(postId),candidateRepository.getById(candidateId));
+        Apply a = new Apply(postRepository.getById(postId),candidateRepository.getById(id));
         Apply result = applyRepository.create(a);
         return Response.status(Response.Status.CREATED).entity(result).build();
     }
 
+    
+    @GET
+    @Path("{idPost}/apply")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMyPostApply(@PathParam("idPost") Long postId) {
+        System.out.println("imp.core.rest.PostREST.getMyPostApply()");
+         List<Apply> a = applyRepository.getByPost(postId);
+        GenericEntity<List<Apply>> applyCandidat = new GenericEntity<List<Apply>>(a) {};
+
+       
+        return Response.ok(applyCandidat).build();  
+    }
 }

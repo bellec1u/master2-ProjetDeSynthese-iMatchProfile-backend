@@ -6,7 +6,6 @@
 package imp.core.bean;
 
 import imp.core.entity.post.Apply;
-import imp.core.entity.post.AssociatedCandidate;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -61,12 +60,9 @@ public class ApplyRepository extends AbstractRepository<Apply> {
     }
 
     public List<Apply> getByPost(Long id) {
-        List<Apply> associatedCandidate = em
-                .createNamedQuery("Apply.findByPost", Apply.class)
+         return em.createNamedQuery("Apply.findByPost", Apply.class)
                 .setParameter("postid", id)
                 .getResultList();
-
-        return associatedCandidate; 
     }
 
     public List<Apply> getAll() {
