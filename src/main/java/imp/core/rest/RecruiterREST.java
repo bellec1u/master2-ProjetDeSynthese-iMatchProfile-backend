@@ -11,6 +11,7 @@ import imp.core.bean.UserRepository;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Recruiter;
 import imp.core.rest.exception.ServiceException;
+import imp.core.rest.filter.JWTTokenNeeded;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -24,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import imp.core.rest.validator.RecruiterPassword;
 
 /**
  *
@@ -104,7 +106,7 @@ public class RecruiterREST {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@Valid Recruiter recruiter) {        
+    public Response create(@Valid @RecruiterPassword(minSize = 6, message = "{user.password.notNull}") Recruiter recruiter) {        
         // checking if email is already used
         if (!userRepository.findByEmail(recruiter.getUser().getEmail()).isEmpty()) {
             throw new ServiceException(Response.Status.CONFLICT, "Email already used: " + recruiter.getUser().getEmail());
@@ -118,6 +120,7 @@ public class RecruiterREST {
     @Path(value = "{id}/posts")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
+    @JWTTokenNeeded(pathParam = "id")
     public Response addPost(@PathParam(value = "id") Long id, @Valid Post json) {
         System.out.println("imp.core.rest.RecruiterREST.addPost()");
         // checking if the recruiter exists
@@ -128,4 +131,5 @@ public class RecruiterREST {
         Post result = postRepository.addPost(id, json);
         return Response.status(Response.Status.CREATED).entity(result).build();
     }
+    
 }

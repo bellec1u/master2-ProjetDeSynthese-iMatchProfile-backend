@@ -9,6 +9,7 @@ import imp.core.bean.ConversationRepository;
 import imp.core.bean.RecruiterRepository;
 import imp.core.entity.conversation.Conversation;
 import imp.core.entity.conversation.Message;
+import imp.core.rest.filter.JWTTokenNeeded;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -61,10 +62,10 @@ public class ConversationREST {
      * @return 
      */
     @POST
-    @Path("{id1}/{id2}")
+    @Path("{id}/{id2}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addMessage(@PathParam("id1") Long id1, @PathParam("id2") Long id2, Message message) {
+    public Response addMessage(@PathParam("id") Long id1, @PathParam("id2") Long id2, Message message) {
         System.out.println("imp.core.rest.ConversationREST.addMessage()");
         
         Conversation conversation = conversationRepository.addMessage(message, id1, id2);
@@ -79,10 +80,10 @@ public class ConversationREST {
      * @return 
      */
     @POST
-    @Path("{idUser}/ownerOf/{idPost}")
+    @Path("{id}/ownerOf/{idPost}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendMessage(@PathParam("idUser") Long idUser, @PathParam("idPost") Long idPost, Message message) {
+    public Response sendMessage(@PathParam("id") Long idUser, @PathParam("idPost") Long idPost, Message message) {
         System.out.println("imp.core.rest.ConversationREST.sendMessage()");
         
         Conversation conversation = conversationRepository.addMessage(

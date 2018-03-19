@@ -14,7 +14,7 @@ import javax.ws.rs.ext.Provider;
  *
  * @author auktis
  */
-@Provider
+//@Provider
 public class DebugExceptionMapper implements ExceptionMapper<Exception> {
 
     @Override

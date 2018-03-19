@@ -32,7 +32,7 @@ import org.hibernate.validator.constraints.NotBlank;
 public class Skill implements Serializable {
 
     static public enum Typeskill {
-        METIER, FONCTIONNELLES, TECHNQUES, LINGUISTIQUES
+        METIER, FONCTIONNELLES, TECHNIQUES, LINGUISTIQUES
     };
 
     private static final long serialVersionUID = 1L;

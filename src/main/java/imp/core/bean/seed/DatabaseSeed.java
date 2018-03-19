@@ -38,7 +38,7 @@ public class DatabaseSeed {
 
     @EJB
     private PostRepository postRepository;
-
+    
     private List<Skill> skills;
     private List<PostSkill> postskills;
     private List<String> emails;
@@ -49,26 +49,28 @@ public class DatabaseSeed {
         this.emails = new ArrayList<>();
         // ---------- ---------- ---------- ---------- Skills
         this.skills = new ArrayList<>();
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Java"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Angular"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "J2EE"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "BDD"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Marketing"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Python"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Scala"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "PHP"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "TLA+"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "9gag"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Suite office"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "Git"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "JavaScript"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "C"));
-        this.skills.add(new Skill(Skill.Typeskill.TECHNQUES, "C++"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "Java"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "Angular"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "J2EE"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "BDD"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "Marketing"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "Python"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "Scala"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "PHP"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "TLA+"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "9gag"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "Suite office"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "Git"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "JavaScript"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "C"));
+        this.skills.add(new Skill(Skill.Typeskill.TECHNIQUES, "C++"));
 
         for (Skill s : skills) {
             em.persist(s);
         }
-
+        // force skills persistence to DB in order to get their id
+        em.flush();
+        
         this.postskills = new ArrayList<>();
         for (Skill s : skills) {
             if (faker.number().numberBetween(0, 100) < 50) {
@@ -175,7 +177,6 @@ public class DatabaseSeed {
 
                 recruiter.addPost(post);
             }
-
             em.persist(recruiter);
         }
 

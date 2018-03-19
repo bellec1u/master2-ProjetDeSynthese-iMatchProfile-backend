@@ -5,14 +5,19 @@
  */
 package imp.core.rest;
 
+import imp.core.bean.ApplyRepository;
 import imp.core.bean.AssociatedCandidateRepository;
 import imp.core.bean.CandidateRepository;
+import imp.core.bean.MatchingRepository;
 import imp.core.bean.PostRepository;
+import imp.core.entity.post.Apply;
 import imp.core.entity.post.AssociatedCandidate;
 import imp.core.entity.post.Post;
 import imp.core.entity.user.Candidate;
+import imp.core.entity.user.Recruiter;
 import imp.core.rest.exception.ServiceException;
 import static java.lang.Long.parseLong;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.GenericEntity;
 import javax.ejb.*;
@@ -34,16 +39,28 @@ public class PostREST {
     private PostRepository postRepository;
     
     @EJB
+    private MatchingRepository matchingRepository;
+    
+    @EJB
     private AssociatedCandidateRepository associatedCandidateRepository;
     
     @EJB
     private CandidateRepository candidateRepository;
+    
+    @EJB
+    private ApplyRepository applyRepository;
  
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
+    public Response getAll(@DefaultValue("-1") @QueryParam("limit") int limit) {
         System.out.println("imp.core.rest.PostREST.getAll()");
-        List<Post> list = postRepository.getAll();
+        List<Post> list;
+        if (limit >= 0) {
+            list = postRepository.getAll(limit);
+        }
+        else {
+            list = postRepository.getAll();
+        }
         // because ok() method expects an Entity as parameter
         GenericEntity<List<Post>> gen = new GenericEntity<List<Post>>(list) {
         };
@@ -69,11 +86,11 @@ public class PostREST {
     }
     
     @GET
-    @Path("{id}/bySkills")
+    @Path("{id}/matchings")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBySkills(@PathParam("id") Long id) throws ParseException {
+    public Response getMatchings(@PathParam("id") Long id) throws ParseException {
         System.out.println("imp.core.rest.PostREST.getBySkills()");
-        JSONArray json = postRepository.getBySkills(id);
+        JSONArray json = matchingRepository.getByPostId(id);
         
         return Response.ok(json.toJSONString()).build();
     }
@@ -105,12 +122,15 @@ public class PostREST {
     }
    
     @GET
-    @Path("{id}/candidatebyMandatorySkills")
+    @Path("{id}/candidateByMandatorySkills")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCandidatebyMandatorySkills(@PathParam("id") Long postId) {
-        System.out.println("imp.core.rest.PostREST.getCandidatebyMandatorySkills()");
+    public Response getCandidateByMandatorySkills(@PathParam("id") Long postId) {
+        System.out.println("imp.core.rest.PostREST.getCandidateByMandatorySkills()");
  
         List<Candidate> list = postRepository.getCandidatebyMandatorySkills(postId);
+        if (list == null) {
+            list = new ArrayList<>();
+        }
         GenericEntity<List<Candidate>> candidates = new GenericEntity<List<Candidate>>(list) {};
 
 
@@ -130,6 +150,18 @@ public class PostREST {
 
         return Response.ok(associatedCandidates).build();  
     }
+    
+    @GET
+    @Path("{idPost}/isMyPost")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response isMyPost(@PathParam("idPost") Long postId) {
+        System.out.println("imp.core.rest.PostREST.isMyPost()");
+ 
+        Recruiter r = postRepository.isMyPost(postId);
+       
+        return Response.ok(r).build();  
+    }
         
     @POST
     @Path("{id}/associatedOneCandidate")
@@ -148,5 +180,32 @@ public class PostREST {
     }
     
  
+    @POST
+    @Path("{id}/apply")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response apply(@PathParam("id") Long postId, @Valid String candidateId) {
+        Long id = parseLong(candidateId);
+        System.out.println("imp.core.rest.PostREST.apply()");
+        if (applyRepository.exist(postId,id)) {
+            throw new ServiceException(Response.Status.FOUND, "You have already applied to this post !");
+        }
+        Apply a = new Apply(postRepository.getById(postId),candidateRepository.getById(id));
+        Apply result = applyRepository.create(a);
+        return Response.status(Response.Status.CREATED).entity(result).build();
+    }
 
+    
+    @GET
+    @Path("{idPost}/apply")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMyPostApply(@PathParam("idPost") Long postId) {
+        System.out.println("imp.core.rest.PostREST.getMyPostApply()");
+         List<Apply> a = applyRepository.getByPost(postId);
+        GenericEntity<List<Apply>> applyCandidat = new GenericEntity<List<Apply>>(a) {};
+
+       
+        return Response.ok(applyCandidat).build();  
+    }
 }

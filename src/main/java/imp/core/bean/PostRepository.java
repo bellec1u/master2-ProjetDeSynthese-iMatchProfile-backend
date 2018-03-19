@@ -5,28 +5,26 @@
  */
 package imp.core.bean;
 
-import com.google.gson.Gson;
 import imp.core.entity.Matching;
 import imp.core.entity.Skill;
 import imp.core.entity.post.Post;
 import imp.core.entity.post.PostSkill;
 import imp.core.entity.post.PostSkill.Type;
 import imp.core.entity.user.Candidate;
+import imp.core.entity.user.Notification;
 import imp.core.entity.user.Recruiter;
+import imp.core.entity.user.User;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import javax.mail.*;
+import javax.mail.internet.*;
 
 /**
  *
@@ -45,7 +43,11 @@ public class PostRepository extends AbstractRepository<Post> {
     public List<Post> getAll() {
         return executeNamedQuery("Post.findAll");
     }
-
+    
+    public List<Post> getAll(int limit) {
+        return getEntityManager().createNamedQuery("Post.findAll", Post.class).setMaxResults(limit).getResultList();
+    }
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;
@@ -88,6 +90,9 @@ public class PostRepository extends AbstractRepository<Post> {
         // generate all matchings for newPost
         generateMatchingForPost(newPost);
         
+        // send email and notification to candidates that match with this post
+        sendNotificationsCandidate(post);
+        
         return newPost;
     }
 
@@ -110,6 +115,21 @@ public class PostRepository extends AbstractRepository<Post> {
         }
         // set the list of postskill
         post.setPostskill(lps);
+        
+        //delete this post matching
+       List<Matching> matchings = em
+                .createNamedQuery("Matching.findByPost", Matching.class)
+                .setParameter("id", post.getId())
+                .getResultList();
+        
+        for (Matching m : matchings) { 
+            em.remove(getEntityManager().merge(m));
+        }        
+        
+        //generate new matching
+        generateMatchingForPost(post);
+
+        
         // update the post
         return super.edit(post);
     }
@@ -140,48 +160,6 @@ public class PostRepository extends AbstractRepository<Post> {
         super.removeById(id);
     }
 
-    /**
-     * return all users with matching %
-     *
-     * @param id
-     * @return
-     */
-    public JSONArray getBySkills(Long id) throws ParseException {
-        List<Matching> matchings = em
-                .createNamedQuery("Matching.findByPost", Matching.class)
-                .setParameter("id", id)
-                .getResultList();
-
-        // sort by percent
-        Collections.sort(matchings, new Comparator<Matching>() {
-            @Override
-            public int compare(Matching o1, Matching o2) {
-                if (o1.getPercent() > o2.getPercent()) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-
-        });
-
-        // product json
-        JSONArray json = new JSONArray();
-        for (Matching matching : matchings) {
-            // generate json
-            JSONObject obj = new JSONObject();
-
-            String candidateJSON = (new Gson()).toJson(matching.getCandidate());
-            JSONParser parser = new JSONParser();
-
-            obj.put("candidate", (JSONObject) parser.parse(candidateJSON));
-            obj.put("percent", matching.getPercent());
-
-            json.add(obj);
-        }
-        return json;
-    }
-
     public List<Candidate> getCandidatebyMandatorySkills(Long postId) {
 
         List<Skill> skillsNeeded = new ArrayList<>();
@@ -207,6 +185,7 @@ public class PostRepository extends AbstractRepository<Post> {
         List<Candidate> res = new ArrayList<>();
 
         for (Candidate c : candidates) {
+            if(c.getUser().getState() == User.State.OK){
             int tmp = 0;
             for (Skill s : c.getSkills()) {
                 if (skillsNeeded.contains(s)) {
@@ -216,6 +195,7 @@ public class PostRepository extends AbstractRepository<Post> {
             if (tmp == skillsNeeded.size()) {
                 res.add(c);
             }
+        }
         }
         return res;
     }
@@ -235,8 +215,11 @@ public class PostRepository extends AbstractRepository<Post> {
         for (Post post : posts) {
             // for each candidate from candidates
             for (Candidate candidate : candidates) {
+               if(candidate.getUser().getState() == User.State.OK){
+
                 // generate matching
                 generateMatching(post, candidate);
+               }
             }
         }
     }
@@ -248,8 +231,10 @@ public class PostRepository extends AbstractRepository<Post> {
 
         // for each candidate from candidates
         for (Candidate candidate : candidates) {
+         if(candidate.getUser().getState() == User.State.OK){
             // generate matching
             generateMatching(post, candidate);
+         }
         }
     }
 
@@ -294,5 +279,59 @@ public class PostRepository extends AbstractRepository<Post> {
             Matching matching = new Matching(candidate, post, percent);
             em.persist(matching);
         }
+    }
+    
+    private void sendEmail(String userEmail, Post post){
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "localhost");
+        props.put("mail.smtp.port", "25");
+        
+        String from = "no-reply@imp.com";
+
+        try {
+            Session session = Session.getDefaultInstance(props, null);
+            session.setDebug(false);
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO,
+                InternetAddress.parse(userEmail));
+            message.setSubject("Vous avez un Match ! - "+post.getTitle() + " - ");
+            message.setText("Lien vers l'offre : "
+                + "\n\n http://localhost:4200/post/"+post.getId());
+
+            Transport.send(message);
+
+            System.out.println("Done");
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public void sendNotification(User user, Post post){
+        String message = "Vous avez un Match ! - "+post.getTitle() + " - " ;
+        String link = "/post/" + post.getId();
+        Notification notif = new Notification(message,link,user,true);
+        em.persist(notif);
+    }
+    
+    private void sendNotificationsCandidate(Post post){
+        List<Candidate> candidateMandatorySkills = new ArrayList<>();
+        candidateMandatorySkills = getCandidatebyMandatorySkills(post.getId());
+        if(candidateMandatorySkills != null){
+        for (Candidate candidateMandatorySkill : candidateMandatorySkills) {
+            // sendEmail is commented for dev environnement
+            //sendEmail(candidateMandatorySkill.getUser().getEmail(),post);
+            sendNotification(candidateMandatorySkill.getUser(),post);
+        }
+        }
+    }
+
+    public Recruiter isMyPost(Long postId) {
+        Post p = em.find(Post.class, postId);
+        List<Recruiter> r =  em.createNamedQuery("Recruiter.findCreatorOfPost", Recruiter.class)
+                .setParameter("post", p)
+                .getResultList();
+        return r.get(0);
     }
 }

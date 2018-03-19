@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imp.core.entity;
+package imp.core.entity.post;
 
-import imp.core.entity.post.Post;
 import imp.core.entity.user.Candidate;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,43 +19,48 @@ import javax.persistence.Table;
 
 /**
  *
- * @author Leopold
+ * @author Karim
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "Matching.findByPost",
-            query = "SELECT m FROM Matching m WHERE m.post.id = :id"),
-    @NamedQuery(name = "Matching.findByCandidate",
-            query = "SELECT m FROM Matching m WHERE m.candidate.id = :id"),
-    @NamedQuery(name = "Matching.cleanTable",
-            query = "DELETE FROM Matching")
-})
-@Table(name = "Matchings")
-public class Matching implements Serializable {
+    @NamedQuery(name = "Apply.findAll",
+            query = "SELECT a FROM Apply a"),
+    @NamedQuery(name = "Apply.findByPost",
+            query = "SELECT a FROM Apply a WHERE a.post.id = :postid"),
+    @NamedQuery(name = "Apply.hasApplied",
+            query = "SELECT a FROM Apply a WHERE a.post.id = :postid AND a.candidat.id = :candidateId"),
+    @NamedQuery(name = "Apply.findByCandidate",
+            query = "SELECT a FROM Apply a WHERE a.candidat.id = :id")       
+})@Table(name = "Apply")
+public class Apply implements Serializable {
 
+    public static enum State {
+        INPROCESS, ACCEPTED
+    };
+    
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
-    private double percent;
-    
-    @ManyToOne
-    private Candidate candidate;
-    
+    @Column(name = "state")
+    private Apply.State state;
+        
     @ManyToOne
     private Post post;
+    
+    @ManyToOne
+    private Candidate candidat;
 
-    public Matching() {
-        
+    public Apply() {
     }
-    
-    public Matching(Candidate candidate, Post post, double percent) {
-        this.candidate = candidate;
+
+    public Apply(Post post, Candidate candidat) {
         this.post = post;
-        this.percent = percent;
+        this.candidat = candidat;
+        this.state = state.INPROCESS;
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -64,12 +69,12 @@ public class Matching implements Serializable {
         this.id = id;
     }
 
-    public Candidate getCandidate() {
-        return candidate;
+    public State getState() {
+        return state;
     }
 
-    public void setCandidate(Candidate candidate) {
-        this.candidate = candidate;
+    public void setState(State state) {
+        this.state = state;
     }
 
     public Post getPost() {
@@ -80,13 +85,14 @@ public class Matching implements Serializable {
         this.post = post;
     }
 
-    public double getPercent() {
-        return percent;
+    public Candidate getCandidat() {
+        return candidat;
     }
 
-    public void setPercent(double percent) {
-        this.percent = percent;
+    public void setCandidat(Candidate candidat) {
+        this.candidat = candidat;
     }
+    
 
     @Override
     public int hashCode() {
@@ -94,14 +100,14 @@ public class Matching implements Serializable {
         hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
-
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Matching)) {
+        if (!(object instanceof Apply)) {
             return false;
         }
-        Matching other = (Matching) object;
+        Apply other = (Apply) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -110,7 +116,7 @@ public class Matching implements Serializable {
 
     @Override
     public String toString() {
-        return "Matching{" + "id=" + id + ", candidate=" + candidate + ", post=" + post + ", percent=" + percent + '}';
+        return "imp.core.entity.post.Apply[ id=" + id + " ]";
     }
     
 }

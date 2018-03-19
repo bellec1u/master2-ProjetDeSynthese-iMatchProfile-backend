@@ -39,12 +39,14 @@ public class CandidateRESTTest {
 
     private static Candidate candidateTest;
 
+    private static String tokenTest;
+    
     private static Candidate candidateCreate;
 
     private static Skill skillTest;
 
     private static Skill newSkillTest;
-
+    
     public CandidateRESTTest() {
     }
 
@@ -70,7 +72,8 @@ public class CandidateRESTTest {
         user.setEmail("Testprénom.Testnom@mail.fr");
         user.setFirstname("Testprénom");
         user.setLastname("Testnom");
-        user.setPassword("testpassword");
+        String candidateTestPwd = "testpassword";
+        user.setPassword(candidateTestPwd);
         user.setRole(User.Role.CANDIDATE);
 
         skillTest = new Skill();
@@ -108,6 +111,16 @@ public class CandidateRESTTest {
 
         // commit the new entities for the tests
         em.getTransaction().commit();
+        
+        // using the REST API to get the access token for candidateTest
+        JSONObject cred = new JSONObject();
+        cred.put("email", candidateTest.getUser().getEmail());
+        cred.put("password", candidateTestPwd);
+        tokenTest = given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(cred)
+                .post("http://localhost:8080/imp/api/login")
+                .path("accessToken");
     }
 
     @After
@@ -162,7 +175,6 @@ public class CandidateRESTTest {
                 .body("user.lastname", equalTo(candidateTest.getUser().getLastname()))
                 .body("user.firstname", equalTo(candidateTest.getUser().getFirstname()))
                 .body("user.email", equalTo(candidateTest.getUser().getEmail()))
-                .body("user.password", equalTo(candidateTest.getUser().getPassword()))
                 .body("user.reportNumber", equalTo(Math.toIntExact(candidateTest.getUser().getReportNumber())))
                 .body("user.role", equalTo(candidateTest.getUser().getRole().toString()))
                 .body("user.state", equalTo(candidateTest.getUser().getState().toString()))
@@ -214,7 +226,6 @@ public class CandidateRESTTest {
                 .body("user.lastname", equalTo(candidateCreate.getUser().getLastname()))
                 .body("user.firstname", equalTo(candidateCreate.getUser().getFirstname()))
                 .body("user.email", equalTo(candidateCreate.getUser().getEmail()))
-                .body("user.password", equalTo(candidateCreate.getUser().getPassword()))
                 .body("user.reportNumber", equalTo(Math.toIntExact(candidateCreate.getUser().getReportNumber())))
                 .body("user.role", equalTo(candidateCreate.getUser().getRole().toString()))
                 .body("user.state", equalTo(candidateCreate.getUser().getState().toString()));
@@ -270,7 +281,7 @@ public class CandidateRESTTest {
     }
 
     @Test
-    public void updateExisting() {
+    public void updateAuthorized() {
         String newDescription = "new description";
         LocalDate newBirthDate = LocalDate.of(1993, 10, 18);
         String newLastname = "NewLastname";
@@ -310,8 +321,8 @@ public class CandidateRESTTest {
         skills.add(s2);
         
         json.put("skills", skills);
-
         given().contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer "+ tokenTest)
                 .body(json)
                 .when().put(API_URL + candidateTest.getId())
                 .then().statusCode(200)
@@ -322,7 +333,6 @@ public class CandidateRESTTest {
                 .body("user.lastname", equalTo(newLastname))
                 .body("user.firstname", equalTo(newFirstname))
                 .body("user.email", equalTo(newEmail))
-                .body("user.password", equalTo(newPassword))
                 .body("user.reportNumber", equalTo(Math.toIntExact(newReportNumber)))
                 .body("user.role", equalTo(candidateTest.getUser().getRole().toString()))
                 .body("user.state", equalTo(newState.toString()))
@@ -339,7 +349,6 @@ public class CandidateRESTTest {
                 .body("user.lastname", equalTo(newLastname))
                 .body("user.firstname", equalTo(newFirstname))
                 .body("user.email", equalTo(newEmail))
-                .body("user.password", equalTo(newPassword))
                 .body("user.reportNumber", equalTo(Math.toIntExact(newReportNumber)))
                 .body("user.role", equalTo(candidateTest.getUser().getRole().toString()))
                 .body("user.state", equalTo(newState.toString()))
@@ -347,7 +356,7 @@ public class CandidateRESTTest {
     }
 
     @Test
-    public void updateInexisting() {
+    public void updateUnauthorized() {
         String newDescription = "new description";
         LocalDate newBirthDate = LocalDate.of(1993, 10, 18);
         String newLastname = "NewLastname";
@@ -390,13 +399,14 @@ public class CandidateRESTTest {
 
         given().contentType(MediaType.APPLICATION_JSON)
                 .body(json)
-                .when().put(API_URL + "-1")
-                .then().statusCode(404);
+                .when().put(API_URL + candidateTest.getId())
+                .then().statusCode(401);
     }
 
     @Test
-    public void deleteExisting() {
+    public void deleteAuthorized() {
         given().contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer "+ tokenTest)
                 .when().delete(API_URL + candidateTest.getId())
                 .then().statusCode(204);
         
@@ -407,10 +417,10 @@ public class CandidateRESTTest {
     }
 
     @Test
-    public void deleteInexisting() {
+    public void deleteUnauthorized() {
         given().contentType(MediaType.APPLICATION_JSON)
-                .when().delete(API_URL + "-1")
-                .then().statusCode(404);
+                .when().delete(API_URL + candidateTest.getId())
+                .then().statusCode(401);
     }
 
 }

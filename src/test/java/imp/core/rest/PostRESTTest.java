@@ -36,6 +36,7 @@ public class PostRESTTest {
     private static EntityManager em;
 
     private Recruiter recruiterTest;
+    private String tokenTest;
     private Post postTest;
     private PostSkill postskillTest;
     private Skill skillTest;
@@ -72,7 +73,8 @@ public class PostRESTTest {
         u.setEmail("test.test@test.test");
         u.setFirstname("test");
         u.setLastname("test");
-        u.setPassword("passtest");
+        String recruiterTestPwd = "passtest";
+        u.setPassword(recruiterTestPwd);
         u.setRole(User.Role.RECRUITER);
         recruiterTest = new Recruiter(u, "Test&Co");
 
@@ -90,6 +92,16 @@ public class PostRESTTest {
 
         // commit the new entities for the tests
         em.getTransaction().commit();
+
+        // using the REST API to get the access token for candidateTest
+        JSONObject cred = new JSONObject();
+        cred.put("email", recruiterTest.getUser().getEmail());
+        cred.put("password", recruiterTestPwd);
+        tokenTest = given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(cred)
+                .post("http://localhost:8080/imp/api/login")
+                .path("accessToken");
     }
 
     @After
@@ -111,7 +123,7 @@ public class PostRESTTest {
             em.close();
         }
     }
-    
+
     public JSONObject generateJSONObject() {
         JSONObject json = new JSONObject();
         json.put("contractType", "test contractType");
@@ -126,7 +138,7 @@ public class PostRESTTest {
         JSONObject s1 = new JSONObject();
         JSONObject java = new JSONObject();
         java.put("description", "Java");
-        java.put("type", Skill.Typeskill.TECHNQUES);
+        java.put("type", Skill.Typeskill.TECHNIQUES);
         java.put("id", 2);
         s1.put("skill", java);
         s1.put("type", "OBLIGATOIRE");
@@ -134,7 +146,7 @@ public class PostRESTTest {
         JSONObject s2 = new JSONObject();
         JSONObject angular = new JSONObject();
         angular.put("description", "Angular");
-        angular.put("type", Skill.Typeskill.TECHNQUES);
+        angular.put("type", Skill.Typeskill.TECHNIQUES);
         angular.put("id", 1);
         s2.put("skill", angular);
         s2.put("type", "OBLIGATOIRE");
@@ -151,9 +163,11 @@ public class PostRESTTest {
     }
 
     @Test
-    public void addPost() {
+    public void addPostAuthorized() {
         System.out.println("----- " + recruiterTest);
-        given().contentType(MediaType.APPLICATION_JSON).body(generateJSONObject())
+        given().contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + tokenTest)
+                .body(generateJSONObject())
                 .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/posts")
                 .then().statusCode(201)
                 .body("id", greaterThan(0))
@@ -173,9 +187,20 @@ public class PostRESTTest {
     }
 
     @Test
+    public void addPostUnauthorized() {
+        System.out.println("----- " + recruiterTest);
+        given().contentType(MediaType.APPLICATION_JSON)
+                .body(generateJSONObject())
+                .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/posts")
+                .then().statusCode(401);
+    }
+    
+    @Test
     public void updatePost() {
         JSONObject newJson
-                = given().contentType(MediaType.APPLICATION_JSON).body(generateJSONObject())
+                = given().contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + tokenTest)
+                        .body(generateJSONObject())
                         .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/posts")
                         .body().as(JSONObject.class);
 
@@ -212,6 +237,7 @@ public class PostRESTTest {
     @Test
     public void deletePost() {
         JSONObject newJson = given().contentType(MediaType.APPLICATION_JSON).body(generateJSONObject())
+                .header("Authorization", "Bearer " + tokenTest)
                 .when().post("http://localhost:8080/imp/api/recruiters/" + recruiterTest.getId() + "/posts")
                 .body().as(JSONObject.class);
 
@@ -228,7 +254,7 @@ public class PostRESTTest {
         given().contentType(MediaType.APPLICATION_JSON)
                 .when().get("http://localhost:8080/imp/api/posts")
                 .then().statusCode(200)
-                        .body("size()", greaterThan(0));
+                .body("size()", greaterThan(0));
     }
 
     @Test
@@ -251,14 +277,14 @@ public class PostRESTTest {
                 .body("workUnit", equalTo(postTest.getWorkUnit()))
                 .body("workplace", equalTo(postTest.getWorkplace()));
     }
-    
+
     @Test
     public void getOnePostWithElementDoesNotExist() {
         given().contentType(MediaType.APPLICATION_JSON)
                 .when().get("http://localhost:8080/imp/api/posts/" + "100000")
                 .then().statusCode(404);
     }
-    
+
     @Test
     public void updatePostWithElementDoesNotExist() {
         JSONObject json = generateJSONObject();
@@ -268,7 +294,7 @@ public class PostRESTTest {
                 .when().put("http://localhost:8080/imp/api/posts/" + "100000")
                 .then().statusCode(404);
     }
-    
+
     @Test
     public void deletePostWithElementDoesNotExist() {
         given().contentType(MediaType.APPLICATION_JSON)
